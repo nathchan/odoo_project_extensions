@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Project form -->
+        <record id="edit_project_form_inherit" model="ir.ui.view">
+            <field name="name">project.project.kanban</field>
+            <field name="model">project.project</field>
+            <field name="inherit_id" ref="project.view_project_kanban" />
+            <field name="arch" type="xml">
+                <data>
+
+                    <xpath expr="//t[@t-esc='record.name.value']/../.." position="after">
+                        <div t-if="record.user_id">
+                           <span>
+                               <i class="fa fa-user"></i>
+                               <small>
+                                   <t t-esc="record.user_id.value"/>
+                               </small>
+                           </span>
+                        </div>
+                    </xpath>
+
+                </data>
+            </field>
+        </record>
+
+    </data>
+</openerp>
