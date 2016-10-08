@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+
+        <record id="view_task_type_tree_inherit" model="ir.ui.view">
+            <field name="name">project.task.type.tree.inherit</field>
+            <field name="model">project.task.type</field>
+            <field name="inherit_id" ref="project.task_type_tree"/>
+            <field name="arch" type="xml">
+                <data>
+
+                    <xpath expr="//field[@name='name']" position="after">
+                        <field name="is_priority_one" />
+                    </xpath>
+
+                </data>
+            </field>
+        </record>
+
+        <record id="view_task_type_form_inherit" model="ir.ui.view">
+            <field name="name">project.task.type.form.inherit</field>
+            <field name="model">project.task.type</field>
+            <field name="inherit_id" ref="project.task_type_edit"/>
+            <field name="arch" type="xml">
+                <data>
+
+                    <xpath expr="//field[@name='fold']" position="after">
+                        <field name="is_priority_one" />
+                    </xpath>
+
+                </data>
+            </field>
+        </record>
+
+    </data>
+</openerp>

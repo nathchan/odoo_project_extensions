@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Task form -->
+        <record id="view_task_form_inherit" model="ir.ui.view">
+            <field name="name">project.task.form.inherit</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project_timesheet.view_task_form2_inherited"/>
+            <field name="arch" type="xml">
+                <data>
+
+                    <xpath expr="//field[@name='timesheet_ids']" position="replace">
+                        <field name="timesheet_ids" groups="project.group_tasks_work_on_tasks" context="{'default_account_id' : analytic_account_id, 'default_is_timesheet' : 1}">
+                            <tree editable="bottom" string="Timesheet Activities" default_order="date">
+                                <field name="date"/>
+                                <field name="user_id" required="1"/>
+                                <field name="project_activity_id" widget="selection" />
+                                <field name="name" invisible="1"/>
+                                <field name="account_id" invisible="1"/>
+                                <field name="unit_amount" string="Duration" sum="Total time" widget="float_time"/>
+                                <field name="is_timesheet" invisible="1"/>
+                            </tree>
+                        </field>
+                    </xpath>
+
+                </data>
+            </field>
+        </record>
+
+
+    </data>
+</openerp>
