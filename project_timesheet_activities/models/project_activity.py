@@ -8,7 +8,7 @@ class ProjectActivityCategory(models.Model):
     name = fields.Char('Name', required=True)
     code = fields.Char('Code', requiered=True)
     info = fields.Text('Description')
-    useful = fields.Boolean('Useful')
+    useful = fields.Boolean('Useful', defult=False)
 
 class ProjectActivity(models.Model):
     _name = 'project.activity'
