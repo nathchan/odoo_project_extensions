@@ -11,7 +11,7 @@
                 <data>
 
                     <xpath expr="//field[@name='name']" position="after">
-                        <field name="is_priority_one" />
+                        <field name="quick_view" />
                     </xpath>
 
                 </data>
