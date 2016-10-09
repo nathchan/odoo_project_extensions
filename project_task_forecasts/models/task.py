@@ -16,7 +16,8 @@ class ProjectTaskStagesForecast(models.Model):
     project_id = fields.Many2one('project.project', 'Project', related='task_id.project_id')
     task_id = fields.Many2one('project.task', 'Task')
     sequence = fields.Integer('Sequence', related='stage_id.sequence')
-    stage_id = fields.Many2one('project.task.type', 'Stage', domain="[('project_ids', '=', project_id)])")
+    stage_id = fields.Many2one('project.task.type', 'Stage', domain="[('project_ids', '=', project_id)])",
+                               required=True)
     forecast_date = fields.Date('Forecast date')
     actual_date = fields.Date('Actual date')
 
