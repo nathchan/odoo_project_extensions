@@ -11,6 +11,5 @@ class AccountAnalyticLine(models.Model):
         if self.project_activity_id:
             self.name = self.project_activity_id.name
 
-
     project_activity_id = fields.Many2one('project.activity', 'Activity')
 

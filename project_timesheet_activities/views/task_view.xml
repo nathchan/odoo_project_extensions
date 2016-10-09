@@ -2,7 +2,7 @@
 <openerp>
     <data>
 
-        <!-- Task form -->
+
         <record id="view_task_form_inherit" model="ir.ui.view">
             <field name="name">project.task.form.inherit</field>
             <field name="model">project.task</field>
