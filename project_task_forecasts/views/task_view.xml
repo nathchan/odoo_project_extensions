@@ -32,7 +32,7 @@
                     </xpath>
 
                     <xpath expr="//field[@name='tag_ids']" position="after">
-                        <field name="stage_progress" widget="progressbar"/>
+                        <!--<field name="stage_progress" widget="progressbar"/>-->
                     </xpath>
 
                     <xpath expr="//field[@name='project_id']" position="after">
