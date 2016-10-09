@@ -45,25 +45,6 @@ class ProjectTask(models.Model):
         return True
 
 
-        # if self.forecast_date:
-        #     task_id = self.task_id.id
-        #     records = self.search([('task_id', '=', task_id), ('sequence', '>', self.sequence)],
-        #                           order='sequence')
-        #     if records:
-        #         start_date = self.forecast_date
-        #         for rec in records:
-        #             # business_days_to_add = rec.stage_id.duration_forecast
-        #             # current_date = start_date
-        #             # while business_days_to_add > 0:
-        #             #     current_date += datetime.timedelta(days=1)
-        #             #     weekday = current_date.weekday()
-        #             #     if weekday >= 5: # sunday = 6
-        #             #         continue
-        #             #     business_days_to_add -= 1
-        #             # rec.forecast_date = current_date
-        #             rec.forecast_date = start_date
-
-
 
 class ProjectTaskType(models.Model):
     _inherit = 'project.task.type'
