@@ -12,6 +12,11 @@
 
                     <xpath expr="//page[@name='description_page']" position="after">
                         <page name="site_acquisition" string="Site acquisition">
+
+                            <group>
+                                <field name="subcontractor_id" />
+                            </group>
+
                             <field name="forecast_ids">
                                 <tree string="Forecasts" editable="bottom" default_order="sequence">
                                     <field name="task_id" invisible="1"/>
@@ -23,10 +28,15 @@
                                 </tree>
                             </field>
                         </page>
+
                     </xpath>
 
                     <xpath expr="//field[@name='tag_ids']" position="after">
                         <field name="stage_progress" widget="progressbar"/>
+                    </xpath>
+
+                    <xpath expr="//field[@name='project_id']" position="after">
+                        <field name="work_package" />
                     </xpath>
 
                 </data>

@@ -8,6 +8,8 @@ class ProjectTask(models.Model):
 
     forecast_ids = fields.One2many('project.task.stage.forecast', 'task_id', 'Stages forecast')
     stage_progress = fields.Float('Stage progress', readonly=True)
+    subcontractor_id = fields.Many2one('res.partner', 'Subcontractor')
+    work_package = fields.Char('Work Package ID')
 
 
 class ProjectTaskStagesForecast(models.Model):
