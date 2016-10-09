@@ -16,7 +16,7 @@
 
                     <xpath expr="//field[@name='timesheet_ids']" position="replace">
                         <!--context="{'employee_id': employee_id, 'user_id':user_id, 'timesheet_date_from': date_from, 'timesheet_date_to': date_to, 'default_is_timesheet' : 1}"-->
-                        <field name="timesheet_ids" nolabel="1">
+                        <field name="timesheet_ids" context="{'employee_id': employee_id, 'user_id':user_id, 'timesheet_date_from': date_from, 'timesheet_date_to': date_to, 'default_is_timesheet' : 1}" nolabel="1">
                             <tree editable="bottom" string="Timesheet Activities">
                                 <field name="date"/>
                                 <field name="account_id" options="{'no_open': True, 'no_create': True}"/>
