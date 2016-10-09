@@ -15,29 +15,30 @@
                     </xpath>
 
                     <xpath expr="//field[@name='timesheet_ids']" position="replace">
-                        <!--context="{'employee_id': employee_id, 'user_id':user_id, 'timesheet_date_from': date_from, 'timesheet_date_to': date_to, 'default_is_timesheet' : 1}"-->
-                        <field name="timesheet_ids" context="{'employee_id': employee_id, 'user_id':user_id, 'timesheet_date_from': date_from, 'timesheet_date_to': date_to, 'default_is_timesheet' : 1}" nolabel="1">
-                            <tree editable="bottom" string="Timesheet Activities">
-                                <field name="date"/>
-                                <field name="account_id" options="{'no_open': True, 'no_create': True}"/>
-                                <field name="name"/>
-                                <field name="unit_amount" widget="float_time" string="Hours" sum="Hours"/>
-                                <field invisible="1" name="user_id" required="1"/>
-                                <field name="is_timesheet" invisible="1"/>
-                            </tree>
-                            <!--<form string="Timesheet Activities">-->
-                                <!--<group>-->
-                                    <!--<field name="date"/>-->
-                                    <!--<field name="account_id"/>-->
-                                    <!--<field name="name"/>-->
-                                    <!--<field name="unit_amount" widget="float_time"/>-->
-                                    <!--<field name="amount"/>-->
-                                    <!--<field name="general_account_id"/>-->
-                                    <!--<field name="user_id" required="1"/>-->
-                                    <!--<field name="is_timesheet" invisible="1"/>-->
-                                <!--</group>-->
-                            <!--</form>-->
-                        </field>
+
+                        <!--<field name="timesheet_ids" context="{'employee_id': employee_id, 'user_id':user_id, 'timesheet_date_from': date_from, 'timesheet_date_to': date_to, 'default_is_timesheet' : 1}" nolabel="1">-->
+                            <!--<tree editable="bottom" string="Timesheet Activities">-->
+                                <!--<field name="date"/>-->
+                                <!--<field name="account_id" options="{'no_open': True, 'no_create': True}"/>-->
+                                <!--<field name="name"/>-->
+                                <!--<field name="unit_amount" widget="float_time" string="Hours" sum="Hours"/>-->
+                                <!--<field invisible="1" name="user_id" required="1"/>-->
+                                <!--<field name="is_timesheet" invisible="1"/>-->
+                            <!--</tree>-->
+                            <!--&lt;!&ndash;<form string="Timesheet Activities">&ndash;&gt;-->
+                                <!--&lt;!&ndash;<group>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<field name="date"/>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<field name="account_id"/>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<field name="name"/>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<field name="unit_amount" widget="float_time"/>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<field name="amount"/>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<field name="general_account_id"/>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<field name="user_id" required="1"/>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<field name="is_timesheet" invisible="1"/>&ndash;&gt;-->
+                                <!--&lt;!&ndash;</group>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</form>&ndash;&gt;-->
+                        <!--</field>-->
+
                     </xpath>
 
 
