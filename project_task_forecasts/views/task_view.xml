@@ -18,6 +18,13 @@
                             </group>
 
 
+
+                                <br/>
+
+                            <strong>Forecast start date: </strong><field class="oe_inline" name="forecast_start_date" />
+                            <br/>
+                            <button name="action_fill_forecast_dates" type="object" string="Fill forecast dates" />
+
                             <field name="forecast_ids">
                                 <tree string="Forecasts" editable="bottom" default_order="sequence">
                                     <field name="task_id" invisible="1"/>

@@ -14,6 +14,7 @@
     ],
     'data': [
         'views/task_view.xml',
+        'views/task_type_view.xml',
     ],
     'demo': [],
     'qweb': [],
