@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_issue_form_inherit" model="ir.ui.view">
+            <field name="name">project.issue.form.inherit</field>
+            <field name="model">project.issue</field>
+            <field name="inherit_id" ref="project_issue.project_issue_form_view"/>
+            <field name="arch" type="xml">
+                <data>
+
+                    <xpath expr="//field[@name='project_id']" position="after">
+                        <field name="task_id" domain="[('project_id', '==', project_id)]"/>
+                    </xpath>
+
+                </data>
+            </field>
+        </record>
+
+    </data>
+</openerp>

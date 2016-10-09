@@ -17,6 +17,7 @@
                                 <field name="subcontractor_id" />
                             </group>
 
+
                             <field name="forecast_ids">
                                 <tree string="Forecasts" editable="bottom" default_order="sequence">
                                     <field name="task_id" invisible="1"/>

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, fields
+from openerp import models, fields, api
 
 
 class ProjectTask(models.Model):
@@ -10,6 +10,19 @@ class ProjectTask(models.Model):
     stage_progress = fields.Float('Stage progress', readonly=True)
     subcontractor_id = fields.Many2one('res.partner', 'Subcontractor')
     work_package = fields.Char('Work Package ID')
+
+    def copy(self, cr, uid, id, default=None, context=None):
+        new_id = super(ProjectTask, self).copy(cr, uid, id, default, context)
+        forecast_tbl = self.pool.get('project.task.stage.forecast')
+        task_obj = self.pool.get('project.task').browse(cr, uid, new_id)
+        for stage in task_obj.project_id.type_ids:
+            data = {
+                'task_id': task_obj.id,
+                'project_id': task_obj.project_id.id,
+                'stage_id': stage.id,
+            }
+            forecast_tbl.create(cr, uid, data, context)
+        return new_id
 
 
 class ProjectTaskStagesForecast(models.Model):
