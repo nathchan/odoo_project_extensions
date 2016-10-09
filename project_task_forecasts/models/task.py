@@ -22,6 +22,7 @@ class ProjectTask(models.Model):
                 'task_id': task_obj.id,
                 'project_id': task_obj.project_id.id,
                 'stage_id': stage.id,
+                'sequence': task_obj.sequence
             }
             forecast_tbl.create(cr, uid, data, context)
         return new_id
@@ -72,7 +73,7 @@ class ProjectTaskType(models.Model):
 class ProjectTaskStagesForecast(models.Model):
     _name = 'project.task.stage.forecast'
 
-    project_id = fields.Many2one('project.project', 'Project', related='task_id.project_id')
+    project_id = fields.Many2one('project.project', 'Project', related='task_id.project_id', store=True)
     task_id = fields.Many2one('project.task', 'Task', required=True, ondelete='cascade')
     sequence = fields.Integer('Sequence', related='stage_id.sequence', store=True)
     stage_id = fields.Many2one('project.task.type', 'Stage', domain="[('project_ids', '=', project_id)])",
