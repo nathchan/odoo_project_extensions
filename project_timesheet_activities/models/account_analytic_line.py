@@ -12,4 +12,5 @@ class AccountAnalyticLine(models.Model):
             self.name = self.project_activity_id.name
 
     project_activity_id = fields.Many2one('project.activity', 'Activity')
+    useful = fields.Boolean('Useful', related='project_activity_id.category_id.useful', store=True)
 

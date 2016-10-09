@@ -11,6 +11,7 @@
 
                 <xpath expr="//field[@name='user_id']" position="after">
                     <field name="project_activity_id" required="1" widget="selection" />
+                    <field name="useful" readonly="1" />
                 </xpath>
 
                 <xpath expr="//field[@name='name']" position="attributes">
