@@ -11,7 +11,7 @@
                 <data>
 
                     <xpath expr="//field[@name='timesheet_ids']" position="replace">
-                        <field name="timesheet_ids" groups="project.group_tasks_work_on_tasks" context="{'default_account_id' : analytic_account_id, 'default_is_timesheet' : 1}">
+                        <field readonly="1" name="timesheet_ids" groups="project.group_tasks_work_on_tasks" context="{'default_account_id' : analytic_account_id, 'default_is_timesheet' : 1}">
                             <tree editable="bottom" string="Timesheet Activities" default_order="date">
                                 <field name="date"/>
                                 <field name="user_id" required="1"/>
