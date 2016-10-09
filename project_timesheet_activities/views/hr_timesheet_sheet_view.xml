@@ -43,15 +43,15 @@
 
 
 
-                    <!--<xpath expr="//field[@name='timesheet_ids']/tree/field[@name='account_id']" position="after">-->
-                        <!--<field name="task_id"  domain="[('project_id.analytic_account_id', '=' , account_id)]" />-->
-                        <!--<field name="project_activity_id" required="1" widget="selection" />-->
-                    <!--</xpath>-->
+                    <xpath expr="//field[@name='timesheet_ids']/tree/field[@name='account_id']" position="after">
+                        <field name="task_id"  domain="[('project_id.analytic_account_id', '=' , account_id)]" />
+                        <field name="project_activity_id" required="1" widget="selection" />
+                    </xpath>
 
-                    <!--<xpath expr="//field[@name='timesheet_ids']/form//field[@name='account_id']" position="after">-->
-                        <!--<field name="task_id"  domain="[('project_id.analytic_account_id', '=' , account_id)]" />-->
-                        <!--<field name="project_activity_id" required="1" widget="selection" />-->
-                    <!--</xpath>-->
+                    <xpath expr="//field[@name='timesheet_ids']/form//field[@name='account_id']" position="after">
+                        <field name="task_id"  domain="[('project_id.analytic_account_id', '=' , account_id)]" />
+                        <field name="project_activity_id" required="1" widget="selection" />
+                    </xpath>
 
 
 
