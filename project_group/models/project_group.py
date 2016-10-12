@@ -15,5 +15,5 @@ class ProjectGroup(models.Model):
 class ProjectProject(models.Model):
     _inherit = 'project.project'
 
-    project_group_id = fields.Many2one('project.group')
+    project_group_id = fields.Many2one('project.group', 'Project group')
 
