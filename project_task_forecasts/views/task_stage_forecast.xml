@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+
+        <record model="ir.ui.view" id="view_task_milestones_tree">
+            <field name="name">project.task.stage.forecast.tree</field>
+            <field name="model">project.task.stage.forecast</field>
+            <field name="arch" type="xml">
+                <tree string="Milestones" default_order="sequence">
+                    <field name="sequence" invisible="1" />
+                    <field name="project_id" />
+                    <field name="stage_id" />
+                    <field name="forecast_date" />
+                    <field name="actual_date" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_task_milestones_form">
+            <field name="name">project.task.stage.forecast.form</field>
+            <field name="model">project.task.stage.forecast</field>
+            <field name="arch" type="xml">
+                <form string="Milestone">
+                    <sheet>
+                        <group>
+                            <field name="project_id" invisible="1" />
+                            <field name="sequence" invisible="1" />
+                            <field name="stage_id" />
+                            <field name="forecast_date" />
+                            <field name="actual_date" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_task_milestones_search">
+            <field name="name">project.task.stage.forecast.search</field>
+            <field name="model">project.task.stage.forecast</field>
+            <field name="arch" type="xml">
+                <search>
+
+                    <filter name="group_project_id" string="Project" context="{'group_by':'project_id'}"/>
+                    <filter name="group_stage_id" string="Stage" context="{'group_by':'stage_id'}"/>
+                    <filter name="group_forecast_date" string="Forecast date" context="{'group_by':'forecast_date'}"/>
+                    <filter name="group_actual_date" string="Actual date" context="{'group_by':'actual_date'}"/>
+
+                    <field name="project_id" />
+                    <field name="stage_id" />
+                    <field name="forecast_date" />
+                    <field name="actual_date" />
+
+                </search>
+            </field>
+        </record>
+
+        <record model='ir.actions.act_window' id='view_task_milestones_show_action'>
+            <field name="name">Milestones</field>
+            <field name="res_model">project.task.stage.forecast</field>
+            <field name="search_view_id" ref="view_task_milestones_search" />
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+
+    </data>
+</openerp>

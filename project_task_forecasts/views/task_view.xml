@@ -10,39 +10,41 @@
             <field name="arch" type="xml">
                 <data>
 
+                    <xpath expr="//div[@name='button_box']" position="inside">
+
+                        <button name="return_action_to_open_milestones"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-line-chart"
+                            help="show the milestones for this task">
+                            <field name="milestone_count" widget="statinfo" string="Milestones"/>
+                        </button>
+
+                    </xpath>
+
+                    <xpath expr="//field[@name='partner_id']" position="before">
+                        <field name="subcontractor_id" />
+                    </xpath>
+
+
                     <xpath expr="//page[@name='description_page']" position="after">
-                        <page name="site_acquisition" string="Site acquisition">
+                        <page name="forecast_generation" string="Forecast generation">
 
-                            <group>
-                                <field name="subcontractor_id" />
-                            </group>
-
-
-
-                                <br/>
+                            <br/>
+                            <br/>
+                            <strong>Project: </strong><field class="oe_inline" name="forecast_project_id" />
+                            <br/>
 
                             <strong>Forecast start date: </strong><field class="oe_inline" name="forecast_start_date" />
                             <br/>
+
                             <button name="action_fill_forecast_dates" type="object" string="Fill forecast dates" />
                             <br/>
-
-                            <field name="forecast_ids">
-                                <tree string="Forecasts" editable="bottom" default_order="sequence">
-                                    <field name="task_id" invisible="1"/>
-                                    <field name="project_id" invisible="1" />
-                                    <field name="sequence" invisible="1" />
-                                    <field name="stage_id" widget="selection"/>
-                                    <field name="forecast_date"/>
-                                    <field name="actual_date"/>
-                                </tree>
-                            </field>
+                            <br/>
                         </page>
 
                     </xpath>
 
-                    <xpath expr="//field[@name='tag_ids']" position="after">
-                        <!--<field name="stage_progress" widget="progressbar"/>-->
-                    </xpath>
 
                     <xpath expr="//field[@name='project_id']" position="after">
                         <field name="work_package" />
