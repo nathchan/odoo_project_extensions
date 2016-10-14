@@ -13,6 +13,7 @@
                     <field name="task_id" />
                     <field name="stage_id" />
                     <field name="forecast_date" />
+                    <field name="duration_forecast" />
                     <field name="actual_date" />
                 </tree>
             </field>
@@ -30,12 +31,14 @@
                             <field name="task_id" readonly="1" />
                             <field name="stage_id" />
                             <field name="forecast_date" />
+                            <field name="duration_forecast" />
                             <field name="actual_date" />
                         </group>
                     </sheet>
                 </form>
             </field>
         </record>
+
 
         <record model="ir.ui.view" id="view_task_milestones_search">
             <field name="name">project.task.stage.forecast.search</field>
@@ -52,6 +55,7 @@
                     <field name="stage_id" />
                     <field name="forecast_date" />
                     <field name="actual_date" />
+                    <field name="duration_forecast" />
 
                 </search>
             </field>
