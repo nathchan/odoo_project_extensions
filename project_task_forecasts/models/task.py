@@ -62,7 +62,7 @@ class ProjectTask(models.Model):
                                         order='sequence')
         start_date = datetime.datetime.strptime(self.forecast_start_date, '%Y-%m-%d')
         for line in lines:
-            business_days_to_add = line.stage_id.duration_forecast
+            business_days_to_add = line.duration_forecast
             current_date = start_date
             while business_days_to_add > 0:
                 current_date += datetime.timedelta(days=1)
