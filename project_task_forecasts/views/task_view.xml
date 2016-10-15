@@ -28,7 +28,7 @@
 
 
                     <xpath expr="//page[@name='description_page']" position="after">
-                        <page name="forecast_generation" string="Forecast calculation">
+                        <page name="forecast_generation" string="Calculate">
 
                             <br />
                             <br />
@@ -40,7 +40,7 @@
                             <br />
                             <br />
 
-                            <button name="action_fill_forecast_dates" type="object" string="Fill forecast dates" />
+                            <button name="action_fill_forecast_dates" type="object" string="Calculate FC" />
                             <br/>
                             <br/>
                         </page>
