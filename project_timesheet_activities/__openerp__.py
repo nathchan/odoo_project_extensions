@@ -4,8 +4,8 @@
     'name': 'Project timesheet activities',
     'version': '1.0',
     'summary': 'Enables detailed input of employee activities',
-    'author': 'B++',
-    'website': 'http://www.bplus.plus',
+    'author': 'nemanja-d@hotmail.com',
+    'website': 'https://www.linkedin.com/in/nemanjadragovic',
     'category': 'Projects',
     'images': [],
     'depends': [
@@ -14,6 +14,7 @@
         'project_issue_sheet',
         'project_timesheet',
         'hr_timesheet_sheet',
+        'fleet',
     ],
     'data': [
         'views/project_activity_view.xml',

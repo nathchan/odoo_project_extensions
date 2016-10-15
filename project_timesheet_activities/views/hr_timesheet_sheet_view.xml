@@ -10,51 +10,65 @@
             <field name="arch" type="xml">
                 <data>
 
-                    <xpath expr="//widget[@type='weekly_timesheet']/.." position="replace">
+                    <xpath expr="//div[@class='oe_button_box']" position="replace"></xpath>
 
+                    <xpath expr="//field[@name='total_attendance']" position="replace"></xpath>
+                    <xpath expr="//field[@name='total_difference']" position="replace"></xpath>
+
+                    <xpath expr="//widget[@type='weekly_timesheet']/.." position="replace">
                     </xpath>
 
-                    <!--<xpath expr="//field[@name='timesheet_ids']" position="replace">-->
-
-                        <!--&lt;!&ndash;<field name="timesheet_ids" context="{'employee_id': employee_id, 'user_id':user_id, 'timesheet_date_from': date_from, 'timesheet_date_to': date_to, 'default_is_timesheet' : 1}" nolabel="1">&ndash;&gt;-->
-                            <!--&lt;!&ndash;<tree editable="bottom" string="Timesheet Activities">&ndash;&gt;-->
-                                <!--&lt;!&ndash;<field name="date"/>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<field name="account_id" options="{'no_open': True, 'no_create': True}"/>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<field name="name"/>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<field name="unit_amount" widget="float_time" string="Hours" sum="Hours"/>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<field invisible="1" name="user_id" required="1"/>&ndash;&gt;-->
-                                <!--&lt;!&ndash;<field name="is_timesheet" invisible="1"/>&ndash;&gt;-->
-                            <!--&lt;!&ndash;</tree>&ndash;&gt;-->
-                            <!--&lt;!&ndash;&lt;!&ndash;<form string="Timesheet Activities">&ndash;&gt;&ndash;&gt;-->
-                                <!--&lt;!&ndash;&lt;!&ndash;<group>&ndash;&gt;&ndash;&gt;-->
-                                    <!--&lt;!&ndash;&lt;!&ndash;<field name="date"/>&ndash;&gt;&ndash;&gt;-->
-                                    <!--&lt;!&ndash;&lt;!&ndash;<field name="account_id"/>&ndash;&gt;&ndash;&gt;-->
-                                    <!--&lt;!&ndash;&lt;!&ndash;<field name="name"/>&ndash;&gt;&ndash;&gt;-->
-                                    <!--&lt;!&ndash;&lt;!&ndash;<field name="unit_amount" widget="float_time"/>&ndash;&gt;&ndash;&gt;-->
-                                    <!--&lt;!&ndash;&lt;!&ndash;<field name="amount"/>&ndash;&gt;&ndash;&gt;-->
-                                    <!--&lt;!&ndash;&lt;!&ndash;<field name="general_account_id"/>&ndash;&gt;&ndash;&gt;-->
-                                    <!--&lt;!&ndash;&lt;!&ndash;<field name="user_id" required="1"/>&ndash;&gt;&ndash;&gt;-->
-                                    <!--&lt;!&ndash;&lt;!&ndash;<field name="is_timesheet" invisible="1"/>&ndash;&gt;&ndash;&gt;-->
-                                <!--&lt;!&ndash;&lt;!&ndash;</group>&ndash;&gt;&ndash;&gt;-->
-                            <!--&lt;!&ndash;&lt;!&ndash;</form>&ndash;&gt;&ndash;&gt;-->
-                        <!--&lt;!&ndash;</field>&ndash;&gt;-->
-
-                    <!--</xpath>-->
+                    <xpath expr="//field[@name='period_ids']/.." position="replace">
+                    </xpath>
 
 
+
+                    <xpath expr="//field[@name='timesheet_ids']/tree//field[@name='name']" position="replace">
+                        <field name="name" invisible="1" />
+                    </xpath>
+
+                    <xpath expr="//field[@name='timesheet_ids']/form//field[@name='name']" position="replace">
+                        <field name="name" invisible="1" />
+                    </xpath>
 
                     <xpath expr="//field[@name='timesheet_ids']/tree/field[@name='account_id']" position="after">
                         <field name="task_id" required="1"  domain="[('project_id.analytic_account_id', '=' , account_id)]" />
                         <field name="project_activity_id" required="1" widget="selection" />
+                        <field name="timesheet_vehicle_id" />
                     </xpath>
 
                     <xpath expr="//field[@name='timesheet_ids']/form//field[@name='account_id']" position="after">
                         <field name="task_id" required="1" domain="[('project_id.analytic_account_id', '=' , account_id)]" />
                         <field name="project_activity_id" required="1" widget="selection" />
+                        <field name="timesheet_vehicle_id" />
+                    </xpath>
+
+                    <xpath expr="//field[@name='timesheet_ids']/tree//field[@name='unit_amount']" position="before">
+                        <field name="timesheet_start_time" widget="float_time" />
+                        <field name="timesheet_end_time" widget="float_time" />
+                        <field name="timesheet_break_amount" widget="float_time" />
+                    </xpath>
+
+                    <xpath expr="//field[@name='timesheet_ids']/form//field[@name='unit_amount']" position="before">
+                        <field name="timesheet_start_time" widget="float_time" />
+                        <field name="timesheet_end_time" widget="float_time" />
+                        <field name="timesheet_break_amount" widget="float_time" />
                     </xpath>
 
 
+                </data>
+            </field>
+        </record>
 
+
+        <record id="hr_timesheet_sheet_tree_simplified_inherit" model="ir.ui.view">
+            <field name="name">hr.timesheet.sheet.tree.inherit</field>
+            <field name="model">hr_timesheet_sheet.sheet</field>
+            <field name="inherit_id" ref="hr_timesheet_sheet.hr_timesheet_sheet_tree_simplified"></field>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//field[@name='total_attendance']" position="replace"></xpath>
+                    <xpath expr="//field[@name='total_difference']" position="replace"></xpath>
                 </data>
             </field>
         </record>
