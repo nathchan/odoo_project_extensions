@@ -28,15 +28,17 @@
 
 
                     <xpath expr="//page[@name='description_page']" position="after">
-                        <page name="forecast_generation" string="Forecast generation">
+                        <page name="forecast_generation" string="Forecast calculation">
 
-                            <br/>
-                            <br/>
+                            <br />
+                            <br />
                             <strong>Project: </strong><field class="oe_inline" name="forecast_project_id" />
-                            <br/>
+                            <br />
+                            <br />
 
                             <strong>Forecast start date: </strong><field class="oe_inline" name="forecast_start_date" />
-                            <br/>
+                            <br />
+                            <br />
 
                             <button name="action_fill_forecast_dates" type="object" string="Fill forecast dates" />
                             <br/>
@@ -46,9 +48,12 @@
                     </xpath>
 
 
-                    <xpath expr="//field[@name='project_id']" position="after">
+                    <xpath expr="//field[@name='tag_ids']" position="after">
                         <field name="work_package" />
                     </xpath>
+
+
+
 
                 </data>
             </field>
