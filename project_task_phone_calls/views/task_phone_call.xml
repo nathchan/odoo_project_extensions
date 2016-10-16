@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+
+        <record id="view_task_phone_call_tree" model="ir.ui.view">
+            <field name="name">project.task.phone.call.tree</field>
+            <field name="model">project.task.phone.call</field>
+            <field name="arch" type="xml">
+                <tree editable="top">
+                    <field name="date" />
+                    <field name="user_id" />
+                    <field name="partner_id" />
+                    <field name="info" />
+                </tree>
+            </field>
+        </record>
+
+
+        <record model='ir.actions.act_window' id='project_task_phone_call_show_action'>
+            <field name="name">Call logs</field>
+            <field name="res_model">project.task.phone.call</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+
+    </data>
+</openerp>

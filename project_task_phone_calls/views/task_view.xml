@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_task_form_inherit" model="ir.ui.view">
+            <field name="name">project.task.form.inherit</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_form2"/>
+            <field name="arch" type="xml">
+                <data>
+
+                    <xpath expr="//button[@name='toggle_active']" position="before">
+
+                            <button name="return_action_to_open_phone_calls"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-phone"
+                                help="show call logs for this task">
+                                <field name="phone_call_count" widget="statinfo" string="Call logs"/>
+                            </button>
+
+                    </xpath>
+
+                </data>
+            </field>
+        </record>
+
+    </data>
+</openerp>
