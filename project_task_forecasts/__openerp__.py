@@ -17,6 +17,7 @@
         'views/task_type_view.xml',
         'views/task_stage_forecast.xml',
         'views/stage_process_view.xml',
+        'security/ir.model.access.csv',
     ],
     'demo': [],
     'qweb': [],

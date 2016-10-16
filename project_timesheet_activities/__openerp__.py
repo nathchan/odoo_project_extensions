@@ -21,6 +21,7 @@
         'views/task_view.xml',
         'views/timesheet_view.xml',
         'views/hr_timesheet_sheet_view.xml',
+        'security/ir.model.access.csv',
     ],
     'demo': [],
     'qweb': [],

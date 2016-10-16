@@ -14,6 +14,7 @@
     'data': [
         'views/project_group_view.xml',
         'views/project_view.xml',
+        'security/ir.model.access.csv',
     ],
     'demo': [],
     'qweb': [],

@@ -14,6 +14,7 @@
     'data': [
         'views/task_phone_call.xml',
         'views/task_view.xml',
+        'security/ir.model.access.csv',
     ],
     'demo': [],
     'qweb': [],
