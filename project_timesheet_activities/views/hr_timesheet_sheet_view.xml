@@ -23,6 +23,7 @@
 
 
 
+
                     <xpath expr="//field[@name='timesheet_ids']/tree//field[@name='name']" position="replace">
                         <field name="name" invisible="1" />
                     </xpath>
@@ -41,6 +42,14 @@
                         <field name="task_id" required="1" domain="[('project_id.analytic_account_id', '=' , account_id)]" />
                         <field name="project_activity_id" required="1" widget="selection" />
                         <field name="timesheet_vehicle_id" />
+                    </xpath>
+
+                    <xpath expr="//field[@name='timesheet_ids']/tree/field[@name='account_id']" position="replace">
+                        <field name="account_id" string="Project"/>
+                    </xpath>
+
+                    <xpath expr="//field[@name='timesheet_ids']/form//field[@name='account_id']" position="replace">
+                        <field name="account_id" string="Project"/>
                     </xpath>
 
                     <xpath expr="//field[@name='timesheet_ids']/tree//field[@name='unit_amount']" position="before">
