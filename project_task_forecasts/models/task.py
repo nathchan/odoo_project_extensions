@@ -13,12 +13,24 @@ class ProjectTask(models.Model):
         for obj in self:
             obj.milestone_count = len(obj.milestone_ids)
 
+    @api.multi
+    @api.depends('milestone_ids.actual_date')
+    def _compute_stage_progress(self):
+        for obj in self:
+            actuals = self.env['project.task.stage.forecast'].search_count([('task_id', '=', obj.id),
+                                                                            ('actual_date', '!=', None)])
+            total = obj.milestone_count
+            if not total or total == 0:
+                obj.stage_progress = 0
+            else:
+                obj.stage_progress = float( float(actuals) / float(total) ) * 100.0
+
     forecast_project_id = fields.Many2one('project.project', 'Forecast project')
     forecast_start_date = fields.Date('Forecast start date')
 
     milestone_ids = fields.One2many('project.task.stage.forecast', 'task_id', 'Stages forecast')
     milestone_count = fields.Integer('Milestone count', compute=_compute_milestone_count)
-    stage_progress = fields.Float('Stage progress', readonly=True)
+    stage_progress = fields.Float('Percent complete', compute=_compute_stage_progress, store=True, group_operator="avg")
     subcontractor_id = fields.Many2one('res.partner', 'Subcontractor')
     work_package = fields.Char('Work Package ID')
 

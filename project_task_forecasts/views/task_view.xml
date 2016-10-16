@@ -2,6 +2,21 @@
 <openerp>
     <data>
 
+        <record id="view_task_tree_inherit" model="ir.ui.view">
+            <field name="name">project.task.tree.inherit</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_tree2"/>
+            <field name="arch" type="xml">
+                <data>
+
+                    <xpath expr="//field[@name='stage_id']" position="after">
+                        <field name="stage_progress" widget="progressbar" />
+                    </xpath>
+
+                </data>
+            </field>
+        </record>
+
         <!-- Task form -->
         <record id="view_task_form_inherit" model="ir.ui.view">
             <field name="name">project.task.form.inherit</field>
@@ -50,6 +65,7 @@
 
                     <xpath expr="//field[@name='tag_ids']" position="after">
                         <field name="work_package" />
+                        <field name="stage_progress" widget="progressbar" />
                     </xpath>
 
 
