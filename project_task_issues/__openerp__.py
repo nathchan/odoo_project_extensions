@@ -10,6 +10,7 @@
     'images': [],
     'depends': [
         'project',
+        'project_issue_sheet',
         'project_issue',
     ],
     'data': [

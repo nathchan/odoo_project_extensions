@@ -9,13 +9,31 @@
             <field name="arch" type="xml">
                 <data>
 
-                    <xpath expr="//field[@name='project_id']" position="after">
-                        <field name="task_id" domain="[('project_id', '==', project_id)]"/>
+                    <!--<xpath expr="//field[@name='progress']" position="replace">-->
+                    <!--</xpath>-->
+
+                    <xpath expr="//field[@name='stage_id']" position="attributes">
+                        <attribute name="invisible">1</attribute>
                     </xpath>
 
                 </data>
             </field>
         </record>
+
+        <record id="project_issue_tree_view_inherited" model="ir.ui.view">
+            <field name="name">Project Issue Tracker Tree Inherited</field>
+            <field name="model">project.issue</field>
+            <field name="inherit_id" ref="project_issue.project_issue_tree_view" />
+            <field name="arch" type="xml">
+                <data>
+
+                    <xpath expr="//field[@name='stage_id']" position="replace"></xpath>
+                    <!--<xpath expr="//field[@name='progress']" position="replace"></xpath>-->
+
+                </data>
+            </field>
+        </record>
+
 
     </data>
 </openerp>
