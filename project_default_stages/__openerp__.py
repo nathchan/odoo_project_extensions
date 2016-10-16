@@ -4,8 +4,8 @@
     'name': 'Project default stages',
     'version': '1.0',
     'summary': 'Lets you to choose project stages',
-    'author': 'B++',
-    'website': 'http://www.bplus.plus',
+    'author': 'nemanja-d@hotmail.com',
+    'website': 'https://www.linkedin.com/in/nemanjadragovic',
     'category': 'Projects',
     'images': [],
     'depends': [

@@ -4,8 +4,8 @@
     'name': 'Feedback for task',
     'version': '1.0',
     'summary': 'Lets employee to give feedback about task assigned to them',
-    'author': 'B++',
-    'website': 'http://www.bplus.plus',
+    'author': 'nemanja-d@hotmail.com',
+    'website': 'https://www.linkedin.com/in/nemanjadragovic',
     'category': 'Projects',
     'images': [],
     'depends': [
