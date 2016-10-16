@@ -11,6 +11,18 @@
                     <xpath expr="//field[@name='sequence']" position="after">
                         <field name="duration_forecast" />
                     </xpath>
+
+                    <xpath expr="//field[@name='project_ids']/.." position="after">
+                        <field name="process_ids">
+                            <h2 class="oe_horizontal_separator">Child Processes</h2>
+                            <tree string="Child Processes">
+                                <field name="sequence" widget="handle" groups="base.group_no_one"/>
+                                <field name="name"/>
+                                <field name="stage_id"/>
+                                <field name="info"/>
+                            </tree>
+                        </field>
+                    </xpath>
                 </data>
             </field>
         </record>

@@ -23,7 +23,16 @@ class ProjectTask(models.Model):
             if not total or total == 0:
                 obj.stage_progress = 0
             else:
-                obj.stage_progress = float( float(actuals) / float(total) ) * 100.0
+                obj.stage_progress = float(float(actuals) / float(total)) * 100.0
+
+    @api.one
+    def _compute_has_processes(self):
+        proc_count = len(self.stage_id.process_ids)
+        if proc_count > 1:
+            self.has_processes = True
+
+        else:
+            self.has_processes = False
 
     forecast_project_id = fields.Many2one('project.project', 'Forecast project')
     forecast_start_date = fields.Date('Forecast start date')
@@ -33,6 +42,18 @@ class ProjectTask(models.Model):
     stage_progress = fields.Float('Percent complete', compute=_compute_stage_progress, store=True, group_operator="avg")
     subcontractor_id = fields.Many2one('res.partner', 'Subcontractor')
     work_package = fields.Char('Work Package ID')
+
+    has_processes = fields.Boolean('Has processes', compute=_compute_has_processes)
+    stage_process_id = fields.Many2one('project.task.stage.process', 'Process')
+
+    @api.multi
+    def write(self, vals):
+        if 'stage_id' in vals:
+            stage_id = vals.get('stage_id')
+            process_id = self.env['project.task.stage.process'].search([('stage_id', '=', stage_id)],
+                                                                                          limit=1)
+            vals.update({'stage_process_id': process_id.id})
+        return super(ProjectTask, self).write(vals)
 
     def copy(self, cr, uid, id, default=None, context=None):
         new_id = super(ProjectTask, self).copy(cr, uid, id, default, context)
