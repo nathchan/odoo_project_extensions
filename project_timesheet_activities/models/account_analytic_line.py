@@ -23,7 +23,10 @@ class AccountAnalyticLine(models.Model):
         return dep
 
     project_activity_id = fields.Many2one('project.activity', 'Activity')
-    useful = fields.Boolean('Useful', related='project_activity_id.category_id.useful', store=True)
+    timesheet_activity_type = fields.Selection([('productive', 'Productive'), ('unproductive', 'Unproductive')],
+                                               string='Activity type',
+                                               related='project_activity_id.category_id.activity_type',
+                                               store=True)
 
     timesheet_department_id = fields.Many2one('hr.department', 'Department', default=_get_default_department)
 

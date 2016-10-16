@@ -9,7 +9,7 @@
                 <tree string="Activity categories" editable="top">
                     <field name="name" />
                     <field name="code" />
-                    <field name="useful" />
+                    <field name="activity_type" />
                     <field name="info" />
                 </tree>
             </field>
