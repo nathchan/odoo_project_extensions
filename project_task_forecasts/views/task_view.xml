@@ -10,7 +10,7 @@
                 <data>
 
                     <xpath expr="//field[@name='stage_id']" position="after">
-                        <field name="stage_progress" widget="progressbar" />
+                        <field name="stage_progress" string="% Complete" widget="progressbar" />
                     </xpath>
 
                 </data>
@@ -70,7 +70,7 @@
 
                     <xpath expr="//field[@name='tag_ids']" position="after">
                         <field name="work_package" />
-                        <field name="stage_progress" widget="progressbar" />
+                        <field name="stage_progress" string="% Complete" widget="progressbar" />
                     </xpath>
 
 
