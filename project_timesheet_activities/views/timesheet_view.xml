@@ -9,6 +9,10 @@
             <field name="inherit_id" ref="hr_timesheet.hr_timesheet_line_tree"/>
             <field name="arch" type="xml">
 
+                <xpath expr="//field[@name='date']" position="after">
+                    <field name="timesheet_department_id" />
+                </xpath>
+
                 <xpath expr="//field[@name='user_id']" position="after">
                     <field name="project_activity_id" required="1" widget="selection" />
                     <field name="useful" readonly="1" />

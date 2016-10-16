@@ -17,8 +17,15 @@ class AccountAnalyticLine(models.Model):
     def _change_times_to_calc_total(self):
         self.unit_amount = self.timesheet_end_time - self.timesheet_start_time - self.timesheet_break_amount
 
+    def _get_default_department(self):
+        emp = self.env['hr.employee'].search([('user_id', '=', self.env.user.id)], limit=1)
+        dep = emp.department_id
+        return dep
+
     project_activity_id = fields.Many2one('project.activity', 'Activity')
     useful = fields.Boolean('Useful', related='project_activity_id.category_id.useful', store=True)
+
+    timesheet_department_id = fields.Many2one('hr.department', 'Department', default=_get_default_department)
 
     timesheet_vehicle_id = fields.Many2one('fleet.vehicle', 'Vehicle')
 
