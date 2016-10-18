@@ -9,11 +9,17 @@
             <field name="arch" type="xml">
                 <data>
 
-                    <!--<xpath expr="//field[@name='progress']" position="replace">-->
-                    <!--</xpath>-->
+                    <xpath expr="//field[@name='active']/.." position="attributes">
+                        <attribute name="group">project.group_project_user</attribute>
+                    </xpath>
 
                     <xpath expr="//field[@name='stage_id']" position="attributes">
                         <attribute name="invisible">1</attribute>
+                    </xpath>
+
+                    <xpath expr="//field[@name='tag_ids']" position="after">
+                        <field name="category_id" />
+                        <field name="subcategory_id" />
                     </xpath>
 
                 </data>
@@ -26,6 +32,11 @@
             <field name="inherit_id" ref="project_issue.project_issue_tree_view" />
             <field name="arch" type="xml">
                 <data>
+
+                    <xpath expr="//field[@name='id']" position="after">
+                        <field name="category_id" />
+                        <field name="subcategory_id" />
+                    </xpath>
 
                     <xpath expr="//field[@name='stage_id']" position="replace"></xpath>
                     <!--<xpath expr="//field[@name='progress']" position="replace"></xpath>-->

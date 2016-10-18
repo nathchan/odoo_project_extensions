@@ -1,0 +1,5 @@
+"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+"access_project_issue_category_user","project.issue.category.user","model_project_issue_category","project.group_project_user",1,0,0,0
+"access_project_issue_category_manager","project.issue.category.manager","model_project_issue_category","project.group_project_manager",1,1,1,1
+"access_project_issue_subcategory_user","project.issue.subcategory.user","model_project_issue_subcategory","project.group_project_user",1,0,0,0
+"access_project_issue_subcategory_manager","project.issue.subcategory.manager","model_project_issue_subcategory","project.group_project_manager",1,1,1,1

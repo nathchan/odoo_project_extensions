@@ -16,6 +16,9 @@
     'data': [
         'views/task_view.xml',
         'views/issue_view.xml',
+        'views/issue_category_view.xml',
+        'views/issue_subcategory_view.xml',
+        'security/ir.model.access.csv',
     ],
     'demo': [],
     'qweb': [],

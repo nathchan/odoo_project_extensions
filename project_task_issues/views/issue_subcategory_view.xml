@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="project_issue_subcategory_tree">
+            <field name="name">project.issue.subcategory.tree</field>
+            <field name="model">project.issue.subcategory</field>
+            <field name="arch" type="xml">
+                <tree string="Issue subcategories" editable="top">
+                    <field name="name" />
+                    <field name="category_id" />
+                    <field name="info" />
+                </tree>
+            </field>
+        </record>
+
+       <record id="action_project_issue_subcategory" model="ir.actions.act_window">
+           <field name="name">Issue subcategories</field>
+           <field name="type">ir.actions.act_window</field>
+           <field name="res_model">project.issue.subcategory</field>
+           <field name="view_type">form</field>
+           <field name="view_mode">tree</field>
+           <field name="context">{}</field>
+           <field name="search_view_id" ref=""/>
+       </record>
+
+
+        <menuitem id="menu_project_issue_subcategory" name="Issue subcategories" parent="project.menu_project_config"
+                  action="action_project_issue_subcategory" sequence="103" groups="project.group_project_manager"/>
+    </data>
+</openerp>
