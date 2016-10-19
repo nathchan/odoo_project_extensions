@@ -9,18 +9,32 @@
             <field name="arch" type="xml">
                 <data>
 
-                    <xpath expr="//field[@name='active']/.." position="attributes">
-                        <attribute name="group">project.group_project_user</attribute>
+                    <xpath expr="//field[@name='active']/../.." position="replace">
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" groups="project.group_project_manager" class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button" options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
+                            </button>
+                        </div>
                     </xpath>
+
+                    <xpath expr="//field[@name='task_id']" position="replace">
+                        <field name="task_id" on_change="onchange_task_id(task_id)"
+                               context="{'default_project_id': project_id}" />
+                    </xpath>
+
+                    <!--<xpath expr="//field[@name='progress']" position="replace"></xpath>-->
 
                     <xpath expr="//field[@name='stage_id']" position="attributes">
                         <attribute name="invisible">1</attribute>
                     </xpath>
 
+
                     <xpath expr="//field[@name='tag_ids']" position="after">
                         <field name="category_id" />
                         <field name="subcategory_id" />
                     </xpath>
+
+
 
                 </data>
             </field>
