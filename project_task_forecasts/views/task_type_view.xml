@@ -10,6 +10,7 @@
                 <data>
                     <xpath expr="//field[@name='sequence']" position="after">
                         <field name="duration_forecast" />
+                        <field name="sequence" />
                     </xpath>
 
                     <xpath expr="//field[@name='project_ids']/.." position="after">
