@@ -27,5 +27,21 @@
             </field>
         </record>
 
+
+        <record id="task_type_tree_inherit" model="ir.ui.view">
+            <field name="name">project.task.type.tree.inherit</field>
+            <field name="model">project.task.type</field>
+            <field name="inherit_id" ref="project.task_type_tree"/>
+            <field name="arch" type="xml">
+                <data>
+
+                    <xpath expr="//field[@name='sequence']" position="replace">
+                        <field name="sequence" />
+                    </xpath>
+
+                </data>
+            </field>
+        </record>
+
     </data>
 </openerp>
