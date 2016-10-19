@@ -36,6 +36,7 @@
                     <xpath expr="//field[@name='id']" position="after">
                         <field name="category_id" />
                         <field name="subcategory_id" />
+                        <field name="task_id" />
                     </xpath>
 
                     <xpath expr="//field[@name='stage_id']" position="replace"></xpath>
