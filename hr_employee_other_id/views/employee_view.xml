@@ -11,7 +11,7 @@
 
                     <xpath expr="//field[@name='user_id']/.." position="after">
                         <group string="Extra info">
-                            <field name="other_id" />
+                            <field name="other_id" string="SAP No."/>
                         </group>
                     </xpath>
 
