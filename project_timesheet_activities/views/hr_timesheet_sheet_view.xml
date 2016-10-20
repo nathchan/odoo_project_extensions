@@ -44,13 +44,23 @@
                     <xpath expr="//field[@name='timesheet_ids']/tree/field[@name='account_id']" position="after">
                         <field name="task_id" required="1"  domain="[('project_id.analytic_account_id', '=' , account_id)]" />
                         <field name="project_activity_id" required="1" widget="selection" />
+
+                        <field name="timesheet_travel_start" />
+                        <field name="timesheet_travel_end" />
+                        <field name="timesheet_is_driver" />
                         <field name="timesheet_vehicle_id" />
+                        <field name="timesheet_accommodation" />
                     </xpath>
 
                     <xpath expr="//field[@name='timesheet_ids']/form//field[@name='account_id']" position="after">
                         <field name="task_id" required="1" domain="[('project_id.analytic_account_id', '=' , account_id)]" />
                         <field name="project_activity_id" required="1" widget="selection" />
+
+                        <field name="timesheet_travel_start" />
+                        <field name="timesheet_travel_end" />
+                        <field name="timesheet_is_driver" />
                         <field name="timesheet_vehicle_id" />
+                        <field name="timesheet_accommodation" />
                     </xpath>
 
                     <xpath expr="//field[@name='timesheet_ids']/tree/field[@name='account_id']" position="replace">
