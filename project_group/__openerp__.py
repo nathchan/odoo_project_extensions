@@ -3,7 +3,7 @@
 {
     'name': 'Project group',
     'version': '1.0',
-    'summary': 'Lets you to projects in groups',
+    'summary': 'Lets you to organize projects and tasks in groups',
     'author': 'nemanja-d@hotmail.com',
     'website': 'https://www.linkedin.com/in/nemanjadragovic',
     'category': 'Projects',
@@ -14,6 +14,8 @@
     'data': [
         'views/project_group_view.xml',
         'views/project_view.xml',
+        'views/task_group_view.xml',
+        'views/task_view.xml',
         'security/ir.model.access.csv',
     ],
     'demo': [],
