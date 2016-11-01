@@ -22,13 +22,29 @@
                     </xpath>
 
 
+                    <xpath expr="//field[@name='timesheet_ids']/tree//field[@name='unit_amount']" position="replace">
+
+                    </xpath>
+
+                    <xpath expr="//field[@name='timesheet_ids']/form//field[@name='unit_amount']" position="replace">
+
+                    </xpath>
+
 
                     <xpath expr="//field[@name='timesheet_ids']/tree//field[@name='date']" position="after">
-                        <field name="timesheet_department_id" />
+                        <field name="timesheet_department_id" options="{'no_open': True, 'no_create': True}" />
+                        <field name="timesheet_start_time" widget="float_time" />
+                        <field name="timesheet_end_time" widget="float_time" />
+                        <field name="timesheet_break_amount" widget="float_time" />
+                        <field name="unit_amount" widget="float_time" string="Hours" sum="Hours"/>
                     </xpath>
 
                     <xpath expr="//field[@name='timesheet_ids']/form//field[@name='date']" position="after">
-                        <field name="timesheet_department_id" />
+                        <field name="timesheet_department_id" options="{'no_open': True, 'no_create': True}" />
+                        <field name="timesheet_start_time" widget="float_time" />
+                        <field name="timesheet_end_time" widget="float_time" />
+                        <field name="timesheet_break_amount" widget="float_time" />
+                        <field name="unit_amount" widget="float_time" string="Hours" sum="Hours"/>
                     </xpath>
 
 
@@ -42,46 +58,56 @@
                     </xpath>
 
                     <xpath expr="//field[@name='timesheet_ids']/tree/field[@name='account_id']" position="after">
-                        <field name="task_id" required="1"  domain="[('project_id.analytic_account_id', '=' , account_id)]" />
-                        <field name="project_activity_id" required="1" widget="selection" />
+                        <field name="account_id_use_tasks" invisible="1" />
+                        <field name="account_id_use_issues" invisible="1" />
+                        <field name="project_activity_id"
+                               attrs="{'required': [('account_id_use_tasks', '=', True),
+                                                    ('account_id_use_issues', '=', True)]}"
+                               options="{'no_open': True, 'no_create': True}" />
+                        <field name="task_id"
+                               attrs="{'required': [('account_id_use_tasks', '=', True),
+                                                    ('account_id_use_issues', '=', True)]}"
+                               options="{'no_open': True, 'no_create': True}"
+                               domain="[('project_id.analytic_account_id', '=' , account_id)]" />
+
 
                         <field name="timesheet_travel_start" />
                         <field name="timesheet_travel_end" />
                         <field name="timesheet_is_driver" />
-                        <field name="timesheet_vehicle_id" />
+                        <field name="timesheet_vehicle_id" options="{'no_open': True, 'no_create': True}" />
                         <field name="timesheet_accommodation" />
                     </xpath>
 
                     <xpath expr="//field[@name='timesheet_ids']/form//field[@name='account_id']" position="after">
-                        <field name="task_id" required="1" domain="[('project_id.analytic_account_id', '=' , account_id)]" />
-                        <field name="project_activity_id" required="1" widget="selection" />
+                        <field name="account_id_use_tasks" invisible="1" />
+                        <field name="account_id_use_issues" invisible="1" />
+                        <field name="project_activity_id"
+                               attrs="{'required': [('account_id_use_tasks', '=', True),
+                                                    ('account_id_use_issues', '=', True)]}"
+                               options="{'no_open': True, 'no_create': True}" />
+                        <field name="task_id"
+                               attrs="{'required': [('account_id_use_tasks', '=', True),
+                                                    ('account_id_use_issues', '=', True)]}"
+                               options="{'no_open': True, 'no_create': True}"
+                               domain="[('project_id.analytic_account_id', '=' , account_id)]" />
+
 
                         <field name="timesheet_travel_start" />
                         <field name="timesheet_travel_end" />
                         <field name="timesheet_is_driver" />
-                        <field name="timesheet_vehicle_id" />
+                        <field name="timesheet_vehicle_id" options="{'no_open': True, 'no_create': True}" />
                         <field name="timesheet_accommodation" />
                     </xpath>
 
                     <xpath expr="//field[@name='timesheet_ids']/tree/field[@name='account_id']" position="replace">
-                        <field name="account_id" string="Project"/>
+                        <field name="account_id" options="{'no_open': True, 'no_create': True}" string="Field of activity"/>
                     </xpath>
 
                     <xpath expr="//field[@name='timesheet_ids']/form//field[@name='account_id']" position="replace">
-                        <field name="account_id" string="Project"/>
+                        <field name="account_id" options="{'no_open': True, 'no_create': True}" string="Field of activity"/>
                     </xpath>
 
-                    <xpath expr="//field[@name='timesheet_ids']/tree//field[@name='unit_amount']" position="before">
-                        <field name="timesheet_start_time" widget="float_time" />
-                        <field name="timesheet_end_time" widget="float_time" />
-                        <field name="timesheet_break_amount" widget="float_time" />
-                    </xpath>
 
-                    <xpath expr="//field[@name='timesheet_ids']/form//field[@name='unit_amount']" position="before">
-                        <field name="timesheet_start_time" widget="float_time" />
-                        <field name="timesheet_end_time" widget="float_time" />
-                        <field name="timesheet_break_amount" widget="float_time" />
-                    </xpath>
 
 
                 </data>

@@ -12,6 +12,13 @@ class AccountAnalyticLine(models.Model):
     def _change_project_activity(self):
         if self.project_activity_id:
             self.name = self.project_activity_id.name
+        else:
+            self.name = self.account_id.name
+
+    @api.onchange('account_id')
+    def _change_account_id(self):
+        self.name = self.account_id.name
+
 
     @api.onchange('timesheet_start_time', 'timesheet_end_time', 'timesheet_break_amount')
     def _change_times_to_calc_total(self):
@@ -21,6 +28,15 @@ class AccountAnalyticLine(models.Model):
         emp = self.env['hr.employee'].search([('user_id', '=', self.env.user.id)], limit=1)
         dep = emp.department_id
         return dep
+
+    @api.one
+    @api.depends('account_id.use_tasks', 'account_id.use_issues')
+    def _compute_project_use_task_issues(self):
+        self.account_id_use_issues = self.account_id.use_issues
+        self.account_id_use_tasks = self.account_id.use_tasks
+
+    account_id_use_tasks = fields.Boolean(related='account_id.use_tasks')
+    account_id_use_issues = fields.Boolean(related='account_id.use_issues')
 
     project_activity_id = fields.Many2one('project.activity', 'Activity')
     timesheet_activity_type = fields.Selection([('productive', 'Productive'), ('unproductive', 'Unproductive')],
