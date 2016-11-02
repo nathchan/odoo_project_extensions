@@ -11,7 +11,15 @@
 
                     <xpath expr="//field[@name='active']/../.." position="replace">
                         <div class="oe_button_box" name="button_box">
-                            <button name="toggle_active" type="object" groups="project.group_project_manager" class="oe_stat_button" icon="fa-archive">
+                            <button
+                                name="toggle_active"
+                                type="object"
+                                groups="project.group_project_manager"
+                                class="oe_stat_button"
+                                icon="fa-archive"
+                                attrs="{'invisible': [('solution', '=', False)]}"
+                                >
+
                                 <field name="active" widget="boolean_button" options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
                             </button>
                         </div>
@@ -33,6 +41,12 @@
                     <xpath expr="//field[@name='tag_ids']" position="after">
                         <field name="category_id" required="1" />
                         <field name="subcategory_id" />
+                    </xpath>
+
+                    <xpath expr="//field[@name='id']/.." position="after">
+                        <group col="2">
+                            <field name="solution" />
+                        </group>
                     </xpath>
 
                 </data>

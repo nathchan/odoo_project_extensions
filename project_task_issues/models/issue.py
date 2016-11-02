@@ -8,6 +8,7 @@ class ProjectIssue(models.Model):
 
     category_id = fields.Many2one('project.issue.category', 'Category')
     subcategory_id = fields.Many2one('project.issue.subcategory', 'Subcategory', context="{'default_category_id': category_id}", domain="[('category_id','=',category_id)]")
+    solution = fields.Text('Solution')
 
     @api.onchange('subcategory_id')
     def change_subcategory(self):
