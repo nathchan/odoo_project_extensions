@@ -136,6 +136,10 @@ class EmployeeTimesheetGenerator(models.TransientModel):
             if not analytic_acc_lines:
                 continue
 
+            # SERVER VERSION
+            # ws = wb.create_sheet(0, employee.employee_id.name)
+            # LOCAL VERSION
+            # ws = wb.create_sheet(employee.employee_id.name, 0)
             ws = wb.create_sheet(0, employee.employee_id.name)
 
 
@@ -462,14 +466,42 @@ class EmployeeTimesheetGenerator(models.TransientModel):
             n = 0
             base_date = d(1970, 1, 1)
             working_time_sum = 0.0
-            for line in analytic_acc_lines:
+            working_time_per_day = 0.0
+            working_time_per_day_sum = 0.0
+            new_day = True
+            current_date = '0-0-0'
+            days_index = 0
+            ws['F8'] = ''
+            for index, line in enumerate(analytic_acc_lines):
                 working_time_sum += line.unit_amount
+                working_time_per_day += line.unit_amount
                 n += 1
 
+                if index > 0:
+                    previous_date = analytic_acc_lines[index-1].date
+                    current_date = analytic_acc_lines[index].date
+                    if previous_date != current_date:
+                        new_day = True
+                    else:
+                        new_day = False
+
+                    if new_day:
+                        days_index += 1
+                        ws['F'+str(7+n-1)] = format_float_time(working_time_per_day)
+                        working_time_per_day_sum += working_time_per_day
+                        working_time_per_day = 0
+                    else:
+                        if index == len(analytic_acc_lines)-1:
+                            ws['F'+str(7+n)] = format_float_time(working_time_per_day)
+                            working_time_per_day_sum += working_time_per_day
+                        else:
+                            ws['F'+str(7+n-1)] = ''
+
+
                 date = datetime.strptime(line.date, '%Y-%m-%d').date()
-                delta = abs((base_date-date).days)
+                # delta = abs((base_date-date).days)
                 color = 'e0eaff'
-                if delta % 2 == 0:
+                if days_index % 2 == 0:
                     color = '9bbcff'
 
                 weekday = date.weekday()
@@ -533,7 +565,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                                                              bottom=Side(style='thin', color=colors.BLACK)),
                                                )
 
-                ws['F'+str(7+n)] = ''
+
                 ws['F'+str(7+n)].style = Style(alignment=Alignment(wrap_text=True),
                                                fill=PatternFill(patternType='solid',
                                                                 fill_type='solid',
@@ -566,7 +598,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                                                              bottom=Side(style='thin', color=colors.BLACK)),
                                                )
 
-                ws['I'+str(7+n)] = line.task_id.name if line.task_id else ''
+                ws['I'+str(7+n)] = line.task_id.name + '-1' if line.task_id else ''
                 ws['I'+str(7+n)].style = Style(alignment=Alignment(wrap_text=True),
                                                fill=PatternFill(patternType='solid',
                                                                 fill_type='solid',
@@ -685,8 +717,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                                                          bottom=Side(style='thick', color=colors.BLACK)),
                                            )
 
-
-            ws['F'+str(7+n)] = '---'
+            ws['F'+str(7+n)] = format_float_time(working_time_per_day_sum)
             ws['F'+str(7+n)].style = Style(font=Font(bold=True),
                                            alignment=Alignment(wrap_text=True),
                                            border=Border(left=Side(style='thick', color=colors.BLACK),
