@@ -26,7 +26,7 @@
 
                     <xpath expr="//field[@name='timesheet_ids']" position="replace">
                         <field readonly="1" name="timesheet_ids" groups="project.group_tasks_work_on_tasks" context="{'default_account_id' : analytic_account_id, 'default_is_timesheet' : 1}">
-                            <tree editable="bottom" string="Timesheet Activities" default_order="date">
+                            <tree default_order="date asc, user_id asc, timesheet_start_time asc" editable="bottom" string="Timesheet Activities">
                                 <field name="date"/>
                                 <field name="user_id" required="1"/>
                                 <field name="project_activity_id" widget="selection" />

@@ -11,6 +11,7 @@
 
                 <xpath expr="//field[@name='date']" position="after">
                     <field name="timesheet_department_id" />
+                    <field name="timesheet_start_time" invisible="1" />
                 </xpath>
 
                 <xpath expr="//field[@name='user_id']" position="after">
@@ -21,6 +22,10 @@
                 <xpath expr="//field[@name='name']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
+
+                <!--<xpath expr="//tree" position="attributes">-->
+                    <!--<attribute name="default_order">date asc, timesheet_start_time asc</attribute>-->
+                <!--</xpath>-->
 
             </field>
         </record>

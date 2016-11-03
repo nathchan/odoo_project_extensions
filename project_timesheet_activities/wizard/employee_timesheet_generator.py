@@ -34,8 +34,11 @@ def format_date(date):
 
 def format_float_time(time):
     x = math.modf(time)
-    decimal = int(x[0] * 60)
+    decimal = int(x[0] * 61)
     whole = int(x[1])
+    if decimal >= 60:
+        decimal -= 60
+        whole += 1
     res = str(whole) if whole >= 10 else '0'+str(whole)
     res += ':'
     res += str(decimal) if decimal >= 10 else '0'+str(decimal)
@@ -116,7 +119,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
         month = this.month
         year = this.year
 
-        start_date = str(year)+'-'+str(month)+'-'+str(monthrange(year, month)[0])
+        start_date = str(year)+'-'+str(month)+'-1'
         end_date = str(year)+'-'+str(month)+'-'+str(monthrange(year, month)[1])
 
         sheet_lines = self.env['account.analytic.line']
@@ -132,7 +135,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
             analytic_acc_lines = sheet_lines.search([('user_id', '=', employee.employee_id.user_id.id),
                                                      ('is_timesheet', '=', True),
                                                      ('date', '>=', start_date),
-                                                     ('date', '<=', end_date)], order='date ASC')
+                                                     ('date', '<=', end_date)], order='date ASC, timesheet_start_time ASC')
             if not analytic_acc_lines:
                 continue
 
@@ -464,7 +467,6 @@ class EmployeeTimesheetGenerator(models.TransientModel):
             ws.column_dimensions['N'].width = 20
 
             n = 0
-            base_date = d(1970, 1, 1)
             working_time_sum = 0.0
             working_time_per_day = 0.0
             working_time_per_day_sum = 0.0
@@ -477,29 +479,48 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 working_time_per_day += line.unit_amount
                 n += 1
 
-                if index > 0:
-                    previous_date = analytic_acc_lines[index-1].date
+                if new_day:
+                    days_index += 1
+                    new_day = False
+
+                if index != len(analytic_acc_lines)-1:
+                    # not last line
+                    next_date = analytic_acc_lines[index+1].date
                     current_date = analytic_acc_lines[index].date
-                    if previous_date != current_date:
-                        new_day = True
-                    else:
-                        new_day = False
-
-                    if new_day:
-                        days_index += 1
-                        ws['F'+str(7+n-1)] = format_float_time(working_time_per_day)
+                    if next_date != current_date:
+                        ws['F'+str(7+n)] = format_float_time(working_time_per_day)
                         working_time_per_day_sum += working_time_per_day
-                        working_time_per_day = 0
-                    else:
-                        if index == len(analytic_acc_lines)-1:
-                            ws['F'+str(7+n)] = format_float_time(working_time_per_day)
-                            working_time_per_day_sum += working_time_per_day
-                        else:
-                            ws['F'+str(7+n-1)] = ''
+                        working_time_per_day = 0.0
+                        new_day = True
+                else:
+                    ws['F'+str(7+n)] = format_float_time(working_time_per_day)
+                    working_time_per_day_sum += working_time_per_day
 
+
+
+
+
+                # if index > 0:
+                #     previous_date = analytic_acc_lines[index-1].date
+                #     current_date = analytic_acc_lines[index].date
+                #     if previous_date != current_date:
+                #         new_day = True
+                #     else:
+                #         new_day = False
+                #
+                #     if new_day:
+                #         days_index += 1
+                #         ws['F'+str(7+n-1)] = format_float_time(working_time_per_day)
+                #         working_time_per_day_sum += working_time_per_day
+                #         working_time_per_day = 0
+                #     else:
+                #         if index == len(analytic_acc_lines)-1:
+                #             ws['F'+str(7+n)] = format_float_time(working_time_per_day)
+                #             working_time_per_day_sum += working_time_per_day
+                #         else:
+                #             ws['F'+str(7+n-1)] = ''
 
                 date = datetime.strptime(line.date, '%Y-%m-%d').date()
-                # delta = abs((base_date-date).days)
                 color = 'e0eaff'
                 if days_index % 2 == 0:
                     color = '9bbcff'

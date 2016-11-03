@@ -57,6 +57,10 @@
                         <field name="name" invisible="1" />
                     </xpath>
 
+                    <xpath expr="//field[@name='timesheet_ids']/tree" position="attributes">
+                        <attribute name="default_order">date, timesheet_start_time</attribute>
+                    </xpath>
+
                     <xpath expr="//field[@name='timesheet_ids']/tree/field[@name='account_id']" position="after">
                         <field name="account_id_use_tasks" invisible="1" />
                         <field name="account_id_use_issues" invisible="1" />
