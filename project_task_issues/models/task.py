@@ -23,4 +23,5 @@ class ProjectTask(models.Model):
         res['context'] = context
         res['context'].update({'default_task_id': ids[0], 'default_project_id': obj.project_id.id})
         res['domain'] = [('task_id', '=', ids[0])]
+        del res['context']['group_by']
         return res
