@@ -6,6 +6,10 @@ from openerp import models, fields, api
 class ProjectTask(models.Model):
     _inherit = 'project.task'
 
+    a_goods_ordered_date = fields.Date('A Goods Ordered')
+    b_goods_ordered_date = fields.Date('B Goods Ordered')
+    c_goods_ordered_date = fields.Date('C Goods Ordered')
+
     planning_package = fields.Selection([(1, 'Planning package for equipment swap'),
                                          (2, 'Planning package small'),
                                          (3, 'Planning package medium'),

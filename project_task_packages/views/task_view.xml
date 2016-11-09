@@ -10,10 +10,17 @@
                 <data>
 
                     <xpath expr="//field[@name='date_assign']/../.." position="after">
-                        <group string="Package types">
-                            <field name="planning_package" />
-                            <field name="site_acquisition_package" />
-                            <field name="civil_works_package" />
+                        <group cols="2">
+                            <group col="1" string="Package types">
+                                <field name="planning_package" />
+                                <field name="site_acquisition_package" />
+                                <field name="civil_works_package" />
+                            </group>
+                            <group col="2" string="Goods ordering dates">
+                                <field name="a_goods_ordered_date" />
+                                <field name="b_goods_ordered_date" />
+                                <field name="c_goods_ordered_date" />
+                            </group>
                         </group>
                     </xpath>
 
