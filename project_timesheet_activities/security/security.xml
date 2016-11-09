@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data noupdate="0">
+
+        <delete id="fleet.fleet_user_vehicle_visibility" model="ir.rule" />
+
+    </data>
+</openerp>

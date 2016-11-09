@@ -24,6 +24,7 @@
         'wizard/employee_timesheet_generator_view.xml',
         'views/hr_timesheet_menuitem.xml',
         'security/ir.model.access.csv',
+        'security/security.xml',
     ],
     'demo': [],
     'qweb': [],

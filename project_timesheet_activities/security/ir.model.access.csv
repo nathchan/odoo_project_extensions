@@ -3,3 +3,4 @@
 "access_project_activity_category_manager","project.activity.category.manager","model_project_activity_category","project.group_project_manager",1,1,1,1
 "access_project_activity_user","project.activity.user","model_project_activity","project.group_project_user",1,0,0,0
 "access_project_activity_manager","project.activity.manager","model_project_activity","project.group_project_manager",1,1,1,1
+"access_fleet_vehicle_employee","fleet_vehicle_access_right_employee","fleet.model_fleet_vehicle","base.group_user",1,0,0,0
