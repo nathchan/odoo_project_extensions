@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_day_off_category_manager,hr.day.off.category.manager,model_hr_day_off_category,base.group_hr_manager,1,1,1,0
+access_hr_day_off_category_user,hr.day.off.category.employee,model_hr_day_off_category,base.group_user,1,0,0,0
+access_hr_day_off_manager,hr.day.off.manager,model_hr_day_off,base.group_hr_manager,1,1,1,0
+access_hr_day_off_user,hr.day.off.employee,model_hr_day_off,base.group_user,1,0,0,0

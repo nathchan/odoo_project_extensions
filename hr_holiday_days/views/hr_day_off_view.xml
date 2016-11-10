@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="hr_day_off_tree">
+            <field name="name">hr.day.off.tree</field>
+            <field name="model">hr.day.off</field>
+            <field name="arch" type="xml">
+                <tree string="Days off" editable="top">
+                    <field name="date" />
+                    <field name="category_id" />
+                    <field name="info" />
+                </tree>
+            </field>
+        </record>
+
+       <record id="action_hr_day_off" model="ir.actions.act_window">
+           <field name="name">Days off</field>
+           <field name="type">ir.actions.act_window</field>
+           <field name="res_model">hr.day.off</field>
+           <field name="view_type">form</field>
+           <field name="view_mode">tree</field>
+           <field name="context">{}</field>
+           <field name="search_view_id" ref=""/>
+       </record>
+
+    </data>
+</openerp>

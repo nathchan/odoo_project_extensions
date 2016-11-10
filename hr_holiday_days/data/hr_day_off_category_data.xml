@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <record id="hr_day_off_category_weekend" model="hr.day.off.category">
+            <field name="name">Weekend</field>
+            <field name="info">Weekend days</field>
+        </record>
+
+    </data>
+</openerp>

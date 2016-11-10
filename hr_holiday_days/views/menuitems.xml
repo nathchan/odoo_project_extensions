@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <menuitem id="menu_hr_day_off"
+                  name="Days off"
+                  parent="hr.menu_human_resources_configuration"
+                  action="action_hr_day_off"
+                  sequence="150"
+                  groups="base.group_hr_manager"
+                />
+
+        <menuitem id="menu_hr_day_off_category"
+                  name="Day off categories"
+                  parent="hr.menu_human_resources_configuration"
+                  action="action_hr_day_off_category"
+                  sequence="151"
+                  groups="base.group_hr_manager"
+                />
+
+        <menuitem id="menu_hr_weekend_generator"
+                  name="Weekend generator"
+                  parent="hr.menu_human_resources_configuration"
+                  action="action_hr_weekend_generator"
+                  sequence="152"
+                  groups="base.group_hr_manager"
+                />
+    </data>
+</openerp>
+
+
