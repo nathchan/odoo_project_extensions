@@ -14,6 +14,7 @@
         'project_issue_sheet',
         'project_timesheet',
         'hr_timesheet_sheet',
+        'hr_holiday_days',
         'fleet',
     ],
     'data': [
