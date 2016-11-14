@@ -10,6 +10,9 @@ from datetime import datetime
 from calendar import monthrange
 import datetime as d
 
+from babel.dates import format_datetime
+
+
 MONTHS = [(1, 'January'),
           (2, 'February'),
           (3, 'March'),
@@ -30,8 +33,12 @@ YEARS = [(2016, '2016'),
          (2020, '2020')]
 
 
-def format_date(date):
-    return datetime.strptime(date, tools.DEFAULT_SERVER_DATE_FORMAT).strftime('%d.%m.%Y')
+
+def print_date(date):
+    dayy = datetime.strptime(date, tools.DEFAULT_SERVER_DATE_FORMAT)
+    day = format_datetime(dayy, format="EEEE", locale="de")
+    res = day[0] + day[1] + format_datetime(dayy, format=", dd.LL.", locale="de")
+    return res
 
 def format_float_time(time):
     x = math.modf(time)
@@ -904,7 +911,7 @@ def write_line(ws, n, color, current_date, line=None):
     if line is None:
         empty_line = True
 
-    ws['A'+str(7+n[0])] = format_date(line.date) if not empty_line and line.date else format_date(current_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT))
+    ws['A'+str(7+n[0])] = print_date(line.date) if not empty_line and line.date else print_date(current_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT))
     ws['A'+str(7+n[0])].style = Style(font=Font(bold=True),
                                       alignment=Alignment(horizontal='center',
                                                           wrap_text=True),
