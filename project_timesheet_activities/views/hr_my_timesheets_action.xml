@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+
+        <record id="hr_timesheet_sheet.act_hr_timesheet_sheet_my_timesheets" model="ir.actions.act_window">
+            <field name="domain">['|', ('employee_id.department_id.manager_id.user_id', '=', uid), ('employee_id.user_id', '=', uid)]</field>
+        </record>
+
+
+    </data>
+</openerp>
