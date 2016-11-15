@@ -13,15 +13,30 @@
                         <div class="oe_button_box" name="button_box">
                             <button
                                 name="toggle_active"
+                                string="Close"
                                 type="object"
                                 groups="project.group_project_manager"
                                 class="oe_stat_button"
                                 icon="fa-archive"
-                                attrs="{'invisible': [('solution', '=', False)]}"
+                                attrs="{'invisible': ['|', ('solution', '=', False), ('active', '=', False)]}"
                                 >
-
-                                <field name="active" widget="boolean_button" options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
+                                <field name="active" invisible="1" />
                             </button>
+
+                            <button
+                                name="toggle_active"
+                                string="Open"
+                                type="object"
+                                groups="project.group_project_manager"
+                                class="oe_stat_button"
+                                icon="fa-archive"
+                                attrs="{'invisible': [('active', '=', True)]}"
+                                >
+                                <field name="active" invisible="1" />
+                            </button>
+
+
+
                         </div>
                     </xpath>
 
