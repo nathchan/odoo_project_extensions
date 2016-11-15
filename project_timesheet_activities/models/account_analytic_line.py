@@ -20,7 +20,7 @@ class AccountAnalyticLine(models.Model):
         self.name = self.account_id.name
 
 
-    @api.onchange('timesheet_start_time', 'timesheet_end_time', 'timesheet_break_amount')
+    @api.onchange('unit_amount', 'timesheet_start_time', 'timesheet_end_time', 'timesheet_break_amount')
     def _change_times_to_calc_total(self):
         self.unit_amount = self.timesheet_end_time - self.timesheet_start_time - self.timesheet_break_amount
 
