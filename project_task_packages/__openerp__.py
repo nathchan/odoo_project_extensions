@@ -13,6 +13,8 @@
     ],
     'data': [
         'views/task_view.xml',
+        'security/ir.model.access.csv',
+        'data/res_partner.xml',
     ],
     'demo': [],
     'qweb': [],

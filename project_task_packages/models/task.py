@@ -1,10 +1,37 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, fields, api
-
+from openerp import models, fields, api, tools
+from datetime import datetime
 
 class ProjectTask(models.Model):
     _inherit = 'project.task'
+
+    @api.multi
+    @api.depends('material_order_ids.delivery_forecast_date', 'material_order_ids.delivery_actual_date')
+    def _compute_alerts(self):
+        for rec in self:
+            due_soon = False
+            overdue = False
+            material_line = self.env['project.task.material.order'].search([('task_id', '=', rec.id),
+                                                                            ('delivery_forecast_date', '!=', False),
+                                                                            ('delivery_actual_date', '=', False)],
+                                                                           order='delivery_forecast_date DESC',
+                                                                           limit=1)
+
+            if material_line:
+                forecast_date = datetime.strptime(material_line[0].delivery_forecast_date, tools.DEFAULT_SERVER_DATE_FORMAT)
+                days = (forecast_date - datetime.today()).days
+                if days > 0 and days <= 7:
+                    due_soon = True
+                elif days <= 0:
+                    overdue = True
+            rec.alert_material_order_due_soon = due_soon
+            rec.alert_material_order_overdue = overdue
+
+    material_order_ids = fields.One2many('project.task.material.order', 'task_id', 'Material orders')
+
+    alert_material_order_due_soon = fields.Boolean('Material order due soon', compute=_compute_alerts, store=True)
+    alert_material_order_overdue = fields.Boolean('Material order overdue', compute=_compute_alerts, store=True)
 
     cw_percent_complete = fields.Selection([('0', '0 %'),
                                             ('25', '25 %'),
@@ -32,3 +59,47 @@ class ProjectTask(models.Model):
                                             (5, 'New Greenfield Outdoor site'),
                                             (6, 'Moving sharing partner'),
                                             (7, 'Site deconstruction')], 'CW package')
+
+    @api.model
+    def create(self, vals):
+        new = super(ProjectTask, self).create(vals)
+
+        project_lte800 = self.env['project.project'].search([('name', '=', 'LTE800')])
+
+        if len(project_lte800)>0:
+            tmp_vals = {
+                'task_id': new.id,
+                'material': 'a_goods',
+                'partner_id': self.env.ref('project_task_packages.partner_kelog').id
+            }
+            self.env['project.task.material.order'].create(tmp_vals)
+
+            tmp_vals = {
+                'task_id': new.id,
+                'material': 'b_goods',
+                'partner_id': self.env.ref('project_task_packages.partner_kelog').id
+            }
+            self.env['project.task.material.order'].create(tmp_vals)
+
+            tmp_vals = {
+                'task_id': new.id,
+                'material': 'c_goods',
+                'partner_id': self.env.ref('project_task_packages.partner_sonepar').id
+            }
+            self.env['project.task.material.order'].create(tmp_vals)
+
+            tmp_vals = {
+                'task_id': new.id,
+                'material': 'steel',
+                'partner_id': self.env.ref('project_task_packages.partner_for_steel').id
+            }
+            self.env['project.task.material.order'].create(tmp_vals)
+
+            tmp_vals = {
+                'task_id': new.id,
+                'material': 'crane',
+                'partner_id': self.env.ref('project_task_packages.partner_for_crane').id
+            }
+            self.env['project.task.material.order'].create(tmp_vals)
+
+        return new

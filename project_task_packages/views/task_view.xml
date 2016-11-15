@@ -20,17 +20,73 @@
                                 <field name="site_acquisition_package" />
                                 <field name="civil_works_package" />
                             </group>
-                            <group col="2" string="Goods ordering dates">
-                                <field name="a_goods_ordered_date" />
-                                <field name="b_goods_ordered_date" />
-                                <field name="c_goods_ordered_date" />
-                            </group>
+
+                            <!--<group col="2" string="Goods ordering dates">-->
+                                <!--<field name="a_goods_ordered_date" />-->
+                                <!--<field name="b_goods_ordered_date" />-->
+                                <!--<field name="c_goods_ordered_date" />-->
+                            <!--</group>-->
                         </group>
+                    </xpath>
+
+                    <xpath expr="//field[@name='date_assign']/../../.." position="after">
+                        <page name="material_orders" string="Material orders">
+
+                            <field name="material_order_ids">
+                                <tree editable="bottom">
+                                    <field name="material" />
+                                    <field name="partner_id" domain="[('supplier', '=', True)]" context="{'default_supplier': True}"/>
+                                    <field name="ordered_date" />
+                                    <field name="delivery_forecast_date" />
+                                    <field name="delivery_actual_date" />
+                                    <field name="order_number" />
+                                </tree>
+                            </field>
+                        </page>
                     </xpath>
 
                 </data>
             </field>
         </record>
+
+
+        <record id="view_task_tree_inherit" model="ir.ui.view">
+            <field name="name">project.task.tree.inherit</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_tree2"/>
+            <field name="arch" type="xml">
+                <data>
+
+                    <xpath expr="//field[@name='stage_id']" position="after">
+                        <field name="alert_material_order_due_soon" invisible="1" />
+                        <field name="alert_material_order_overdue" invisible="1" />
+                    </xpath>
+
+                    <xpath expr="//tree" position="attributes">
+                        <attribute name="decoration-warning">alert_material_order_due_soon</attribute>
+                        <attribute name="decoration-danger">alert_material_order_overdue or (date_deadline and (date_deadline&lt;current_date))</attribute>
+                    </xpath>
+
+                </data>
+            </field>
+        </record>
+
+
+    <record id="view_task_search_form_inherit" model="ir.ui.view">
+        <field name="name">project.task.search.form.inherit</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_search_form"/>
+        <field name="arch" type="xml">
+            <data>
+                <xpath expr="//filter[@name='inactive']" position="after">
+                    <separator />
+                    <filter string="Materials due soon" name="materials_due_soon" domain="[('alert_material_order_due_soon', '=', True)]" />
+                    <filter string="Materials overdue" name="materials_overdue" domain="[('alert_material_order_overdue', '=', True)]" />
+                </xpath>
+            </data>
+        </field>
+    </record>
+
 
     </data>
 </openerp>

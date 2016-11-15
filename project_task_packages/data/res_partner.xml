@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+    <data noupdate="1">
+
+        <record id="partner_kelog" model="res.partner">
+            <field name="name">Kelog</field>
+            <field name="is_company" eval="True"/>
+        </record>
+
+        <record id="partner_sonepar" model="res.partner">
+            <field name="name">Sonepar</field>
+            <field name="is_company" eval="True"/>
+        </record>
+
+        <record id="partner_for_steel" model="res.partner">
+            <field name="name">Partner For Steel</field>
+            <field name="is_company" eval="True"/>
+        </record>
+
+        <record id="partner_for_crane" model="res.partner">
+            <field name="name">Partner For Crane</field>
+            <field name="is_company" eval="True"/>
+        </record>
+
+    </data>
+</openerp>
