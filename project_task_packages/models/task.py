@@ -6,6 +6,12 @@ from openerp import models, fields, api
 class ProjectTask(models.Model):
     _inherit = 'project.task'
 
+    cw_percent_complete = fields.Selection([('0', '0 %'),
+                                            ('25', '25 %'),
+                                            ('50', '50 %'),
+                                            ('75', '75 %'),
+                                            ('100', '100 %')], string='CW % Complete', default=0)
+
     a_goods_ordered_date = fields.Date('A Goods Ordered')
     b_goods_ordered_date = fields.Date('B Goods Ordered')
     c_goods_ordered_date = fields.Date('C Goods Ordered')
