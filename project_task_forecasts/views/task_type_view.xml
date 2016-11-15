@@ -9,9 +9,9 @@
             <field name="arch" type="xml">
                 <data>
                     <xpath expr="//field[@name='sequence']" position="after">
-                        <field name="duration_forecast" />
-                        <!--<field name="sequence" />-->
+                        <field name="duration_forecast" string="Lead" />
                     </xpath>
+
 
                     <xpath expr="//field[@name='project_ids']/.." position="after">
                         <field name="process_ids">
@@ -38,6 +38,10 @@
 
                     <xpath expr="//field[@name='sequence']" position="replace">
                         <field name="sequence" />
+                    </xpath>
+
+                    <xpath expr="//field[@name='description']" position="before">
+                        <field name="duration_forecast" string="Lead" />
                     </xpath>
 
                 </data>
