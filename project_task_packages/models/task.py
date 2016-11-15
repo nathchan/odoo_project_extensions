@@ -66,7 +66,7 @@ class ProjectTask(models.Model):
 
         project_lte800 = self.env['project.project'].search([('name', '=', 'LTE800')])
 
-        if len(project_lte800)>0:
+        if len(project_lte800) > 0 and vals.get('project_id') and project_lte800[0].id == vals['project_id']:
             tmp_vals = {
                 'task_id': new.id,
                 'material': 'a_goods',
