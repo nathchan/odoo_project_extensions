@@ -6,6 +6,49 @@ from datetime import datetime
 class ProjectTask(models.Model):
     _inherit = 'project.task'
 
+    @api.one
+    def populate_lte800_tasks(self):
+
+        tasks = self.env['project.task'].search([('project_id.name', '=', 'LTE800')])
+        for task in tasks:
+            tmp_vals = {
+                'task_id': task.id,
+                'material': 'a_goods',
+                'partner_id': self.env.ref('project_task_packages.partner_kelog').id
+            }
+            self.env['project.task.material.order'].create(tmp_vals)
+
+            tmp_vals = {
+                'task_id': task.id,
+                'material': 'b_goods',
+                'partner_id': self.env.ref('project_task_packages.partner_kelog').id
+            }
+            self.env['project.task.material.order'].create(tmp_vals)
+
+            tmp_vals = {
+                'task_id': task.id,
+                'material': 'c_goods',
+                'partner_id': self.env.ref('project_task_packages.partner_sonepar').id
+            }
+            self.env['project.task.material.order'].create(tmp_vals)
+
+            tmp_vals = {
+                'task_id': task.id,
+                'material': 'steel',
+                'partner_id': self.env.ref('project_task_packages.partner_for_steel').id
+            }
+            self.env['project.task.material.order'].create(tmp_vals)
+
+            tmp_vals = {
+                'task_id': task.id,
+                'material': 'crane',
+                'partner_id': self.env.ref('project_task_packages.partner_for_crane').id
+            }
+            self.env['project.task.material.order'].create(tmp_vals)
+
+
+        return True
+
     @api.multi
     @api.depends('material_order_ids.delivery_forecast_date', 'material_order_ids.delivery_actual_date')
     def _compute_alerts(self):
