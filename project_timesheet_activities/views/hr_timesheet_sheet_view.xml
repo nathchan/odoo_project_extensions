@@ -10,6 +10,23 @@
             <field name="arch" type="xml">
                 <data>
 
+                    <xpath expr="//button[@name='button_confirm']" position="attributes">
+                        <attribute name="confirm">This timesheet will be submitted to manager. Are you sure?</attribute>
+                    </xpath>
+
+                    <xpath expr="//button[@name='done']" position="attributes">
+                        <attribute name="confirm">This timesheet will be confirmed. Are you sure?</attribute>
+                    </xpath>
+
+                    <xpath expr="//button[@name='action_set_to_draft']" position="attributes">
+                        <attribute name="confirm">This timesheet will be sent to draft. Are you sure?</attribute>
+                    </xpath>
+
+                    <xpath expr="//button[@name='cancel']" position="attributes">
+                        <attribute name="confirm">This timesheet will be refused. Are you sure?</attribute>
+                    </xpath>
+
+
                     <xpath expr="//div[@class='oe_button_box']" position="replace"></xpath>
 
                     <xpath expr="//field[@name='total_attendance']" position="replace"></xpath>
