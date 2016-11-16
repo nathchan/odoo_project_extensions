@@ -2,6 +2,25 @@
 <openerp>
     <data>
 
+        <record model="ir.ui.view" id="project_dispatching_calendar">
+            <field name="name">project.dispatching.calendar</field>
+            <field name="model">project.dispatching</field>
+            <field name="arch" type="xml">
+                <calendar date_start="date_start"
+                          date_stop="date_stop"
+                          display="[department_id] - [task_id]"
+                          color="department_id"
+                          all_day="all_day"
+                          mode="month"
+                        >
+                    <field name="name" />
+                    <field name="department_id" />
+                    <field name="task_id" />
+                    <field name="project_id" />
+                </calendar>
+            </field>
+        </record>
+
         <record model="ir.ui.view" id="project_dispatching_form">
             <field name="name">project.dispatching.form</field>
             <field name="model">project.dispatching</field>
@@ -47,7 +66,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">project.dispatching</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,calendar</field>
             <field name="context">{}</field>
             <field name="search_view_id" ref=""/>
         </record>
