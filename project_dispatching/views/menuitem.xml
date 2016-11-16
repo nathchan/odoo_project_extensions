@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <menuitem name="Dispatching"
+                  id="menu_project_dispatching_track"
+                  parent="project.menu_project_management"
+                  action="action_project_dispatching"
+                  sequence="20"/>
+
+
+
+    </data>
+</openerp>

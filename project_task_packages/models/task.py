@@ -37,7 +37,7 @@ class ProjectTask(models.Model):
                                             ('25', '25 %'),
                                             ('50', '50 %'),
                                             ('75', '75 %'),
-                                            ('100', '100 %')], string='CW % Complete', default=0)
+                                            ('100', '100 %')], string='CW % Complete', default='0')
 
     a_goods_ordered_date = fields.Date('A Goods Ordered')
     b_goods_ordered_date = fields.Date('B Goods Ordered')
