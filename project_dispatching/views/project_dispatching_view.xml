@@ -8,7 +8,7 @@
             <field name="arch" type="xml">
                 <calendar date_start="date_start"
                           date_stop="date_stop"
-                          display="[department_id] - [task_id]"
+                          display="[name]"
                           color="department_id"
                           all_day="all_day"
                           mode="month"

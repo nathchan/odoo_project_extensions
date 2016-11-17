@@ -11,7 +11,9 @@ class ProjectDispatching(models.Model):
     @api.multi
     def _compute_name(self):
         for rec in self:
-            rec.name = rec.department_id.name + ' - ' + rec.task_id.name
+            rec.name = rec.department_id.name + ' - ' + rec.analytic_account_id.name
+            if rec.task_id:
+                rec.name += ' - ' + rec.task_id.name
 
     def _get_default_completition(self):
         return 0
