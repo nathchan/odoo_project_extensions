@@ -8,6 +8,20 @@
                   action="action_project_dispatching"
                   sequence="20"/>
 
+        <menuitem name="Dispatching"
+                  groups="base.group_user"
+                  parent="hr_attendance.timesheet_menu_root"
+                  id="menu_project_timesheet_dispatching_base"
+                  sequence="1"/>
+
+        <menuitem name="Dispatching"
+                  id="menu_project_timesheet_dispatching_track"
+                  parent="menu_project_timesheet_dispatching_base"
+                  action="action_project_dispatching"
+                  sequence="1"/>
+
+
+
 
 
     </data>

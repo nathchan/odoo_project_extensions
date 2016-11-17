@@ -17,6 +17,7 @@
                     <field name="department_id" />
                     <field name="task_id" />
                     <field name="analytic_account_id" />
+                    <field name="activity_id" />
                 </calendar>
             </field>
         </record>
@@ -27,17 +28,50 @@
             <field name="arch" type="xml">
                 <form>
                     <sheet>
-                        <group>
-                            <field name="analytic_account_id_use_tasks" invisible="1" />
-                            <field name="department_id" />
-                            <field name="analytic_account_id" />
-                            <field name="task_id" attrs="{'required': [('analytic_account_id_use_tasks', '=', True)],
-                                                          'invisible': [('analytic_account_id_use_tasks', '=', False)]}" />
-                            <field name="percent_complete" />
-                            <field name="date_start" />
-                            <field name="date_stop" />
-                            <field name="vehicle_id" />
+                        <div class="oe_button_box" name="button_box">
+                            <button name="return_action_to_open_issues"
+                                    type="object"
+                                    class="oe_stat_button"
+                                    icon="fa-bug"
+                                    help="show the issues for this task"
+                                    attrs="{'invisible': [('analytic_account_id_use_tasks', '=', False)]}"
+                                    >
+                                    <field name="issue_count" widget="statinfo" string="Issues"/>
+                            </button>
+                        </div>
+
+                        <div class="oe_title">
+                            <h2>
+                                <field name="name" />
+                            </h2>
+                        </div>
+
+                        <group col="2">
+                            <group>
+                                <field name="analytic_account_id_use_tasks" invisible="1" />
+                                <field name="department_id" />
+                                <field name="analytic_account_id" />
+                                <field name="task_id" attrs="{'required': [('analytic_account_id_use_tasks', '=', True)],
+                                                              'invisible': [('analytic_account_id_use_tasks', '=', False)]}" />
+
+                                <field name="activity_id" attrs="{'required': [('analytic_account_id_use_tasks', '=', True)],
+                                                                  'invisible': [('analytic_account_id_use_tasks', '=', False)]}" />
+                                <field name="vehicle_id" />
+                                <field name="percent_complete" />
+                            </group>
+                            <group>
+                                <field name="date_start" />
+                                <field name="date_stop" />
+                                <field name="assigned_user_id" attrs="{'invisible': [('analytic_account_id_use_tasks', '=', False)]}"/>
+                            </group>
+
                         </group>
+                        <notebook>
+                            <page name="description" string="Description">
+                                <field name="info" type="html"/>
+                                <div class="oe_clear"/>
+                            </page>
+                        </notebook>
                     </sheet>
                     <div class="oe_chatter">
                         <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
@@ -54,6 +88,7 @@
                 <tree string="Dispatching">
                     <field name="department_id" />
                     <field name="analytic_account_id" />
+                    <field name="activity_id" />
                     <field name="task_id" />
                     <field name="percent_complete" />
                     <field name="date_start" />
@@ -68,7 +103,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">project.dispatching</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form,calendar</field>
+            <field name="view_mode">calendar,tree,form</field>
             <field name="context">{}</field>
             <field name="search_view_id" ref=""/>
         </record>

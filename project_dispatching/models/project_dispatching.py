@@ -14,12 +14,26 @@ class ProjectDispatching(models.Model):
             rec.name = rec.department_id.name + ' - ' + rec.analytic_account_id.name
             if rec.task_id:
                 rec.name += ' - ' + rec.task_id.name
+            if rec.activity_id:
+                rec.name += ' - ' + rec.activity_id.name
 
     def _get_default_completition(self):
         return 0
 
+    @api.multi
+    def _compute_issue_count(self):
+        for obj in self:
+            if obj.task_id:
+                obj.issue_count = self.env['project.issue'].search_count([('task_id', '=', obj.task_id.id)])
+            else:
+                obj.issue_count = 0
+
     @api.onchange('analytic_account_id', 'task_id')
     def _onchange_department_project_task(self):
+        if not self.analytic_account_id_use_tasks:
+            self.task_id = None
+            self.activity_id = None
+
         if self.analytic_account_id and self.task_id:
             query = 'select max(percent_complete) from project_dispatching where analytic_account_id=%s and task_id=%s'
             self.env.cr.execute(query, (self.analytic_account_id.id, self.task_id.id,))
@@ -32,6 +46,7 @@ class ProjectDispatching(models.Model):
     department_id = fields.Many2one('hr.department', 'Department', required=True, track_visibility='onchange')
     analytic_account_id = fields.Many2one('account.analytic.account', 'Field of activity', required=True, track_visibility='onchange')
     analytic_account_id_use_tasks = fields.Boolean(related='analytic_account_id.use_tasks')
+    activity_id = fields.Many2one('project.activity', 'Main activity', track_visibility='onchange')
     task_id = fields.Many2one('project.task', 'Task', track_visibility='onchange')
     date_start = fields.Date('Date from', track_visibility='onchange')
     date_stop = fields.Date('Date to', track_visibility='onchange')
@@ -41,6 +56,10 @@ class ProjectDispatching(models.Model):
                                         (50, '50 %'),
                                         (75, '75 %'),
                                         (100, '100 %')], string='% Complete', track_visibility='onchange', default=_get_default_completition)
+    info = fields.Html('Description')
+    assigned_user_id = fields.Many2one('res.users', 'Assigned to', related='task_id.user_id', readonly=True)
+    issue_count = fields.Integer('Issue count', compute=_compute_issue_count)
+
 
     @api.constrains('date_start', 'date_stop')
     def _check_dates(self):
@@ -49,3 +68,18 @@ class ProjectDispatching(models.Model):
         if start and end:
             if start > end:
                 raise e.ValidationError('Starting date must be lower than ending date.')
+
+    def return_action_to_open_issues(self, cr, uid, ids, context=None):
+        if context is None:
+            context = {}
+        obj = self.pool.get('project.dispatching').browse(cr, uid, ids[0], context)
+        if obj.task_id:
+            res = self.pool.get('ir.actions.act_window').for_xml_id(cr, uid, 'project_task_issues', 'project_issues_show_action', context=context)
+            res['context'] = context
+            res['context'].update({'default_task_id': obj.task_id.id, 'default_project_id': obj.analytic_account_id.id})
+            res['domain'] = [('task_id', '=', obj.task_id.id)]
+            if 'group_by' in res['context']:
+                del res['context']['group_by']
+            return res
+        else:
+            return True

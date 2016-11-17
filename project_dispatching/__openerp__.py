@@ -12,6 +12,8 @@
         'project',
         'hr',
         'fleet',
+        'project_timesheet_activities',
+        'project_task_issues',
     ],
     'data': [
         'views/project_dispatching_view.xml',
