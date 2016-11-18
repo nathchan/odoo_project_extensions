@@ -11,7 +11,12 @@ class ProjectDispatching(models.Model):
     @api.multi
     def _compute_name(self):
         for rec in self:
-            rec.name = rec.department_id.name + ' - ' + rec.analytic_account_id.name
+            rec.name = rec.department_id.name
+            if rec.department_id.manager_id:
+                rec.name += ' - ' + rec.department_id.manager_id.name
+
+            rec.name += ' - ' + rec.analytic_account_id.name
+
             if rec.task_id:
                 rec.name += ' - ' + rec.task_id.name
             if rec.activity_id:
@@ -47,7 +52,7 @@ class ProjectDispatching(models.Model):
     analytic_account_id = fields.Many2one('account.analytic.account', 'Field of activity', required=True, track_visibility='onchange')
     analytic_account_id_use_tasks = fields.Boolean(related='analytic_account_id.use_tasks')
     activity_id = fields.Many2one('project.activity', 'Main activity', track_visibility='onchange')
-    task_id = fields.Many2one('project.task', 'Task', track_visibility='onchange')
+    task_id = fields.Many2one('project.task', 'Task', domain="[('project_id', '=', analytic_account_id)]", track_visibility='onchange')
     date_start = fields.Date('Date from', track_visibility='onchange')
     date_stop = fields.Date('Date to', track_visibility='onchange')
     vehicle_id = fields.Many2one('fleet.vehicle', 'Vehicle', track_visibility='onchange')
