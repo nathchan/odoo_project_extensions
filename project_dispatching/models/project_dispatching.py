@@ -53,8 +53,33 @@ class ProjectDispatching(models.Model):
             if res and res[0] and res[0]>0:
                 self.percent_complete = res[0]
 
+    @api.onchange('date_start', 'date_stop')
+    def _onchange_date_start_date_stop(self):
+        if self.date_start:
+            self.datetime_start = self.date_start + ' 12:00:00'
+        if self.date_stop:
+            self.datetime_stop = self.date_stop + ' 12:00:00'
+
+    @api.onchange('all_day')
+    def _onchange_all_day(self):
+        if self.all_day is True:
+            if self.datetime_start:
+                self.date_start = self.datetime_start[:10]
+            if self.datetime_stop:
+                self.date_stop = self.datetime_stop[:10]
+
+    @api.one
+    def calculate_datetime(self):
+        objs = self.search([])
+        for obj in objs:
+            if obj.date_start:
+                obj.datetime_start = obj.date_start + ' 12:00:00'
+            if obj.date_stop:
+                obj.datetime_stop = obj.date_stop + ' 12:00:00'
+
+
+
     name = fields.Char('Name', compute=_compute_name)
-    all_day = fields.Boolean('All day', readonly="True", default=True)
     department_id = fields.Many2one('hr.department', 'Department', required=True, track_visibility='onchange')
     project_id = fields.Many2one('project.project', 'Project', compute=_get_project)
     analytic_account_id = fields.Many2one('account.analytic.account', 'Field of activity', required=True, track_visibility='onchange')
@@ -63,6 +88,7 @@ class ProjectDispatching(models.Model):
     task_id = fields.Many2one('project.task', 'Task', domain="[('project_id', '=', project_id)]", track_visibility='onchange')
     date_start = fields.Date('From')
     date_stop = fields.Date('To')
+    all_day = fields.Boolean('All day?', default=True)
     datetime_start = fields.Datetime('From', track_visibility='onchange')
     datetime_stop = fields.Datetime('To', track_visibility='onchange')
     vehicle_id = fields.Many2one('fleet.vehicle', 'Vehicle', track_visibility='onchange')
