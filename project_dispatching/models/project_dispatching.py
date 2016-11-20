@@ -33,6 +33,13 @@ class ProjectDispatching(models.Model):
             else:
                 obj.issue_count = 0
 
+    @api.multi
+    @api.depends('analytic_account_id')
+    def _get_project(self):
+        for rec in self:
+            if rec.analytic_account_id:
+                rec.project_id = self.env['project.project'].search([('analytic_account_id', '=', rec.analytic_account_id.id)])
+
     @api.onchange('analytic_account_id', 'task_id')
     def _onchange_department_project_task(self):
         if not self.analytic_account_id_use_tasks:
@@ -49,12 +56,15 @@ class ProjectDispatching(models.Model):
     name = fields.Char('Name', compute=_compute_name)
     all_day = fields.Boolean('All day', readonly="True", default=True)
     department_id = fields.Many2one('hr.department', 'Department', required=True, track_visibility='onchange')
+    project_id = fields.Many2one('project.project', 'Project', compute=_get_project)
     analytic_account_id = fields.Many2one('account.analytic.account', 'Field of activity', required=True, track_visibility='onchange')
     analytic_account_id_use_tasks = fields.Boolean(related='analytic_account_id.use_tasks')
     activity_id = fields.Many2one('project.activity', 'Main activity', track_visibility='onchange')
-    task_id = fields.Many2one('project.task', 'Task', domain="[('project_id', '=', analytic_account_id)]", track_visibility='onchange')
-    date_start = fields.Date('Date from', track_visibility='onchange')
-    date_stop = fields.Date('Date to', track_visibility='onchange')
+    task_id = fields.Many2one('project.task', 'Task', domain="[('project_id', '=', project_id)]", track_visibility='onchange')
+    date_start = fields.Date('From')
+    date_stop = fields.Date('To')
+    datetime_start = fields.Datetime('From', track_visibility='onchange')
+    datetime_stop = fields.Datetime('To', track_visibility='onchange')
     vehicle_id = fields.Many2one('fleet.vehicle', 'Vehicle', track_visibility='onchange')
     percent_complete = fields.Selection([(0, '0 %'),
                                         (25, '25 %'),
