@@ -2,21 +2,14 @@
 
 from openerp import models, fields, api
 
-class ProjectActivityCategory(models.Model):
-    _name = 'project.activity.category'
-
-    name = fields.Char('Name', required=True)
-    code = fields.Char('Code', requiered=True)
-    info = fields.Text('Description')
-    activity_type = fields.Selection([('productive', 'Productive'), ('unproductive', 'Unproductive')], default='unproductive')
 
 class ProjectActivity(models.Model):
     _name = 'project.activity'
 
     name = fields.Char('Name', required=True)
-    category_id = fields.Many2one('project.activity.category', 'Category', required=True)
-    category_code = fields.Char('Category code', related='category_id.code', readonly=True)
     info = fields.Text('Description')
+    category = fields.Selection([('effective', 'Effective'), ('ineffective', 'Ineffective')], 'Category')
+    on_site_activity = fields.Boolean('On site activity')
 
 
 

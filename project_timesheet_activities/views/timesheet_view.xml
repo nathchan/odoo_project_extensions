@@ -9,6 +9,10 @@
             <field name="inherit_id" ref="hr_timesheet.hr_timesheet_line_tree"/>
             <field name="arch" type="xml">
 
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="editable"></attribute>
+                </xpath>
+
                 <xpath expr="//field[@name='date']" position="after">
                     <field name="timesheet_department_id" />
                     <field name="timesheet_start_time" invisible="1" />
@@ -16,7 +20,11 @@
 
                 <xpath expr="//field[@name='user_id']" position="after">
                     <field name="project_activity_id" required="1" widget="selection" />
-                    <field name="timesheet_activity_type" readonly="1" />
+                    <field name="timesheet_activity_category" readonly="1" />
+                </xpath>
+
+                <xpath expr="//field[@name='account_id']" position="after">
+                    <field name="timesheet_analytic_account_category" readonly="1" />
                 </xpath>
 
                 <xpath expr="//field[@name='name']" position="attributes">

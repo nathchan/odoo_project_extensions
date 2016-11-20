@@ -42,10 +42,18 @@ class AccountAnalyticLine(models.Model):
     account_id_use_issues = fields.Boolean(related='account_id.use_issues')
 
     project_activity_id = fields.Many2one('project.activity', 'Activity')
-    timesheet_activity_type = fields.Selection([('productive', 'Productive'), ('unproductive', 'Unproductive')],
-                                               string='Activity type',
-                                               related='project_activity_id.category_id.activity_type',
+    timesheet_activity_category = fields.Selection([('effective', 'Effective'), ('ineffective', 'Ineffective')],
+                                               string='Activity category',
+                                               related='project_activity_id.category',
                                                store=True)
+
+    timesheet_analytic_account_category = fields.Selection([('on_project', 'On project'),
+                                                            ('not_on_project', 'Not on project'),
+                                                            ('not_in_production', 'Not in production')],
+                                                           string='Analytic account category',
+                                                           related='account_id.category',
+                                                           store=True)
+    timesheet_on_site_activity = fields.Boolean('On site activity', related='project_activity_id.on_site_activity')
 
     timesheet_department_id = fields.Many2one('hr.department', 'Department', default=_get_default_department)
 
