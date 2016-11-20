@@ -43,14 +43,14 @@ class AccountAnalyticLine(models.Model):
 
     project_activity_id = fields.Many2one('project.activity', 'Activity')
     timesheet_activity_category = fields.Selection([('effective', 'Effective'), ('ineffective', 'Ineffective')],
-                                               string='Activity category',
+                                               string='Effectiveness category',
                                                related='project_activity_id.category',
                                                store=True)
 
     timesheet_analytic_account_category = fields.Selection([('on_project', 'On project'),
                                                             ('not_on_project', 'Not on project'),
                                                             ('not_in_production', 'Not in production')],
-                                                           string='Analytic account category',
+                                                           string='Production category',
                                                            related='account_id.category',
                                                            store=True)
     timesheet_on_site_activity = fields.Boolean('On site activity', related='project_activity_id.on_site_activity')
