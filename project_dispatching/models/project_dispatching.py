@@ -68,17 +68,6 @@ class ProjectDispatching(models.Model):
             if self.datetime_stop:
                 self.date_stop = self.datetime_stop[:10]
 
-    @api.one
-    def calculate_datetime(self):
-        objs = self.search([])
-        for obj in objs:
-            if obj.date_start:
-                obj.datetime_start = obj.date_start + ' 12:00:00'
-            if obj.date_stop:
-                obj.datetime_stop = obj.date_stop + ' 12:00:00'
-
-
-
     name = fields.Char('Name', compute=_compute_name)
     department_id = fields.Many2one('hr.department', 'Department', required=True, track_visibility='onchange')
     project_id = fields.Many2one('project.project', 'Project', compute=_get_project)
