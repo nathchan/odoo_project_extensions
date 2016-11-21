@@ -2,6 +2,20 @@
 <openerp>
     <data>
 
+        <record model="ir.ui.view" id="view_task_kanban_inherit">
+            <field name="name">project.task.kanban</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_kanban" />
+            <field name="arch" type="xml">
+                <data>
+
+                    <xpath expr="//ul[@class='oe_kanban_colorpicker']/.." position="replace">
+                    </xpath>
+
+                </data>
+            </field>
+        </record>
+
         <record id="view_task_tree_inherit" model="ir.ui.view">
             <field name="name">project.task.tree.inherit</field>
             <field name="model">project.task</field>

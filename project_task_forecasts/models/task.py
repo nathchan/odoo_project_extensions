@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api
-from openerp.exceptions import Warning
+from openerp.exceptions import Warning, ValidationError
 import datetime
 
 
@@ -34,6 +34,34 @@ class ProjectTask(models.Model):
         else:
             self.has_processes = False
 
+    @api.multi
+    def _compute_color(self):
+        for rec in self:
+            missing_goods_category = self.env['project.issue.category'].search([('name', '=', 'Missing Goods')])
+            missing_goods_A = self.env['project.issue.subcategory'].search([('name', '=', 'A Goods')])
+            missing_goods_B = self.env['project.issue.subcategory'].search([('name', '=', 'B Goods')])
+            missing_goods_C = self.env['project.issue.subcategory'].search([('name', '=', 'C Goods')])
+            missing_goods_A_B_issues_count = self.env['project.issue'].search([('task_id', '=', rec.id),
+                                                                               ('active', '=', True),
+                                                                               ('category_id', '=', missing_goods_category.id),
+                                                                               '|',
+                                                                               ('subcategory_id', '=', missing_goods_A.id),
+                                                                               ('subcategory_id', '=', missing_goods_B.id)],
+                                                                              count=True)
+            missing_goods_C_issues_count = self.env['project.issue'].search([('task_id', '=', rec.id),
+                                                                             ('active', '=', True),
+                                                                             ('category_id', '=', missing_goods_category.id),
+                                                                             ('subcategory_id', '=', missing_goods_C.id)],
+                                                                            count=True)
+
+            if missing_goods_A_B_issues_count > 0:
+                rec.color = '3'
+            elif missing_goods_C_issues_count > 0:
+                rec.color = '4'
+
+
+    color = fields.Char('Color Index', compute=_compute_color)
+
     forecast_project_id = fields.Many2one('project.project', 'Forecast project')
     forecast_start_date = fields.Date('Forecast start date')
 
@@ -48,6 +76,19 @@ class ProjectTask(models.Model):
 
     @api.multi
     def write(self, vals):
+        if 'stage_id' in vals:
+            stage_1100_1200 = self.env['project.task.type'].search([('name', '=', '1100-1200')], limit=1)
+            new_stage = self.env['project.task.type'].search([('id', '=', vals['stage_id'])], limit=1)
+            if stage_1100_1200 and new_stage and self.stage_id.id == stage_1100_1200.id:
+                if new_stage.sequence > stage_1100_1200.sequence:
+                    # provjeriti da li ima missing goods otvorenih issues
+                    missing_goods_category = self.env['project.issue.category'].search([('name', '=', 'Missing Goods')])
+                    missing_goods_issues_count = self.env['project.issue'].search([('task_id', '=', self.id),
+                                                                                   ('active', '=', True),
+                                                                                   ('category_id', '=', missing_goods_category.id)], count=True)
+                    if missing_goods_issues_count > 0:
+                        raise ValidationError('Issues with Category "Missing Goods" are still opened. Close these Issues First.')
+
         if 'stage_id' in vals:
             stage_id = vals.get('stage_id')
             process_id = self.env['project.task.stage.process'].search([('stage_id', '=', stage_id)],

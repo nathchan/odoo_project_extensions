@@ -13,6 +13,7 @@
         'project_default_stages',
     ],
     'data': [
+        'views/assets_backend.xml',
         'views/task_view.xml',
         'views/task_type_view.xml',
         'views/task_stage_forecast.xml',
