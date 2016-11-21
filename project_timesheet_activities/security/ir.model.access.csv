@@ -7,3 +7,5 @@
 "access_project_activity_manager","project.activity.manager","model_project_activity","project.group_project_manager",1,1,1,1
 "access_fleet_vehicle_employee","fleet_vehicle_access_right_employee","fleet.model_fleet_vehicle","base.group_user",1,0,0,0
 "project.access_account_analytic_account_user","account.analytic.account","analytic.model_account_analytic_account","project.group_project_user",1,1,0,0
+"hr_timesheet_sheet.access_hr_timesheet_sheet_sheet_system_employee","hr_timesheet_sheet.sheet.system.employee","model_hr_timesheet_sheet_sheet","base.group_user",1,1,1,0
+"hr_timesheet_sheet.access_hr_timesheet_sheet_sheet_user","hr_timesheet_sheet.sheet.user","model_hr_timesheet_sheet_sheet","base.group_user",1,1,1,0
