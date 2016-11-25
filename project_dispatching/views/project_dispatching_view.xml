@@ -69,8 +69,10 @@
                             <group>
                                 <field name="all_day" />
 
-                                <field name="date_start" attrs="{'invisible': [('all_day', '!=', True)]}" />
-                                <field name="date_stop" attrs="{'invisible': [('all_day', '!=', True)]}" />
+                                <field name="date_start" attrs="{'invisible': [('all_day', '!=', True)],
+                                                                 'required': [('all_day', '=', True)]}" />
+                                <field name="date_stop" attrs="{'invisible': [('all_day', '!=', True)],
+                                                                 'required': [('all_day', '=', True)]}" />
 
                                 <field name="datetime_start" attrs="{'invisible': [('all_day', '=', True)]}" />
                                 <field name="datetime_stop" attrs="{'invisible': [('all_day', '=', True)]}" />
