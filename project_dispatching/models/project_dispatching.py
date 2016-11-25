@@ -85,8 +85,8 @@ class ProjectDispatching(models.Model):
     date_start = fields.Date('From')
     date_stop = fields.Date('To')
     all_day = fields.Boolean('All day?', default=True)
-    datetime_start = fields.Datetime('From', track_visibility='onchange')
-    datetime_stop = fields.Datetime('To', track_visibility='onchange')
+    datetime_start = fields.Datetime('From', required=True, track_visibility='onchange')
+    datetime_stop = fields.Datetime('To', required=True, track_visibility='onchange')
     vehicle_id = fields.Many2one('fleet.vehicle', 'Vehicle', track_visibility='onchange')
     percent_complete = fields.Selection([(0, '0 %'),
                                         (25, '25 %'),
@@ -98,13 +98,79 @@ class ProjectDispatching(models.Model):
     issue_count = fields.Integer('Issue count', compute=_compute_issue_count)
     task_dispatching_count = fields.Integer('Task Dispatching Counter', readonly=True, default=None)
 
-    @api.constrains('date_start', 'date_stop')
+    @api.constrains('department_id', 'datetime_start', 'datetime_stop')
     def _check_dates(self):
-        start = datetime.datetime.strptime(self.date_start, tools.DEFAULT_SERVER_DATE_FORMAT) if self.date_start else False
-        end = datetime.datetime.strptime(self.date_stop, tools.DEFAULT_SERVER_DATE_FORMAT) if self.date_stop else False
+        start = datetime.datetime.strptime(self.datetime_start, tools.DEFAULT_SERVER_DATETIME_FORMAT) if self.datetime_start else False
+        end = datetime.datetime.strptime(self.datetime_stop, tools.DEFAULT_SERVER_DATETIME_FORMAT) if self.datetime_stop else False
         if start and end:
             if start > end:
                 raise e.ValidationError('Starting date must be lower than ending date.')
+
+        if self.all_day is True:
+            self.env.cr.execute("""
+                select
+                    COUNT(*)
+                from
+                    project_dispatching pd
+                where
+                    pd.id <> %s
+                      AND
+                    department_id = %s
+                      AND
+                    (
+                        (%s::TIMESTAMP::DATE <= pd.datetime_start::DATE AND %s::TIMESTAMP::DATE >= pd.datetime_start::DATE)
+                          OR
+                        (%s::TIMESTAMP::DATE <= pd.datetime_stop::DATE AND %s::TIMESTAMP::DATE >= pd.datetime_stop::DATE)
+                          OR
+                        (%s::TIMESTAMP::DATE >= pd.datetime_start::DATE AND %s::TIMESTAMP::DATE <= pd.datetime_stop::DATE)
+                    )
+            """, (self.id,
+                  self.department_id.id,
+                  self.datetime_start, self.datetime_stop,
+                  self.datetime_start, self.datetime_stop,
+                  self.datetime_start, self.datetime_stop))
+
+        else:
+            self.env.cr.execute("""
+                select
+                    COUNT(*)
+                from
+                    project_dispatching pd
+                where
+                    pd.id <> %s
+                      AND
+                    pd.department_id = %s
+                      AND
+                    (
+                      (pd.all_day = true AND (
+                            (%s::TIMESTAMP::DATE <= pd.datetime_start::DATE AND %s::TIMESTAMP::DATE >= pd.datetime_start::DATE)
+                              OR
+                            (%s::TIMESTAMP::DATE <= pd.datetime_stop::DATE AND %s::TIMESTAMP::DATE >= pd.datetime_stop::DATE)
+                              OR
+                            (%s::TIMESTAMP::DATE >= pd.datetime_start::DATE AND %s::TIMESTAMP::DATE <= pd.datetime_stop::DATE)
+                      ))
+                         OR
+                      ((TIMESTAMP %s, TIMESTAMP %s) OVERLAPS (pd.datetime_start, pd.datetime_stop))
+                    )
+
+            """, (self.id,
+                  self.department_id.id,
+                  self.datetime_start, self.datetime_stop,
+                  self.datetime_start, self.datetime_stop,
+                  self.datetime_start, self.datetime_stop,
+                  self.datetime_start, self.datetime_stop))
+
+        count = self.env.cr.fetchone()[0]
+        if count > 0:
+            raise e.ValidationError(self.department_id.name + ' is already dispatched for selected period.')
+
+    @api.multi
+    def write(self, vals):
+        if 'datetime_start' in vals:
+            vals['date_start'] = vals['datetime_start'][:10]
+        if 'datetime_stop' in vals:
+            vals['date_stop'] = vals['datetime_stop'][:10]
+        return super(ProjectDispatching, self).write(vals)
 
     def return_action_to_open_issues(self, cr, uid, ids, context=None):
         if context is None:
