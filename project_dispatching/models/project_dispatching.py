@@ -74,10 +74,10 @@ class ProjectDispatching(models.Model):
             if self.datetime_stop:
                 self.date_stop = self.datetime_stop[:10]
 
-    @api.onchange('task_id')
+    @api.depends('task_id', 'datetime_start')
     def _compute_task_dispatching_count(self):
         if self.task_id:
-            self.task_dispatching_count = self.search([('task_id', '=', self.task_id.id)], count=True)
+            self.task_dispatching_count = 1 + self.search([('task_id', '=', self.task_id.id), ('datetime_start', '<', self.datetime_start)], count=True)
         else:
             self.task_dispatching_count = None
 
@@ -102,7 +102,7 @@ class ProjectDispatching(models.Model):
     info = fields.Html('Description')
     assigned_user_id = fields.Many2one('res.users', 'Assigned to', related='task_id.user_id', readonly=True)
     issue_count = fields.Integer('Issue count', compute=_compute_issue_count)
-    task_dispatching_count = fields.Integer('Task Dispatching Counter', readonly=True, default=None)
+    task_dispatching_count = fields.Integer('Task Dispatching Counter', readonly=True, compute=_compute_task_dispatching_count)
 
     @api.constrains('department_id', 'datetime_start', 'datetime_stop')
     def _check_dates(self):
