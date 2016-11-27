@@ -53,6 +53,12 @@ class ProjectDispatching(models.Model):
             if res and res[0] and res[0]>0:
                 self.percent_complete = res[0]
 
+        if self.task_id and self.datetime_start and self.datetime_stop:
+            last_dispatch = self.search([('datetime_stop', '<', self.datetime_stop), ('task_id', '=', self.task_id.id)],
+                                        limit=1,
+                                        order='datetime_stop DESC')
+            self.department_id = last_dispatch.department_id
+
     @api.onchange('date_start', 'date_stop')
     def _onchange_date_start_date_stop(self):
         if self.date_start:
