@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, fields, api
-from openerp.exceptions import Warning, ValidationError
+from openerp import models, fields, api, tools, exceptions as e
 import datetime
 
 
@@ -17,7 +16,7 @@ class ProjectTask(models.Model):
     @api.depends('milestone_ids.actual_date')
     def _compute_stage_progress(self):
         for obj in self:
-            actuals = self.env['project.task.stage.forecast'].search_count([('task_id', '=', obj.id),
+            actuals = self.env['project.task.milestone.forecast'].search_count([('task_id', '=', obj.id),
                                                                             ('actual_date', '!=', None)])
             total = obj.milestone_count
             if not total or total == 0:
@@ -86,7 +85,7 @@ class ProjectTask(models.Model):
                                                                                    ('active', '=', True),
                                                                                    ('category_id', '=', missing_goods_category.id)], count=True)
                     if missing_goods_issues_count > 0:
-                        raise ValidationError('Issues with Category "Missing Goods" are still opened. Close these Issues First.')
+                        raise e.ValidationError('Issues with Category "Missing Goods" are still opened. Close these Issues First.')
 
         if 'stage_id' in vals:
             stage_id = vals.get('stage_id')
@@ -94,6 +93,21 @@ class ProjectTask(models.Model):
                                                                                           limit=1)
             vals.update({'stage_process_id': process_id.id})
         return super(ProjectTask, self).write(vals)
+
+    @api.model
+    def create(self, vals):
+        new = super(ProjectTask, self).create(vals)
+        forecast_tbl = self.env['project.task.milestone.forecast']
+        for milestone in new.project_id.milestone_ids:
+            data = {
+                'task_id': new.id,
+                'project_id': new.project_id.id,
+                'milestone_id': milestone.id,
+                'baseline_duration': milestone.duration,
+                'duration_forecast': milestone.duration,
+            }
+            forecast_tbl.create(data)
+        return new
 
     def copy(self, cr, uid, id, default=None, context=None):
         new_id = super(ProjectTask, self).copy(cr, uid, id, default, context)
@@ -104,6 +118,8 @@ class ProjectTask(models.Model):
                 'task_id': task_obj.id,
                 'project_id': task_obj.project_id.id,
                 'milestone_id': milestone.id,
+                'baseline_duration': milestone.duration,
+                'duration_forecast': milestone.duration,
             }
             forecast_tbl.create(cr, uid, data, context)
         return new_id
@@ -112,38 +128,62 @@ class ProjectTask(models.Model):
     def action_fill_forecast_dates(self):
         pass
         if not self.forecast_start_date:
-            raise Warning('First enter forecast start date, please.')
+            raise e.Warning('First enter forecast start date, please.')
 
 
         lines = None
         forecast_ref = self.env['project.task.milestone.forecast']
-        records_existing = forecast_ref.search([('task_id', '=', self.id),
-                                                ('project_id', '=', self.project_id.id)],
-                                               order='sequence')
+        records_existing = forecast_ref.search([('task_id', '=', self.id)], order='sequence')
 
         if records_existing and len(records_existing) > 0:
             lines = records_existing
         else:
-            milestones = self.project_id.milestone_ids
+            milestones = self.env['project.milestone'].search([('project_id', '=', self.project_id.id)],
+                                                              order='sequence')
+            if not milestones or len(milestones) < 1:
+                raise Warning('Project does not have any related milestones.')
+
             for milestone in milestones:
-                forecast_ref.sudo().create({
-                    'project_id': self.forecast_project_id.id,
+                forecast_ref.create({
+                    'project_id': self.project_id.id,
                     'task_id': self.id,
                     'milestone_id': milestone.id,
+                    'baseline_duration': milestone.duration,
+                    'duration_forecast': milestone.duration,
                 })
             lines = forecast_ref.search([('task_id', '=', self.id), ('project_id', '=', self.project_id.id)],
                                         order='sequence')
-        start_date = datetime.datetime.strptime(self.forecast_start_date, '%Y-%m-%d')
+        start_date = datetime.datetime.strptime(self.forecast_start_date, tools.DEFAULT_SERVER_DATE_FORMAT)
+
         for line in lines:
-            business_days_to_add = line.duration_forecast
+
             current_date = start_date
+
+            if line.milestone_id.predecessor_milestone_ids and len(line.milestone_id.predecessor_milestone_ids) > 0:
+                dates = []
+                for item in line.milestone_id.predecessor_milestone_ids:
+                    predecessor = lines.filtered(lambda r: r.milestone_id.id == item.id)
+                    if predecessor and len(predecessor) == 1:
+                        dates.append(predecessor.forecast_date)
+
+                if len(dates) > 0:
+                    current_date = max(datetime.datetime.strptime(date, tools.DEFAULT_SERVER_DATE_FORMAT) for date in dates)
+                else:
+                    current_date = start_date
+
+            else:
+                current_date = start_date
+
+            # TODO: recalculate duration forecast based on issues related to task/milestone
+            business_days_to_add = line.duration_forecast
+
             while business_days_to_add > 0:
                 current_date += datetime.timedelta(days=1)
                 weekday = current_date.weekday()
                 if weekday >= 5: # sunday = 6
                     continue
                 business_days_to_add -= 1
-            line.forecast_date = current_date.strftime('%Y-%m-%d')
+            line.forecast_date = current_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)
             start_date = current_date
         return True
 
@@ -155,6 +195,5 @@ class ProjectTask(models.Model):
         res['context'] = context
         res['context'].update({'default_task_id': ids[0], 'default_project_id': obj.project_id.id})
         res['context'].update({'order_by': 'sequence'})
-        res['context'].update({'group_by': 'project_id'})
         res['domain'] = [('task_id', '=', ids[0])]
         return res

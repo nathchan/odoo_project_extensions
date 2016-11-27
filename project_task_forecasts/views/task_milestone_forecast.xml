@@ -12,9 +12,10 @@
                     <field name="project_id" />
                     <field name="task_id" />
                     <field name="milestone_id" />
-                    <field name="forecast_date" />
-                    <field name="duration_forecast" />
-                    <field name="actual_date" />
+                    <field name="baseline_duration" string="BL Duration" />
+                    <field name="duration_forecast" string="Duration" />
+                    <field name="forecast_date" string="Forecast" />
+                    <field name="actual_date" string="Actual" />
                     <field name="write_uid" />
                     <field name="write_date" />
                 </tree>
@@ -56,13 +57,17 @@
                             </group>
                             <group>
                                 <field name="forecast_date" />
-                                <field name="duration_forecast" /> Days
                                 <field name="actual_date" />
                             </group>
                             <group>
                                 <field name="write_uid" readonly="1" />
                                 <field name="write_date" readonly="1" />
                             </group>
+                            <group>
+                                <field name="baseline_duration" readonly="1" />
+                                <field name="duration_forecast" />
+                            </group>
+
                         </group>
                     </sheet>
                 </form>
@@ -76,6 +81,7 @@
             <field name="arch" type="xml">
                 <search>
 
+                    <filter name="group_task_id" string="Task" context="{'group_by':'task_id'}"/>
                     <filter name="group_project_id" string="Project" context="{'group_by':'project_id'}"/>
                     <filter name="group_milestone_id" string="Milestone" context="{'group_by':'milestone_id'}"/>
                     <filter name="group_forecast_date" string="Forecast date" context="{'group_by':'forecast_date'}"/>
@@ -83,6 +89,7 @@
 
                     <field name="project_id" />
                     <field name="milestone_id" />
+                    <field name="task_id" />
                     <field name="forecast_date" />
                     <field name="actual_date" />
                     <field name="duration_forecast" />
@@ -99,6 +106,15 @@
             <field name="view_mode">tree,form</field>
         </record>
 
+
+        <record model='ir.actions.act_window' id='action_task_milestones'>
+            <field name="name">Milestones</field>
+            <field name="res_model">project.task.milestone.forecast</field>
+            <field name="search_view_id" ref="view_task_milestones_search" />
+            <field name="context">{"search_default_group_milestone_id":1}</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
 
 
     </data>

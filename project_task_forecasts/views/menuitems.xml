@@ -2,13 +2,18 @@
 <openerp>
     <data>
 
-            <menuitem name="Milestones"
-                      id="menu_project_milestones_config"
+        <menuitem name="Milestones"
+                  id="menu_project_milestones_tracking"
+                  parent="project.menu_project_management"
+                  action="action_task_milestones"
+                  sequence="30"/>
 
-                      parent="project.menu_project_config"
-                      action="action_project_milestones"
-                      sequence="20"/>
-                    <!--groups="project.project_group_manager"-->
+        <menuitem name="Milestones"
+                  id="menu_project_milestones_config"
+                  parent="project.menu_project_config"
+                  action="action_project_milestones"
+                  sequence="20"/>
+                <!--groups="project.project_group_manager"-->
     </data>
 </openerp>
 

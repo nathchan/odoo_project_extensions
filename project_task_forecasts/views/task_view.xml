@@ -55,13 +55,7 @@
 
                         </button>
 
-                        <button name="action_fill_forecast_dates"
-                                type="object"
-                                string="Calculate FC"
-                                class="oe_stat_button"
-                                icon="fa-calculator"
-                                help="calculate milestone dates for this task"
-                                />
+
 
                     </xpath>
 
@@ -78,7 +72,18 @@
                     <xpath expr="//field[@name='tag_ids']" position="after">
                         <field name="work_package" />
                         <field name="stage_progress" string="% Complete" widget="progressbar" />
-                        <field name="forecast_start_date" />
+                    </xpath>
+
+                    <xpath expr="//field[@name='tag_ids']/.." position="after">
+                        <group>
+                            <field name="forecast_start_date" />
+                            <button name="action_fill_forecast_dates"
+                                    type="object"
+                                    string="Calculate FC"
+                                    icon="fa-calculator"
+                                    help="calculate milestone dates for this task"
+                                    />
+                        </group>
                     </xpath>
 
 

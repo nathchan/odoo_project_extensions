@@ -12,5 +12,6 @@ class ProjectMilestone(models.Model):
     name = fields.Char('Name', required=True, track_visibility='onchange')
     duration = fields.Integer('Duration', required=True, default=0, track_visibility='onchange')
     predecessor_milestone_id = fields.Many2one('project.milestone', 'Predecessor', track_visibility='onchange')
-    project_id = fields.Many2one('project.project', 'Project', track_visibility='onchange')
+    predecessor_milestone_ids = fields.Many2many('project.milestone', 'milestone_predecessor_rel', 'current_milestone_id', 'predecessor_milestone_id', 'Predecessors')
+    project_id = fields.Many2one('project.project', 'Project', track_visibility='onchange', required=True)
     info = fields.Html('Decription')

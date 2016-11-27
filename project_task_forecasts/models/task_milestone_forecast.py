@@ -3,6 +3,7 @@
 from openerp import models, fields, api
 import datetime
 
+
 class ProjectTaskMilestoneForecast(models.Model):
     _name = 'project.task.milestone.forecast'
 
@@ -21,7 +22,8 @@ class ProjectTaskMilestoneForecast(models.Model):
                 while business_days_to_add > 0:
                     current_date -= datetime.timedelta(days=1)
                     weekday = current_date.weekday()
-                    if weekday >= 5: # sunday = 6
+                    if weekday >= 5:
+                        # sunday = 6
                         continue
                     business_days_to_add -= 1
                 rec.forecast_start_date = current_date.strftime('%Y-%m-%d')
@@ -55,7 +57,8 @@ class ProjectTaskMilestoneForecast(models.Model):
 
     name = fields.Char('Name', compute=_get_name)
 
-    duration_forecast = fields.Integer('Duration forecast', default=_get_default_duration)
+    baseline_duration = fields.Integer('Baseline duration', default=_get_default_duration, group_operator="avg")
+    duration_forecast = fields.Integer('Duration forecast', default=_get_default_duration, group_operator="avg")
     forecast_start_date = fields.Date('Forecast start date', compute=_compute_forecast_start_date, store=True)
 
     _sql_constraints = [

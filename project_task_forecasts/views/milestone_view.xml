@@ -10,7 +10,6 @@
                 <tree string="Milestones">
                     <field name="name"/>
                     <field name="duration"/>
-                    <field name="predecessor_milestone_id"/>
                     <field name="project_id"/>
                     <field name="sequence" />
                 </tree>
@@ -36,18 +35,20 @@
                                     <field name="duration"/>
                                     <div>Days</div>
                                 </div>
-                                <field name="predecessor_milestone_id"/>
+                                <field name="predecessor_milestone_ids" widget="many2many_tags" />
                             </group>
                             <group>
                                 <field name="active" />
                                 <field name="sequence" />
                             </group>
                         </group>
+
                         <notebook>
                             <page name="description" string="Description">
                                 <field name="info" type="html"/>
                                 <div class="oe_clear"/>
                             </page>
+
                         </notebook>
                     </sheet>
                     <div class="oe_chatter">
