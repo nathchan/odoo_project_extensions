@@ -62,6 +62,7 @@ class ProjectTask(models.Model):
     color = fields.Char('Color Index', compute=_compute_color)
 
     forecast_start_date = fields.Date('Forecast start date')
+    forecast_project_id = fields.Many2one('project.project')
 
     milestone_ids = fields.One2many('project.task.milestone.forecast', 'task_id', 'Milestones forecast')
     milestone_count = fields.Integer('Milestone count', compute=_compute_milestone_count)
