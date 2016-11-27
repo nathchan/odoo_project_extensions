@@ -33,13 +33,13 @@ class AccountAnalyticLine(models.Model):
         return dep
 
     @api.one
-    @api.depends('account_id.use_tasks', 'account_id.use_issues')
+    @api.depends('account_id')
     def _compute_project_use_task_issues(self):
         self.account_id_use_issues = self.account_id.use_issues
         self.account_id_use_tasks = self.account_id.use_tasks
 
-    account_id_use_tasks = fields.Boolean(related='account_id.use_tasks')
-    account_id_use_issues = fields.Boolean(related='account_id.use_issues')
+    account_id_use_tasks = fields.Boolean(compute=_compute_project_use_task_issues)
+    account_id_use_issues = fields.Boolean(compute=_compute_project_use_task_issues)
 
     project_activity_id = fields.Many2one('project.activity', 'Activity')
     timesheet_activity_category = fields.Selection([('effective', 'Effective'), ('ineffective', 'Ineffective')],

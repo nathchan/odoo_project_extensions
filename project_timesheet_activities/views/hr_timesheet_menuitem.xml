@@ -6,7 +6,7 @@
                   action="act_hr_timesheet_sheet_generate_timesheets_xls"
                   id="menu_act_hr_timesheet_sheet_generate_timesheets_xls"
                   parent="hr_attendance.menu_hr_time_tracking"
-                  groups="base.group_user"
+                  groups="project.group_project_user"
                   sequence="20"/>
 
 
