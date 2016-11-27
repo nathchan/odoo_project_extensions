@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+
+"access_account_analytic_account_technician","account.analytic.account.technician","analytic.model_account_analytic_account","project_security.group_project_technician",1,0,0,0
+"access_account_analytic_line_technician","account.analytic.line.technician","analytic.model_account_analytic_line","project_security.group_project_technician",1,0,0,0
+
+"access_project_project_technician","project.project.technician","project.model_project_project","project_security.group_project_technician",1,0,0,0
+"access_project_task_technician","project.task.technician","project.model_project_task","project_security.group_project_technician",1,0,0,0
+"access_project_issue_technician","project.issue.technician","project_issue.model_project_issue","project_security.group_project_technician",1,0,0,0
+"access_project_task_type_technician","project.task.type.technician","project.model_project_task_type","project_security.group_project_technician",1,0,0,0
+"access_project_task_history_technician","project.task.history.technician","project.model_project_task_history","project_security.group_project_technician",1,0,0,0
+"access_project_task_history_cumulative_technician","project.task.history.technician","project.model_project_task_history_cumulative","project_security.group_project_technician",1,0,0,0
