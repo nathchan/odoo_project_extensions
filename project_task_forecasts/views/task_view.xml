@@ -52,7 +52,16 @@
                             icon="fa-line-chart"
                             help="show the milestones for this task">
                             <field name="milestone_count" widget="statinfo" string="Milestones"/>
+
                         </button>
+
+                        <button name="action_fill_forecast_dates"
+                                type="object"
+                                string="Calculate FC"
+                                class="oe_stat_button"
+                                icon="fa-calculator"
+                                help="calculate milestone dates for this task"
+                                />
 
                     </xpath>
 
@@ -62,16 +71,6 @@
 
 
                     <xpath expr="//page[@name='description_page']" position="after">
-                        <page name="forecast_generation" string="Calculate">
-
-                            <strong>Forecast start date: </strong><field class="oe_inline" name="forecast_start_date" />
-                            <br />
-                            <br />
-
-                            <button name="action_fill_forecast_dates" type="object" string="Calculate FC" />
-                            <br/>
-                            <br/>
-                        </page>
 
                     </xpath>
 
@@ -79,6 +78,7 @@
                     <xpath expr="//field[@name='tag_ids']" position="after">
                         <field name="work_package" />
                         <field name="stage_progress" string="% Complete" widget="progressbar" />
+                        <field name="forecast_start_date" />
                     </xpath>
 
 
