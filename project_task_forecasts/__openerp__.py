@@ -11,6 +11,7 @@
     'depends': [
         'project',
         'project_default_stages',
+        'project_issue',
     ],
     'data': [
         'views/assets_backend.xml',
@@ -18,6 +19,9 @@
         'views/task_type_view.xml',
         'views/task_stage_forecast.xml',
         'views/stage_process_view.xml',
+        'views/issue_view.xml',
+        'views/milestone_view.xml',
+        'views/menuitems.xml',
         'security/ir.model.access.csv',
     ],
     'demo': [],

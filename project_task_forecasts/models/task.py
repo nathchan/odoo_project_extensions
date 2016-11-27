@@ -59,13 +59,11 @@ class ProjectTask(models.Model):
             elif missing_goods_C_issues_count > 0:
                 rec.color = '4'
 
-
     color = fields.Char('Color Index', compute=_compute_color)
 
-    forecast_project_id = fields.Many2one('project.project', 'Forecast project')
     forecast_start_date = fields.Date('Forecast start date')
 
-    milestone_ids = fields.One2many('project.task.stage.forecast', 'task_id', 'Stages forecast')
+    milestone_ids = fields.One2many('project.task.milestone.forecast', 'task_id', 'Milestones forecast')
     milestone_count = fields.Integer('Milestone count', compute=_compute_milestone_count)
     stage_progress = fields.Float('Percent complete', compute=_compute_stage_progress, store=True, group_operator="avg")
     subcontractor_id = fields.Many2one('res.partner', 'Subcontractor')
@@ -98,41 +96,41 @@ class ProjectTask(models.Model):
 
     def copy(self, cr, uid, id, default=None, context=None):
         new_id = super(ProjectTask, self).copy(cr, uid, id, default, context)
-        forecast_tbl = self.pool.get('project.task.stage.forecast')
+        forecast_tbl = self.pool.get('project.task.milestone.forecast')
         task_obj = self.pool.get('project.task').browse(cr, uid, new_id)
-        for stage in task_obj.project_id.type_ids:
+        for milestone in task_obj.project_id.milestone_ids:
             data = {
                 'task_id': task_obj.id,
                 'project_id': task_obj.project_id.id,
-                'stage_id': stage.id,
-                'sequence': task_obj.sequence
+                'milestone_id': milestone.id,
             }
             forecast_tbl.create(cr, uid, data, context)
         return new_id
 
     @api.one
     def action_fill_forecast_dates(self):
-        if not (self.forecast_project_id and self.forecast_start_date):
-            raise Warning('Please first enter project and start date.')
+        pass
+        if not self.forecast_start_date:
+            raise Warning('First enter forecast start date, please.')
 
 
         lines = None
-        forecast_ref = self.env['project.task.stage.forecast']
+        forecast_ref = self.env['project.task.milestone.forecast']
         records_existing = forecast_ref.search([('task_id', '=', self.id),
-                                                ('project_id', '=', self.forecast_project_id.id)],
+                                                ('project_id', '=', self.project_id.id)],
                                                order='sequence')
 
         if records_existing and len(records_existing) > 0:
             lines = records_existing
         else:
-            stages = self.forecast_project_id.type_ids
-            for stage in stages:
+            milestones = self.project_id.milestone_ids
+            for milestone in milestones:
                 forecast_ref.sudo().create({
                     'project_id': self.forecast_project_id.id,
                     'task_id': self.id,
-                    'stage_id': stage.id,
+                    'milestone_id': milestone.id,
                 })
-            lines = forecast_ref.search([('task_id', '=', self.id), ('project_id', '=', self.forecast_project_id.id)],
+            lines = forecast_ref.search([('task_id', '=', self.id), ('project_id', '=', self.project_id.id)],
                                         order='sequence')
         start_date = datetime.datetime.strptime(self.forecast_start_date, '%Y-%m-%d')
         for line in lines:

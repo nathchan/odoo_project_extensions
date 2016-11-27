@@ -3,14 +3,13 @@
 from openerp import models, fields, api
 import datetime
 
-class ProjectTaskStagesForecast(models.Model):
-    _name = 'project.task.stage.forecast'
-    _rec_name = 'task_id'
+class ProjectTaskMilestoneForecast(models.Model):
+    _name = 'project.task.milestone.forecast'
 
     @api.multi
     def _get_default_duration(self):
         for rec in self:
-            rec.duration_days = rec.stage_id.duration_forecast
+            rec.duration_days = rec.milestone_id.duration
 
     @api.multi
     @api.depends('forecast_date', 'duration_forecast')
@@ -30,12 +29,27 @@ class ProjectTaskStagesForecast(models.Model):
     @api.multi
     def _get_name(self):
         for rec in self:
-            rec.name = rec.stage_id.name
+            rec.name = ''
+            if rec.milestone_id:
+                rec.name += 'Milestone ' + str(rec.milestone_id.name)
+            if rec.task_id:
+                rec.name += ' - Task ' + str(rec.task_id.name)
 
+    @api.multi
+    def _compute_issue_count(self):
+        for obj in self:
+            if obj.task_id:
+                obj.issue_count = self.env['project.issue'].search_count([('task_id', '=', obj.task_id.id)])
+            else:
+                obj.issue_count = 0
+
+    issue_count = fields.Integer('Issue Count', compute=_compute_issue_count)
     project_id = fields.Many2one('project.project', 'Project', required=True)
     task_id = fields.Many2one('project.task', 'Task', required=True, ondelete='cascade')
-    sequence = fields.Integer('Sequence', related='stage_id.sequence', store=True)
-    stage_id = fields.Many2one('project.task.type', 'Stage', required=True, ondelete='cascade')
+    sequence = fields.Integer('Sequence', related='milestone_id.sequence', store=True)
+
+    milestone_id = fields.Many2one('project.milestone', 'Milestone', required=True, ondelete='restrict')
+
     forecast_date = fields.Date('Forecast end date')
     actual_date = fields.Date('Actual end date')
 
@@ -45,5 +59,5 @@ class ProjectTaskStagesForecast(models.Model):
     forecast_start_date = fields.Date('Forecast start date', compute=_compute_forecast_start_date, store=True)
 
     _sql_constraints = [
-        ('unique_task_stage', 'unique(task_id, stage_id)', 'Combination of task and milestone must be unique!')
+        ('unique_task_milestone', 'unique(task_id, milestone_id)', 'Combination of task and milestone must be unique!')
     ]

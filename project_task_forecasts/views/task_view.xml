@@ -64,12 +64,6 @@
                     <xpath expr="//page[@name='description_page']" position="after">
                         <page name="forecast_generation" string="Calculate">
 
-                            <br />
-                            <br />
-                            <strong>Project: </strong><field class="oe_inline" name="forecast_project_id" />
-                            <br />
-                            <br />
-
                             <strong>Forecast start date: </strong><field class="oe_inline" name="forecast_start_date" />
                             <br />
                             <br />
