@@ -1,7 +1,7 @@
 "id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
 "access_project_milestone_employee","project.milestone.employee","model_project_milestone","base.group_user",1,0,0,0
 "access_project_milestone_manager","project.milestone.manager","model_project_milestone","project.group_project_manager",1,1,1,0
-"access_project_task_stage_forecast_user","project.task.stage.forecast.user","model_project_task_stage_forecast","project.group_project_user",1,0,0,0
-"access_project_task_stage_forecast_manager","project.task.stage.forecast.manager","model_project_task_stage_forecast","project.group_project_manager",1,1,1,0
+"access_project_task_milestone_forecast_user","project.task.milestone.forecast.user","model_project_task_milestone_forecast","project.group_project_user",1,0,0,0
+"access_project_task_milestone_forecast_manager","project.task.milestone.forecast.manager","model_project_task_milestone_forecast","project.group_project_manager",1,1,1,0
 "access_project_task_stage_process_user","project.task.stage.process.user","model_project_task_stage_process","project.group_project_user",1,0,0,0
 "access_project_task_stage_process_manager","project.task.stage.process.manager","model_project_task_stage_process","project.group_project_manager",1,1,1,0
