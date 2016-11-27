@@ -14,6 +14,7 @@
         'fleet',
         'project_timesheet_activities',
         'project_task_issues',
+        'project_security',
     ],
     'data': [
         'views/project_dispatching_view.xml',
