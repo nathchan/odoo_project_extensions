@@ -60,6 +60,9 @@
                     <xpath expr="//field[@name='stage_id']" position="after">
                         <field name="alert_material_order_due_soon" invisible="1" />
                         <field name="alert_material_order_overdue" invisible="1" />
+                        <field name="planning_package" invisible="1" />
+                        <field name="site_acquisition_package" invisible="1" />
+                        <field name="civil_works_package" invisible="1" />
                     </xpath>
 
                     <xpath expr="//tree" position="attributes">
