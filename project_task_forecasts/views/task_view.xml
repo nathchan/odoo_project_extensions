@@ -82,6 +82,7 @@
                                     string="Calculate FC"
                                     icon="fa-calculator"
                                     help="calculate milestone dates for this task"
+                                    confirm="Are you sure?"
                                     />
                         </group>
                     </xpath>
