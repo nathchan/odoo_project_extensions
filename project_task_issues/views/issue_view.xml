@@ -80,7 +80,12 @@
             <field name="arch" type="xml">
                 <data>
 
+                    <xpath expr="//tree" position="attributes">
+                        <attribute name="decoration-muted">active == False</attribute>
+                    </xpath>
+
                     <xpath expr="//field[@name='id']" position="after">
+                        <field name="active" invisible="1" />
                         <field name="category_id" />
                         <field name="subcategory_id" />
                         <field name="task_id" />
