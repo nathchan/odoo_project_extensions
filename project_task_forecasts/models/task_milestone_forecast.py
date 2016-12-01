@@ -70,7 +70,7 @@ class ProjectTaskMilestoneForecast(models.Model):
         for obj in self:
             if obj.task_id:
                 obj.issue_count = self.env['project.issue'].search([('task_id', '=', obj.task_id.id),
-                                                                    ('milestone_id', '=', obj.milestone_id.id),
+                                                                    ('milestone_id', '=', obj.id),
                                                                     '|',
                                                                     ('active', '=', True),
                                                                     ('active', '=', False)],
@@ -299,7 +299,7 @@ class ProjectTaskMilestoneForecast(models.Model):
 
             if self.task_id and self.milestone_id and self.project_id:
                 issue_count = self.env['project.issue'].search([('task_id', '=', self.task_id.id),
-                                                                ('milestone_id', '=', self.milestone_id.id),
+                                                                ('milestone_id', '=', self.id),
                                                                 ('project_id', '=', self.project_id.id),
                                                                 '|',
                                                                 ('active', '=', True),
@@ -335,11 +335,11 @@ class ProjectTaskMilestoneForecast(models.Model):
         obj = self.browse(cr, uid, ids[0], context)
         res = self.pool.get('ir.actions.act_window').for_xml_id(cr, uid, 'project_task_issues', 'project_issues_show_action', context=context)
         res['context'] = context
-        res['context'].update({'default_task_id': obj.task_id.id,
-                               'default_project_id': obj.project_id.id,
-                               'default_milestone_id': obj.milestone_id.id})
+        res['context'].update({'default_project_id': obj.project_id.id,
+                               'default_task_id': obj.task_id.id,
+                               'default_milestone_id': obj.id})
         res['domain'] = [('task_id', '=', obj.task_id.id),
-                         ('milestone_id', '=', obj.milestone_id.id),
+                         ('milestone_id', '=', obj.id),
                          '|',
                          ('active', '=', True),
                          ('active', '=', False)]
