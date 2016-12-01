@@ -7,7 +7,7 @@
             <field name="name">project.task.milestone.forecast.tree</field>
             <field name="model">project.task.milestone.forecast</field>
             <field name="arch" type="xml">
-                <tree string="Milestones" default_order="sequence">
+                <tree string="Milestones">
                     <field name="sequence" invisible="1" />
                     <field name="project_id" />
                     <field name="task_id" />

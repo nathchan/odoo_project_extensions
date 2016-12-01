@@ -8,6 +8,7 @@ class ProjectTaskMilestoneForecast(models.Model):
     _name = 'project.task.milestone.forecast'
     _inherit = ['mail.thread', 'ir.needaction_mixin']
     _rec_name = 'milestone_id'
+    _order = 'sequence'
 
     @api.multi
     def _get_default_duration(self):
