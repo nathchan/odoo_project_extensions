@@ -8,7 +8,7 @@
             <field name="model">project.task.milestone.forecast</field>
             <field name="arch" type="xml">
                 <tree string="Milestones">
-                    <field name="sequence" invisible="1" />
+                    <field name="sequence_order" invisible="1" />
                     <field name="project_id" />
                     <field name="task_id" />
                     <field name="milestone_id" />
@@ -18,6 +18,7 @@
                     <field name="actual_date" string="Actual" />
                     <field name="forecast_week" string="FC Week" />
                     <field name="actual_week" string="AC Week" />
+                    <field name="same_week_tasks_count" />
                     <field name="write_uid" />
                     <field name="write_date" />
                 </tree>
@@ -61,7 +62,7 @@
                         <group col="2">
                             <group>
                                 <field name="project_id" readonly="1" />
-                                <field name="sequence" invisible="1" />
+                                <field name="sequence_order" invisible="1" />
                                 <field name="task_id" readonly="1" />
                                 <field name="milestone_id" readonly="1" />
 
@@ -70,8 +71,8 @@
                             </group>
                             <group col="1">
                                 <group>
-                                    <field name="forecast_date" attrs="{'readonly': [('actual_date', '!=', False)]}" />
-                                    <field name="actual_date" />
+                                    <field name="forecast_date" string="Forecast" attrs="{'readonly': [('actual_date', '!=', False)]}" />
+                                    <field name="actual_date" string="Actual"/>
                                     <field name="baseline_duration" readonly="1" />
                                     <field name="duration_forecast" attrs="{'readonly': [('actual_date', '!=', False)]}" />
                                 </group>
@@ -83,6 +84,11 @@
                             </group>
 
                         </group>
+                        <notebook>
+                            <page name="predecessors" string="Predecessors">
+                                <field name="predecessors_forecast_actual" />
+                            </page>
+                        </notebook>
                     </sheet>
                     <div class="oe_chatter">
                         <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>

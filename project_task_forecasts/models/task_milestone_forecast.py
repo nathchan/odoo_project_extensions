@@ -8,7 +8,7 @@ class ProjectTaskMilestoneForecast(models.Model):
     _name = 'project.task.milestone.forecast'
     _inherit = ['mail.thread', 'ir.needaction_mixin']
     _rec_name = 'milestone_id'
-    _order = 'sequence'
+    _order = 'sequence_order'
 
     @api.multi
     def _get_default_duration(self):
@@ -88,6 +88,8 @@ class ProjectTaskMilestoneForecast(models.Model):
                 week = str(week_no) if week_no > 9 else '0' + str(week_no)
                 year = str(fc.isocalendar()[0]) + '-W'
                 rec.forecast_week = year + week
+            else:
+                rec.forecast_week = ''
 
             if rec.actual_date:
                 ac = datetime.datetime.strptime(rec.actual_date, tools.DEFAULT_SERVER_DATE_FORMAT)
@@ -95,13 +97,48 @@ class ProjectTaskMilestoneForecast(models.Model):
                 week = str(week_no) if week_no > 9 else '0' + str(week_no)
                 year = str(ac.isocalendar()[0]) + '-W'
                 rec.actual_week = year + week
+            else:
+                rec.actual_week = ''
 
+    @api.one
+    def _compute_predecessors_forecast_actual(self):
+        out = '<div> <hr/>'
+        if self.milestone_id and self.milestone_id.predecessor_milestone_ids and len(self.milestone_id.predecessor_milestone_ids) > 0:
+            for line in self.milestone_id.predecessor_milestone_ids:
+                item = self.search([('task_id', '=', self.task_id.id), ('milestone_id', '=', line.id)])
+                if item:
+                    if item.forecast_date:
+                        out += '<h3>' + str(item.milestone_id.name) + ' FC: ' + datetime.datetime.strptime(item.forecast_date, tools.DEFAULT_SERVER_DATE_FORMAT).strftime('%d.%m.%Y') + '</h3>'
+                    if item.actual_date:
+                        out += '<h3>' + str(item.milestone_id.name) + ' AC: ' + datetime.datetime.strptime(item.actual_date, tools.DEFAULT_SERVER_DATE_FORMAT).strftime('%d.%m.%Y') + '</h3>'
+                    out += '<hr/>'
 
+        out += '</div>'
+        self.predecessors_forecast_actual = out
 
+    @api.multi
+    def _compute_same_week_tasks_count(self):
+        for rec in self:
+            if rec.forecast_date:
+                sql = """ select
+                            count(*)
+                          from
+                            project_task_milestone_forecast
+                          where
+                            id <> %s
+                            and EXTRACT(YEAR FROM forecast_date) = EXTRACT(YEAR FROM DATE %s)
+                            and EXTRACT(WEEK FROM forecast_date) = EXTRACT(WEEK FROM DATE %s)"""
+                self.env.cr.execute(sql, (rec.id, rec.forecast_date, rec.forecast_date,))
+                rec.same_week_tasks_count = self.env.cr.fetchone()[0]
+            else:
+                0
+
+    same_week_tasks_count = fields.Integer('Task FC in same week', compute=_compute_same_week_tasks_count)
+    predecessors_forecast_actual = fields.Html('Predecessors', compute=_compute_predecessors_forecast_actual)
     issue_count = fields.Integer('Issue Count', compute=_compute_issue_count)
     project_id = fields.Many2one('project.project', 'Project', required=True, track_visibility='onchange')
     task_id = fields.Many2one('project.task', 'Task', required=True, ondelete='cascade', track_visibility='onchange')
-    sequence = fields.Integer('Sequence', related='milestone_id.sequence', store=True)
+    sequence_order = fields.Integer('Sequence', related='milestone_id.sequence', store=True)
 
     milestone_id = fields.Many2one('project.milestone', 'Milestone', required=True, ondelete='restrict', track_visibility='onchange')
 
@@ -125,8 +162,8 @@ class ProjectTaskMilestoneForecast(models.Model):
     @api.one
     def calculate_forecast(self, vals):
         future_milestones = self.env['project.task.milestone.forecast'].search([('task_id', '=', self.task_id.id),
-                                                                                ('sequence', '>', self.sequence)],
-                                                                               order='sequence')
+                                                                                ('sequence_order', '>', self.sequence_order)],
+                                                                               order='sequence_order')
 
         if len(future_milestones) == 0:
             return True
@@ -147,7 +184,7 @@ class ProjectTaskMilestoneForecast(models.Model):
             if milestone.milestone_id.predecessor_milestone_ids and len(milestone.milestone_id.predecessor_milestone_ids) > 0:
                 dates = []
                 all_milestones = self.env['project.task.milestone.forecast'].search([('task_id', '=', self.task_id.id)],
-                                                                                    order='sequence')
+                                                                                    order='sequence_order')
                 for item in milestone.milestone_id.predecessor_milestone_ids:
                     predecessor = all_milestones.filtered(lambda r: r.milestone_id.id == item.id)
                     if predecessor and len(predecessor) == 1:
@@ -189,6 +226,13 @@ class ProjectTaskMilestoneForecast(models.Model):
                             changes and update only one of these two fields.')
 
         if 'actual_date' in vals and vals['actual_date'] is not False:
+            opened_issues = self.env['project.issue'].search([('task_id', '=', self.task_id.id),
+                                                              ('milestone_id', '=', self.id),
+                                                              ('active', '=', True)], count=True)
+            if opened_issues > 0:
+                raise e.ValidationError('There is one or more opened issues related to this milestone. Please \
+                        close all issues before setting Actual date.')
+
             if 'forecast_date' in vals:
                 forecast = vals['forecast_date']
             else:
