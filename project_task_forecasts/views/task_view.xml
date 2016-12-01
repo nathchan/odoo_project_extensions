@@ -75,7 +75,7 @@
                     </xpath>
 
                     <xpath expr="//field[@name='tag_ids']/.." position="after">
-                        <group>
+                        <group attrs="{'invisible': [('milestone_count', '>', 0)]}">
                             <field name="forecast_start_date" />
                             <button name="action_fill_forecast_dates"
                                     type="object"
