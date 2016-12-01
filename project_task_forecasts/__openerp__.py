@@ -12,6 +12,7 @@
         'project',
         'project_default_stages',
         'project_issue',
+        'project_task_issues',
     ],
     'data': [
         'views/assets_backend.xml',

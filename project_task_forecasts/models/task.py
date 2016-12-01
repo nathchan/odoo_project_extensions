@@ -183,8 +183,13 @@ class ProjectTask(models.Model):
                 if weekday >= 5: # sunday = 6
                     continue
                 business_days_to_add -= 1
-            line.forecast_date = current_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)
+            data = {
+                'force_update': True,
+                'forecast_date': current_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT),
+            }
+            line.write(data)
             start_date = current_date
+
         return True
 
     def return_action_to_open_milestones(self, cr, uid, ids, context=None):

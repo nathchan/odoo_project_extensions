@@ -16,6 +16,8 @@
                     <field name="duration_forecast" string="Duration" />
                     <field name="forecast_date" string="Forecast" />
                     <field name="actual_date" string="Actual" />
+                    <field name="forecast_week" string="FC Week" />
+                    <field name="actual_week" string="AC Week" />
                     <field name="write_uid" />
                     <field name="write_date" />
                 </tree>
@@ -27,6 +29,14 @@
             <field name="model">project.task.milestone.forecast</field>
             <field name="arch" type="xml">
                 <form string="Milestone">
+                    <header>
+                        <button name="calculate_forecast"
+                                type="object"
+                                string="Calculate FC"
+                                icon="fa-calculator"
+                                confirm="Recalculate milestone forecasts?"
+                                />
+                    </header>
                     <sheet>
 
                         <div class="oe_button_box" name="button_box">
@@ -54,22 +64,30 @@
                                 <field name="sequence" invisible="1" />
                                 <field name="task_id" readonly="1" />
                                 <field name="milestone_id" readonly="1" />
-                            </group>
-                            <group>
-                                <field name="forecast_date" />
-                                <field name="actual_date" />
-                            </group>
-                            <group>
+
                                 <field name="write_uid" readonly="1" />
                                 <field name="write_date" readonly="1" />
                             </group>
-                            <group>
-                                <field name="baseline_duration" readonly="1" />
-                                <field name="duration_forecast" />
+                            <group col="1">
+                                <group>
+                                    <field name="forecast_date" attrs="{'readonly': [('actual_date', '!=', False)]}" />
+                                    <field name="actual_date" />
+                                    <field name="baseline_duration" readonly="1" />
+                                    <field name="duration_forecast" attrs="{'readonly': [('actual_date', '!=', False)]}" />
+                                </group>
+
+                                <group>
+                                    <field name="forecast_week" readonly="1" />
+                                    <field name="actual_week" readonly="1" />
+                                </group>
                             </group>
 
                         </group>
                     </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
                 </form>
             </field>
         </record>
