@@ -133,7 +133,7 @@ class ProjectTask(models.Model):
 
         lines = None
         forecast_ref = self.env['project.task.milestone.forecast']
-        records_existing = forecast_ref.search([('task_id', '=', self.id)], order='sequence')
+        records_existing = forecast_ref.search([('task_id', '=', self.id)], order='sequence_order')
 
         if records_existing and len(records_existing) > 0:
             lines = records_existing
@@ -152,7 +152,7 @@ class ProjectTask(models.Model):
                     'duration_forecast': milestone.duration,
                 })
             lines = forecast_ref.search([('task_id', '=', self.id), ('project_id', '=', self.project_id.id)],
-                                        order='sequence')
+                                        order='sequence_order')
         start_date = datetime.datetime.strptime(self.forecast_start_date, tools.DEFAULT_SERVER_DATE_FORMAT)
 
         for line in lines:
@@ -199,6 +199,6 @@ class ProjectTask(models.Model):
         res = self.pool.get('ir.actions.act_window').for_xml_id(cr, uid, 'project_task_forecasts', 'view_task_milestones_show_action', context=context)
         res['context'] = context
         res['context'].update({'default_task_id': ids[0], 'default_project_id': obj.project_id.id})
-        res['context'].update({'order_by': 'sequence'})
+        res['context'].update({'order_by': 'sequence_order'})
         res['domain'] = [('task_id', '=', ids[0])]
         return res
