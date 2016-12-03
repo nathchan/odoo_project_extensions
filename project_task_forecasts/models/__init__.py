@@ -5,3 +5,4 @@ import task_type
 import issue
 import milestone
 import project
+import export_milestones_log

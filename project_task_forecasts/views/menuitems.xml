@@ -13,7 +13,14 @@
                   parent="project.menu_project_config"
                   action="action_project_milestones"
                   sequence="20"/>
-                <!--groups="project.project_group_manager"-->
+
+        <menuitem name="Export Milestones"
+                  id="menu_project_milestones_export"
+                  parent="project.menu_project_management"
+                  action="action_project_export_milestones"
+                  sequence="40"/>
+
+
     </data>
 </openerp>
 

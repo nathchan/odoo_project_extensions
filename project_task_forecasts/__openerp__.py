@@ -22,6 +22,8 @@
         'views/stage_process_view.xml',
         'views/issue_view.xml',
         'views/milestone_view.xml',
+        'views/project_view.xml',
+        'wizard/export_milestones_view.xml',
         'views/menuitems.xml',
         'security/ir.model.access.csv',
     ],

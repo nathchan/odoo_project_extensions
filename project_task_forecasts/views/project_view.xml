@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- Project form -->
+        <record id="edit_project_form_inherit" model="ir.ui.view">
+            <field name="name">project.project.form</field>
+            <field name="model">project.project</field>
+            <field name="inherit_id" ref="project.edit_project" />
+            <field name="arch" type="xml">
+                <data>
+
+                    <xpath expr="//field[@name='sequence']" position="after">
+                        <field name="project_code" />
+                        <field name="project_wp_code" />
+                    </xpath>
+
+                </data>
+            </field>
+        </record>
+
+    </data>
+</openerp>
