@@ -12,7 +12,7 @@ from babel.dates import format_datetime
 
 def print_date(date):
     dayy = datetime.datetime.strptime(date, tools.DEFAULT_SERVER_DATE_FORMAT)
-    res = dayy.strftime("%d-%b-%y")
+    res = format_datetime(dayy, format="d-MMM-yy", locale="en")
     return res
 
 class ExportMilestonesWizard(models.TransientModel):
@@ -79,7 +79,20 @@ class ExportMilestonesWizard(models.TransientModel):
             for line in lines:
                 n += 1
                 ws['C'+str(n)] = line.task_id.name
-                ws['D'+str(n)] = line.task_id.work_package if line.task_id.work_package else '--- WP ID is missing ---'
+
+
+                field = line.milestone_id.export_task_wp_code
+                wp_code = False
+                if field == 'sa':
+                    wp_code = line.task_id.sa_work_package_code
+                elif field == 'cw':
+                    wp_code = line.task_id.cw_work_package_code
+                elif field == 'ti':
+                    wp_code = line.task_id.ti_work_package_code
+                if not wp_code:
+                    wp_code = '--- WP ID is missing ---'
+
+                ws['D'+str(n)] = wp_code
                 ws['E'+str(n)] = print_date(line.forecast_date) if line.forecast_date else ''
 
 
