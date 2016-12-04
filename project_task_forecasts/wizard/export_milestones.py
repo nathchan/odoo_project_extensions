@@ -58,7 +58,7 @@ class ExportMilestonesWizard(models.TransientModel):
             # ws = wb.create_sheet(0, milestone.name)
             # LOCAL VERSION
             # ws = wb.create_sheet(milestone.name, 0)
-            ws = wb.create_sheet(0, milestone.name)
+            ws = wb.create_sheet(milestone.name, 0)
 
             ws['A1'] = 'Project ID'
             ws['A2'] = this.project_id.project_code
@@ -71,9 +71,9 @@ class ExportMilestonesWizard(models.TransientModel):
             ws['E1'] = milestone.name
             ws['E3'] = 'Forecast'
 
-
             lines = self.env['project.task.milestone.forecast'].search([('project_id', '=', this.project_id.id),
                                                                         ('milestone_id', '=', milestone.id),
+                                                                        ('forecast_date', '!=', False),
                                                                         ('write_date', '>=', this.timestamp)])
             n = 3
             for line in lines:

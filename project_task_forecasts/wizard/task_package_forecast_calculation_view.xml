@@ -20,18 +20,19 @@
                         <div states="choose">
                             <label for="project_id" />
                             <field name="project_id" required="1" options="{'no_open': True, 'no_create': True}"/>
-                            <label for="task_package_id" />
-                            <field name="task_package_id" required="1" options="{'no_open': True, 'no_create': True}"/>
+                            <label for="package_id" />
+                            <field name="package_id" required="1" options="{'no_open': True, 'no_create': True}"/>
                             <label for="forecast_date" />
                             <field name="forecast_date" required="1"/>
                         </div>
                         <div states="get">
-                            <h2>Milestone forecast calculation completed!</h2>
+                            <h2>Milestone forecast calculation for package <field name="package_id" readonly="1"/> completed.</h2>
+                            <p>System updated <field name="updated_count"/> tasks.</p>
                         </div>
 
         			</sheet>
         			<footer states='choose'>
-                        <button name="get_report" context="" string="Calculate FC" icon="fa-calculator" type="object" default_focus="1" class="oe_highlight"/>
+                        <button name="do_calculations" confirm="Are you sure?" string="Calculate FC" icon="fa-calculator" type="object" default_focus="1" class="oe_highlight"/>
                         or
                         <button string="Cancel" class="oe_link" special="cancel" />
                     </footer>

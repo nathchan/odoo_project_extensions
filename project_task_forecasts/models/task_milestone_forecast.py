@@ -143,9 +143,9 @@ class ProjectTaskMilestoneForecast(models.Model):
     milestone_id = fields.Many2one('project.milestone', 'Milestone', required=True, ondelete='restrict', track_visibility='onchange')
 
     force_update = fields.Boolean('Force update', default=False)
-    forecast_date = fields.Date('Forecast end date', track_visibility='onchange')
+    forecast_date = fields.Date('Forecast date', track_visibility='onchange')
     forecast_week = fields.Char('Forecast week', track_visibility='onchange', compute=_compute_weeks, store=True)
-    actual_date = fields.Date('Actual end date', track_visibility='onchange')
+    actual_date = fields.Date('Actual date', track_visibility='onchange')
     actual_week = fields.Char('Actual week', track_visibility='onchange', compute=_compute_weeks, store=True)
 
     name = fields.Char('Name', compute=_get_name)
@@ -162,6 +162,7 @@ class ProjectTaskMilestoneForecast(models.Model):
     @api.one
     def calculate_forecast(self, vals):
         future_milestones = self.env['project.task.milestone.forecast'].search([('task_id', '=', self.task_id.id),
+                                                                                ('project_id', '=', self.project_id.id),
                                                                                 ('sequence_order', '>', self.sequence_order)],
                                                                                order='sequence_order')
 
@@ -183,7 +184,8 @@ class ProjectTaskMilestoneForecast(models.Model):
 
             if milestone.milestone_id.predecessor_milestone_ids and len(milestone.milestone_id.predecessor_milestone_ids) > 0:
                 dates = []
-                all_milestones = self.env['project.task.milestone.forecast'].search([('task_id', '=', self.task_id.id)],
+                all_milestones = self.env['project.task.milestone.forecast'].search([('task_id', '=', self.task_id.id),
+                                                                                     ('project_id', '=', self.project_id.id)],
                                                                                     order='sequence_order')
                 for item in milestone.milestone_id.predecessor_milestone_ids:
                     predecessor = all_milestones.filtered(lambda r: r.milestone_id.id == item.id)

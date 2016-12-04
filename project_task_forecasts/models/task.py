@@ -133,7 +133,8 @@ class ProjectTask(models.Model):
 
         lines = None
         forecast_ref = self.env['project.task.milestone.forecast']
-        records_existing = forecast_ref.search([('task_id', '=', self.id)], order='sequence_order')
+        records_existing = forecast_ref.search([('task_id', '=', self.id),
+                                                ('project_id', '=', self.project_id.id)], order='sequence_order')
 
         if records_existing and len(records_existing) > 0:
             lines = records_existing
