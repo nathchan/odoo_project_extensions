@@ -219,13 +219,15 @@ class ProjectTaskMilestoneForecast(models.Model):
     def write(self, vals):
 
         if 'forecast_date' in vals and vals['forecast_date'] is not False \
-                and 'duration_forecast' in vals and vals['duration_forecast'] is not False:
+                and 'duration_forecast' in vals and vals['duration_forecast'] is not False \
+                and ('force_update' not in vals or vals['force_update'] is False):
 
             raise e.ValidationError('Forecast date end and Duration forecast updated together and system can not \
                             determine which value to use for calculation of future forecasts. Please discard current \
                             changes and update only one of these two fields.')
 
-        if 'actual_date' in vals and vals['actual_date'] is not False:
+        if 'actual_date' in vals and vals['actual_date'] is not False\
+                and ('force_update' not in vals or vals['force_update'] is False):
             opened_issues = self.env['project.issue'].search([('task_id', '=', self.task_id.id),
                                                               ('milestone_id', '=', self.id),
                                                               ('active', '=', True)], count=True)
