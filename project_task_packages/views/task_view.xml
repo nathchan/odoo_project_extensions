@@ -8,6 +8,9 @@
             <field name="inherit_id" ref="project.view_task_form2"/>
             <field name="arch" type="xml">
                 <data>
+                    <xpath expr="//field[@name='tag_ids']" position="after">
+                        <field name="task_package_id" />
+                    </xpath>
 
                     <xpath expr="//field[@name='planned_hours']" position="after">
                         <field name="cw_percent_complete" />
@@ -21,11 +24,11 @@
                                 <field name="civil_works_package" />
                             </group>
 
-                            <!--<group col="2" string="Goods ordering dates">-->
-                                <!--<field name="a_goods_ordered_date" />-->
-                                <!--<field name="b_goods_ordered_date" />-->
-                                <!--<field name="c_goods_ordered_date" />-->
-                            <!--</group>-->
+                            <group col="2" string="Work package IDs">
+                                <field name="sa_work_package_code" />
+                                <field name="cw_work_package_code" />
+                                <field name="ti_work_package_code" />
+                            </group>
                         </group>
                     </xpath>
 

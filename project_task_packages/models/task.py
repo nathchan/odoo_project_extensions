@@ -43,6 +43,12 @@ class ProjectTask(models.Model):
     b_goods_ordered_date = fields.Date('B Goods Ordered')
     c_goods_ordered_date = fields.Date('C Goods Ordered')
 
+    task_package_id = fields.Many2one('project.task.package', 'Task package')
+
+    sa_work_package_code = fields.Char('SA WP ID')
+    cw_work_package_code = fields.Char('CW WP ID')
+    ti_work_package_code = fields.Char('TI WP ID')
+
     planning_package = fields.Selection([(1, 'Planning package for equipment swap'),
                                          (2, 'Planning package small'),
                                          (3, 'Planning package medium'),

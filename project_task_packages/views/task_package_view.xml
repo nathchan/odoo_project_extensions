@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+
+        <record id="view_task_package_tree" model="ir.ui.view">
+            <field name="name">project.task.package.tree</field>
+            <field name="model">project.task.package</field>
+            <field name="arch" type="xml">
+                <tree editable="top">
+                    <field name="name" />
+                    <field name="info" />
+                </tree>
+            </field>
+        </record>
+
+
+        <record model='ir.actions.act_window' id='project_task_package_action'>
+            <field name="name">Task packages</field>
+            <field name="res_model">project.task.package</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+
+    </data>
+</openerp>

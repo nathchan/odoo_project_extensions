@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <menuitem name="Task packages"
+                  id="menu_project_task_package_config"
+                  parent="project.menu_project_config"
+                  action="project_task_package_action"
+                  sequence="20"/>
+
+    </data>
+</openerp>
