@@ -15,6 +15,9 @@ class ProjectMilestone(models.Model):
     predecessor_milestone_ids = fields.Many2many('project.milestone', 'milestone_predecessor_rel', 'current_milestone_id', 'predecessor_milestone_id', 'Predecessors')
     project_id = fields.Many2one('project.project', 'Project', track_visibility='onchange', required=True)
     info = fields.Html('Decription')
+    export_task_wp_code = fields.Selection([('sa', 'SA'),
+                                            ('cw', 'CW'),
+                                            ('ti', 'TI')], string='Work Package for export')
 
     _sql_constraints = [
         ('unique_project_milestone', 'unique(name, project_id)', 'Combination of project and milestone name must be unique!')

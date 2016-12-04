@@ -20,6 +20,11 @@
                   action="action_project_export_milestones"
                   sequence="40"/>
 
+        <menuitem name="Package FC calculation"
+                  id="menu_project_task_package_forecast_calculation"
+                  parent="project.menu_project_management"
+                  action="action_project_task_package_forecast_calculation"
+                  sequence="40"/>
 
     </data>
 </openerp>

@@ -13,6 +13,7 @@
         'project_default_stages',
         'project_issue',
         'project_task_issues',
+        'project_task_packages',
     ],
     'data': [
         'views/assets_backend.xml',
@@ -24,6 +25,7 @@
         'views/milestone_view.xml',
         'views/project_view.xml',
         'wizard/export_milestones_view.xml',
+        'wizard/task_package_forecast_calculation_view.xml',
         'views/menuitems.xml',
         'security/ir.model.access.csv',
     ],

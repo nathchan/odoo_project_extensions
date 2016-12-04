@@ -36,6 +36,7 @@
                                     <div>Days</div>
                                 </div>
                                 <field name="predecessor_milestone_ids" widget="many2many_tags" />
+                                <field name="export_task_wp_code" />
                             </group>
                             <group>
                                 <field name="active" />
