@@ -17,15 +17,23 @@ class TaskPackageForecastCalculationWizard(models.TransientModel):
     def do_calculations(self):
         this = self
 
-        if not this.project_id or not this.package_id or not this.forecast_date:
-            raise e.ValidationError('First select project, package and date.')
+        # if not this.project_id or not this.package_id or not this.forecast_date:
+        #     raise e.ValidationError('First select project, package and date.')
 
-        tasks = self.env['project.task'].search([('project_id', '=', this.project_id.id),
-                                                 ('task_package_id', '=', this.package_id.id)])
-
+        project_SA = self.env['project.project'].search([('name', '=', 'Sprint SA')], limit=1)
+        new_milestone = self.env['project.milestone'].search([('name', '=', '0900')], limit=1)
+        tasks = self.env['project.task'].search([('project_id', '=', project_SA.id)])
         for task in tasks:
-            task.forecast_start_date = this.forecast_date
-            task.action_fill_forecast_dates()
+            data = {
+                'task_id': task.id,
+                'project_id': task.project_id.id,
+                'milestone_id': new_milestone.id,
+                'baseline_duration': new_milestone.duration,
+                'duration_forecast': new_milestone.duration,
+            }
+            milestone = self.env['project.task.milestone.forecast'].create(data)
+
+
 
         self.write({
             'state': 'get',

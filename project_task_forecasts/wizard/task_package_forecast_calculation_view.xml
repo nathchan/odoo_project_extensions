@@ -18,12 +18,12 @@
                         </p>
 
                         <div states="choose">
-                            <label for="project_id" />
-                            <field name="project_id" required="1" options="{'no_open': True, 'no_create': True}"/>
-                            <label for="package_id" />
-                            <field name="package_id" required="1" options="{'no_open': True, 'no_create': True}"/>
-                            <label for="forecast_date" />
-                            <field name="forecast_date" required="1"/>
+                            <!--<label for="project_id" />-->
+                            <!--<field name="project_id" required="1" options="{'no_open': True, 'no_create': True}"/>-->
+                            <!--<label for="package_id" />-->
+                            <!--<field name="package_id" required="1" options="{'no_open': True, 'no_create': True}"/>-->
+                            <!--<label for="forecast_date" />-->
+                            <!--<field name="forecast_date" required="1"/>-->
                         </div>
                         <div states="get">
                             <h2>Milestone forecast calculation for package <field name="package_id" readonly="1"/> completed.</h2>
