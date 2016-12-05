@@ -17,35 +17,37 @@ class TaskPackageForecastCalculationWizard(models.TransientModel):
     def do_calculations(self):
         this = self
 
+        return True
+
         # if not this.project_id or not this.package_id or not this.forecast_date:
         #     raise e.ValidationError('First select project, package and date.')
 
-        project_SA = self.env['project.project'].search([('name', '=', 'Sprint SA')], limit=1)
-        new_milestone = self.env['project.milestone'].search([('name', '=', '0900')], limit=1)
-        tasks = self.env['project.task'].search([('project_id', '=', project_SA.id)])
-        for task in tasks:
-            data = {
-                'task_id': task.id,
-                'project_id': task.project_id.id,
-                'milestone_id': new_milestone.id,
-                'baseline_duration': new_milestone.duration,
-                'duration_forecast': new_milestone.duration,
-            }
-            milestone = self.env['project.task.milestone.forecast'].create(data)
-
-
-
-        self.write({
-            'state': 'get',
-            'updated_count': len(tasks),
-        })
-
-        return {
-            'type': 'ir.actions.act_window',
-            'res_id': this.id,
-            'view_type': 'form',
-            'view_mode': 'form',
-            'res_model': 'project.task.package.forecast.calculation.wizard',
-            'target': 'new',
-            'context': self.env.context,
-        }
+        # project_SA = self.env['project.project'].search([('name', '=', 'Sprint SA')], limit=1)
+        # new_milestone = self.env['project.milestone'].search([('name', '=', '0900')], limit=1)
+        # tasks = self.env['project.task'].search([('project_id', '=', project_SA.id)])
+        # for task in tasks:
+        #     data = {
+        #         'task_id': task.id,
+        #         'project_id': task.project_id.id,
+        #         'milestone_id': new_milestone.id,
+        #         'baseline_duration': new_milestone.duration,
+        #         'duration_forecast': new_milestone.duration,
+        #     }
+        #     milestone = self.env['project.task.milestone.forecast'].create(data)
+        #
+        #
+        #
+        # self.write({
+        #     'state': 'get',
+        #     'updated_count': len(tasks),
+        # })
+        #
+        # return {
+        #     'type': 'ir.actions.act_window',
+        #     'res_id': this.id,
+        #     'view_type': 'form',
+        #     'view_mode': 'form',
+        #     'res_model': 'project.task.package.forecast.calculation.wizard',
+        #     'target': 'new',
+        #     'context': self.env.context,
+        # }

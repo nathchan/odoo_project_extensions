@@ -58,7 +58,7 @@ class ExportMilestonesWizard(models.TransientModel):
             # ws = wb.create_sheet(0, milestone.name)
             # LOCAL VERSION
             # ws = wb.create_sheet(milestone.name, 0)
-            ws = wb.create_sheet(milestone.name, 0)
+            ws = wb.create_sheet(0, milestone.name)
 
             ws['A1'] = 'Project ID'
             ws['A2'] = this.project_id.project_code
