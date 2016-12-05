@@ -122,6 +122,38 @@
             </field>
         </record>
 
+        <record model="ir.ui.view" id="view_task_milestones_graph">
+            <field name="name">project.task.milestone.forecast.graph</field>
+            <field name="model">project.task.milestone.forecast</field>
+            <field name="arch" type="xml">
+                <graph>
+
+                    <field name="project_id" />
+                    <field name="milestone_id" />
+                    <field name="task_id" />
+                    <field name="forecast_date" interval="week" />
+                    <field name="actual_date" interval="week" />
+
+                </graph>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_task_milestones_pivot">
+            <field name="name">project.task.milestone.forecast.pivot</field>
+            <field name="model">project.task.milestone.forecast</field>
+            <field name="arch" type="xml">
+                <pivot>
+
+                    <field name="project_id" />
+                    <field name="milestone_id" />
+                    <field name="task_id" />
+                    <field name="forecast_date" />
+                    <field name="actual_date" />
+
+                </pivot>
+            </field>
+        </record>
+
         <record model='ir.actions.act_window' id='view_task_milestones_show_action'>
             <field name="name">Milestones</field>
             <field name="res_model">project.task.milestone.forecast</field>
@@ -137,7 +169,7 @@
             <field name="search_view_id" ref="view_task_milestones_search" />
             <field name="context">{"search_default_group_milestone_id":1}</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,graph,pivot</field>
         </record>
 
 
