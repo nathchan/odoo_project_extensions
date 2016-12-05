@@ -43,7 +43,7 @@
        </record>
 
 
-        <menuitem id="menu_project_task_group" name="Task groups" parent="project.menu_project_config"
+        <menuitem id="menu_project_task_group" name="Rollout groups" parent="project.menu_project_config"
                           action="action_project_task_group" sequence="55" groups="project.group_project_manager"/>
     </data>
 </openerp>
