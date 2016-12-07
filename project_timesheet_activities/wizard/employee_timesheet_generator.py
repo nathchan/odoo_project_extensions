@@ -50,6 +50,7 @@ def format_float_time(time):
     res = str(whole) if whole >= 10 else '0'+str(whole)
     res += ':'
     res += str(decimal) if decimal >= 10 else '0'+str(decimal)
+    res += ':00'
     return res
 
 class EmployeeTimesheetGeneratorLine(models.TransientModel):
