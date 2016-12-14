@@ -167,7 +167,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
             # ws = wb.create_sheet(0, employee.employee_id.name)
             # LOCAL VERSION
             # ws = wb.create_sheet(employee.employee_id.name, 0)
-            ws = wb.create_sheet(employee.employee_id.name, 0)
+            ws = wb.create_sheet(0, employee.employee_id.name)
 
 
             ws.merge_cells('A2:C2')
