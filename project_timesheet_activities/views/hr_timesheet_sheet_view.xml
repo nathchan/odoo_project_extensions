@@ -2,6 +2,21 @@
 <openerp>
     <data>
 
+        <record id="hr_timesheet_sheet_search_inherit" model="ir.ui.view">
+            <field name="name">hr.timesheet.sheet.search.inherit</field>
+            <field name="model">hr_timesheet_sheet.sheet</field>
+            <field name="inherit_id" ref="hr_timesheet_sheet.view_hr_timesheet_sheet_filter"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//filter[@name='message_needaction']" position="after">
+                        <filter name="with_warnings"
+                                string="With Warnings"
+                                domain="['|', ('no_break_warning', '=', True), ('working_hours_warning', '=', True)]"/>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+
 
         <record id="hr_timesheet_sheet_form_inherit" model="ir.ui.view">
             <field name="name">hr.timesheet.sheet.form.inherit</field>
@@ -29,8 +44,30 @@
 
                     <xpath expr="//div[@class='oe_button_box']" position="replace"></xpath>
 
-                    <xpath expr="//field[@name='total_attendance']" position="replace"></xpath>
-                    <xpath expr="//field[@name='total_difference']" position="replace"></xpath>
+
+
+                    <xpath expr="//field[@name='total_attendance']/.." position="replace">
+                        <group>
+                            <field name="no_break_warning" invisible="1" />
+                            <field name="working_hours_warning" invisible="1" />
+
+                            <!--<h2 attrs="{'invisible': [('no_break_warning', '=', False)]}"-->
+                                <!--class="text-danger">There are days with more than 8 hours of work without 30 minutes break.</h2>-->
+
+                            <span attrs="{'invisible': [('no_break_warning', '=', False)]}"
+                                  class="label label-danger">There are days with more than 8 hours of work without 30 minutes break.</span>
+
+                            <!--<h2 attrs="{'invisible': [('working_hours_warning', '=', False)]}"-->
+                                <!--class="text-danger">There are days with more than 10 hours of work.</h2>-->
+
+                            <span attrs="{'invisible': [('working_hours_warning', '=', False)]}"
+                                  class="label label-danger">There are days with more than 10 hours of work.</span>
+
+                        </group>
+                    </xpath>
+
+
+
 
                     <xpath expr="//widget[@type='weekly_timesheet']/.." position="replace">
                     </xpath>
@@ -97,9 +134,10 @@
 
                         <field name="timesheet_travel_start" />
                         <field name="timesheet_travel_end" />
-                        <field name="timesheet_is_driver" />
+                        <!--<field name="timesheet_is_driver" />-->
                         <field name="timesheet_vehicle_id" options="{'no_open': True, 'no_create': True}" />
                         <field name="timesheet_accommodation" />
+                        <field name="timesheet_comment" />
                     </xpath>
 
                     <xpath expr="//field[@name='timesheet_ids']/form//field[@name='account_id']" position="after">
@@ -121,9 +159,10 @@
 
                         <field name="timesheet_travel_start" />
                         <field name="timesheet_travel_end" />
-                        <field name="timesheet_is_driver" />
+                        <!--<field name="timesheet_is_driver" />-->
                         <field name="timesheet_vehicle_id" options="{'no_open': True, 'no_create': True}" />
                         <field name="timesheet_accommodation" />
+                        <field name="timesheet_comment" />
                     </xpath>
 
                     <xpath expr="//field[@name='timesheet_ids']/tree/field[@name='account_id']" position="replace">
@@ -150,6 +189,16 @@
                 <data>
                     <xpath expr="//field[@name='total_attendance']" position="replace"></xpath>
                     <xpath expr="//field[@name='total_difference']" position="replace"></xpath>
+
+                    <xpath expr="//field[@name='state']" position="after">
+                        <field name="no_break_warning" invisible="1" />
+                        <field name="working_hours_warning" invisible="1" />
+                    </xpath>
+
+                    <xpath expr="//tree" position="attributes">
+                        <attribute name="decoration-danger">no_break_warning or working_hours_warning</attribute>
+                    </xpath>
+
                 </data>
             </field>
         </record>

@@ -66,6 +66,9 @@ class AccountAnalyticLine(models.Model):
     timesheet_start_time = fields.Float('Start time')
     timesheet_end_time = fields.Float('End time')
     timesheet_break_amount = fields.Float('Break')
+    timesheet_comment = fields.Char('Comment', size=20)
+
+    # sheet_id = fields.Many2one('hr_timesheet_sheet.sheet', string='Sheet', ondelete="cascade")
 
     @api.one
     @api.constrains('timesheet_start_time', 'timesheet_end_time')
@@ -79,7 +82,7 @@ class AccountAnalyticLine(models.Model):
     @api.one
     @api.constrains('timesheet_break_amount')
     def _check_break_amount(self):
-        if self.timesheet_break_amount > self.unit_amount:
-            raise e.ValidationError('Break must be less than total hours.')
+        if self.unit_amount <= 0:
+            raise e.ValidationError('Total hours must be non negative.')
         if self.timesheet_break_amount < 0:
             raise e.ValidationError('Break must be non negative.')
