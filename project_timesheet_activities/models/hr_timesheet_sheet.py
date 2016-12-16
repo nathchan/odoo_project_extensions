@@ -25,7 +25,7 @@ class HrTimesheetSheet(models.Model):
                         group by
                             sheet_id, date
                         having
-                            sum(unit_amount) >= 8.0
+                            sum(unit_amount) >= 6.0
                             and sum(timesheet_break_amount) < 0.5
                     ) as tbl
                 ) as break_warning,
@@ -43,7 +43,7 @@ class HrTimesheetSheet(models.Model):
                         group by
                             sheet_id, date
                         having
-                            sum(unit_amount) > 10.0
+                            sum(unit_amount) > 10.5
                     ) as tbl
                 ) as working_hours_warning
             """

@@ -55,13 +55,13 @@
                                 <!--class="text-danger">There are days with more than 8 hours of work without 30 minutes break.</h2>-->
 
                             <span attrs="{'invisible': [('no_break_warning', '=', False)]}"
-                                  class="label label-danger">There are days with more than 8 hours of work without 30 minutes break.</span>
+                                  class="label label-danger">There are days with more than 6 hours of work without 30 minutes break.</span>
 
                             <!--<h2 attrs="{'invisible': [('working_hours_warning', '=', False)]}"-->
                                 <!--class="text-danger">There are days with more than 10 hours of work.</h2>-->
 
                             <span attrs="{'invisible': [('working_hours_warning', '=', False)]}"
-                                  class="label label-danger">There are days with more than 10 hours of work.</span>
+                                  class="label label-danger">There are days with more than 10 hours and 30 minutes of work.</span>
 
                         </group>
                     </xpath>

@@ -42,8 +42,8 @@ def print_date(date):
 
 def format_float_time_str(time):
     x = math.modf(time)
-    decimal = int(x[0] * 61)
-    whole = int(x[1])
+    decimal = abs(int(x[0] * 61))
+    whole = abs(int(x[1]))
     if decimal >= 60:
         decimal -= 60
         whole += 1
@@ -56,8 +56,8 @@ def format_float_time_str(time):
 
 def format_float_time(time):
     x = math.modf(time)
-    decimal = int(x[0] * 61)
-    whole = int(x[1])
+    decimal = abs(int(x[0] * 61))
+    whole = abs(int(x[1]))
     if decimal >= 60:
         decimal -= 60
         whole += 1
@@ -151,8 +151,13 @@ class EmployeeTimesheetGenerator(models.TransientModel):
         top = Border(top=Side(color=colors.BLACK, border_style='thick'))
         bottom = Border(bottom=Side(color=colors.BLACK, border_style='thick'))
 
-        for employee in this.employee_timesheet_generator_line_ids:
-            analytic_acc_lines_count = sheet_lines.search([('user_id', '=', employee.employee_id.user_id.id),
+        if len(this.employee_timesheet_generator_line_ids) == 0:
+            employees = self.env['hr.employee'].search([])
+        else:
+            employees = [item.employee_id for item in this.employee_timesheet_generator_line_ids]
+
+        for employee in employees:
+            analytic_acc_lines_count = sheet_lines.search([('user_id', '=', employee.user_id.id),
                                                            ('is_timesheet', '=', True),
                                                            ('date', '>=', start_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)),
                                                            ('date', '<=', end_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT))],
@@ -167,7 +172,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
             # ws = wb.create_sheet(0, employee.employee_id.name)
             # LOCAL VERSION
             # ws = wb.create_sheet(employee.employee_id.name, 0)
-            ws = wb.create_sheet(0, employee.employee_id.name)
+            ws = wb.create_sheet(employee.name, 0)
 
 
             ws.merge_cells('A2:C2')
@@ -185,7 +190,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
 
             ws.merge_cells('B3:C3')
             ws['A3'] = 'Employee:'
-            ws['B3'] = employee.employee_id.name
+            ws['B3'] = employee.name
             ws['C3'].style = Style(border=Border(right=Side(style='thick',
                                                             color=colors.BLACK)))
             ws['B3'].style = Style(
@@ -198,7 +203,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
 
             ws.merge_cells('B4:C4')
             ws['A4'] = 'ID number:'
-            ws['B4'] = employee.employee_id.other_id
+            ws['B4'] = employee.other_id
             ws['C4'].style = Style(border=Border(right=Side(style='thick',
                                                             color=colors.BLACK)))
             ws['B4'].style = Style(
@@ -512,7 +517,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                     color = '999a9e'
 
                 # ovdje ispitati da li je day_off ili samo nema linija
-                analytic_lines = sheet_lines.search([('user_id', '=', employee.employee_id.user_id.id),
+                analytic_lines = sheet_lines.search([('user_id', '=', employee.user_id.id),
                                                      ('is_timesheet', '=', True),
                                                      ('date', '=', iteration_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT))],
                                                     order='timesheet_start_time ASC')
@@ -529,8 +534,9 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                         working_time_per_day += line.unit_amount
                         n[0] += 1
                         if index == len(analytic_lines)-1:
-                            ws['F'+str(7+n[0])] = format_float_time_str(working_time_per_day)
-                            ws['F'+str(7+n[0])].style = Style(number_format="HH:MM:SS")
+                            if working_time_per_day != 0:
+                                ws['F'+str(7+n[0])] = format_float_time_str(working_time_per_day)
+                                ws['F'+str(7+n[0])].style = Style(number_format="HH:MM:SS")
                             working_time_per_day_sum += working_time_per_day
 
                         write_line(ws, n, color, iteration_date, line)
@@ -539,6 +545,67 @@ class EmployeeTimesheetGenerator(models.TransientModel):
 
 
             write_footer(ws, n, working_time_sum, working_time_per_day_sum)
+
+        if len(employees)>0:
+            lines = sheet_lines.search([('user_id', 'in', [item.user_id.id for item in employees]),
+                                        ('is_timesheet', '=', True),
+                                        ('task_id', '!=', False),
+                                        ('date', '>=', start_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)),
+                                        ('date', '<=', end_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT))],
+                                       order='user_id, date, write_date')
+
+            # SERVER VERSION
+            # ws = wb.create_sheet(0, employee.employee_id.name)
+            # LOCAL VERSION
+            # ws = wb.create_sheet(employee.employee_id.name, 0)
+            ws = wb.create_sheet('SAP UPLOAD', 0)
+
+            ws['A1'] = 'Personalnummer *'
+            ws['A1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+            ws['B1'] = 'Datum *'
+            ws['B1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+            ws['C1'] = 'Beginn (HH:MM)'
+            ws['C1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+            ws['D1'] = 'Ende (HH:MM)'
+            ws['D1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+            ws['E1'] = 'Dauer (HH:MM) *'
+            ws['E1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+            ws['F1'] = 'Servicenummer *'
+            ws['F1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+            ws['G1'] = 'Zeitart'
+            ws['G1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+            ws['H1'] = 'Zuschlag'
+            ws['H1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+            ws['I1'] = 'Aufgabennummer *'
+            ws['I1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+            ws['J1'] = 'Abweichende abrechenbare Dauer (HH:MM)'
+            ws['J1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+            ws['K1'] = 'Arbeitsbeschreibung'
+            ws['K1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+            ws['L1'] = 'Interner Kommentar'
+            ws['L1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+            ws['M1'] = 'Mitarbeiter'
+            ws['M1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+
+            ws.row_dimensions[1].height = 50
+
+            n = 1
+            for line in lines:
+                n += 1
+                emp = self.env['hr.employee'].search([('user_id', '=', line.user_id.id)], limit=1)
+                ws['A'+str(n)] = emp.other_id if emp and emp.other_id else '---'
+                ws['B'+str(n)] = d.datetime.strptime(line.date, tools.DEFAULT_SERVER_DATE_FORMAT).strftime("%M/%d/%Y")
+                ws['C'+str(n)] = format_float_time(line.timesheet_start_time)
+                ws['D'+str(n)] = format_float_time(line.timesheet_end_time)
+                ws['E'+str(n)] = format_float_time(line.unit_amount)
+                ws['F'+str(n)] = '---'
+                ws['G'+str(n)] = ''
+                ws['H'+str(n)] = ''
+                ws['I'+str(n)] = line.task_id.name + '-1' if line.task_id else ''
+                ws['J'+str(n)] = ''
+                ws['K'+str(n)] = ''
+                ws['L'+str(n)] = line.project_activity_id.name if line.project_activity_id else ''
+                ws['M'+str(n)] = line.user_id.name
 
 
         buf = cStringIO.StringIO()
