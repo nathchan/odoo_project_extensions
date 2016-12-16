@@ -126,13 +126,17 @@ class ProjectTaskMilestoneForecast(models.Model):
                             project_task_milestone_forecast
                           where
                             id <> %s
+                            --and active = true
+                            and project_id = %s
+                            and milestone_id = %s
                             and EXTRACT(YEAR FROM forecast_date) = EXTRACT(YEAR FROM DATE %s)
                             and EXTRACT(WEEK FROM forecast_date) = EXTRACT(WEEK FROM DATE %s)"""
-                self.env.cr.execute(sql, (rec.id, rec.forecast_date, rec.forecast_date,))
+                self.env.cr.execute(sql, (rec.id, rec.project_id.id, rec.milestone_id.id, rec.forecast_date, rec.forecast_date,))
                 rec.same_week_tasks_count = self.env.cr.fetchone()[0]
             else:
                 0
 
+    #active = fields.Boolean('Active', default=True)
     same_week_tasks_count = fields.Integer('Task FC in same week', compute=_compute_same_week_tasks_count)
     predecessors_forecast_actual = fields.Html('Predecessors', compute=_compute_predecessors_forecast_actual)
     issue_count = fields.Integer('Issue Count', compute=_compute_issue_count)
