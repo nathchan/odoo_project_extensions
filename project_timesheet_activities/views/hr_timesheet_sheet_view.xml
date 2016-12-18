@@ -167,13 +167,13 @@
 
                     <xpath expr="//field[@name='timesheet_ids']/tree/field[@name='account_id']" position="replace">
                         <field name="account_id"
-                               domain="[('account_type', '=', 'normal')]"
+                               domain="[('choose_on_timesheets', '=', True)]"
                                options="{'no_open': True, 'no_create': True}" string="Field of activity"/>
                     </xpath>
 
                     <xpath expr="//field[@name='timesheet_ids']/form//field[@name='account_id']" position="replace">
                         <field name="account_id"
-                               domain="[('account_type', '=', 'normal')]"
+                               domain="[('choose_on_timesheets', '=', True)]"
                                options="{'no_open': True, 'no_create': True}"
                                string="Field of activity"/>
                     </xpath>

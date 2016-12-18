@@ -10,6 +10,7 @@
                 <data>
                     <xpath expr="//field[@name='code']" position="before">
                         <field name="category" />
+                        <field name="choose_on_timesheets" />
                     </xpath>
                 </data>
             </field>
