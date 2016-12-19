@@ -63,7 +63,8 @@
 
                     <xpath expr="//field[@name='tag_ids']" position="after">
                         <field name="category_id" required="1" />
-                        <field name="subcategory_id" />
+                        <field name="category_name" invisible="1" />
+                        <field name="subcategory_id" attrs="{'required': [('category_name', '=', 'Missing Goods')]}"/>
                     </xpath>
 
                     <xpath expr="//field[@name='description']" position="after">
