@@ -5,6 +5,7 @@
         <template id="assets_backend" name="kanban_colors_extension" inherit_id="web.assets_backend">
             <xpath expr="." position="inside">
                 <link rel="stylesheet" href="/project_task_forecasts/static/src/css/kanban_colors.css"/>
+                <script type="text/javascript" src="/project_task_forecasts/static/src/js/project_task_milestone_forecast.js"></script>
             </xpath>
         </template>
 

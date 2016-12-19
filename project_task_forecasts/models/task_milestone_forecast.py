@@ -136,12 +136,19 @@ class ProjectTaskMilestoneForecast(models.Model):
             else:
                 0
 
+    @api.depends('task_id.user_id')
+    @api.one
+    def _compute_assigned_to(self):
+        if self.task_id and self.task_id.user_id:
+            self.assigned_to = self.task_id.user_id
+
     #active = fields.Boolean('Active', default=True)
     same_week_tasks_count = fields.Integer('Task FC in same week', compute=_compute_same_week_tasks_count)
     predecessors_forecast_actual = fields.Html('Predecessors', compute=_compute_predecessors_forecast_actual)
     issue_count = fields.Integer('Issue Count', compute=_compute_issue_count)
     project_id = fields.Many2one('project.project', 'Project', required=True, track_visibility='onchange')
     task_id = fields.Many2one('project.task', 'Task', required=True, ondelete='cascade', track_visibility='onchange')
+    assigned_to = fields.Many2one('res.users', 'Assigned to', compute=_compute_assigned_to, store=True)
     sequence_order = fields.Integer('Sequence', related='milestone_id.sequence', store=True)
 
     milestone_id = fields.Many2one('project.milestone', 'Milestone', required=True, ondelete='restrict', track_visibility='onchange')
