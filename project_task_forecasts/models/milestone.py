@@ -22,3 +22,28 @@ class ProjectMilestone(models.Model):
     _sql_constraints = [
         ('unique_project_milestone', 'unique(name, project_id)', 'Combination of project and milestone name must be unique!')
     ]
+
+    @api.one
+    def add_in_tasks(self):
+        self.ensure_one()
+
+        query = """
+            select distinct
+                task_id
+            from
+                project_task_milestone_forecast
+            where
+                project_id = %s
+        """
+        self.env.cr.execute(query % (self.project_id.id))
+        res = self.env.cr.dictfetchall()
+        task_ids = [item['task_id'] for item in res]
+
+        for task_id in task_ids:
+            self.env['project.task.milestone.forecast'].create({
+                'project_id': self.project_id.id,
+                'task_id': task_id,
+                'milestone_id': self.id,
+                'baseline_duration': self.duration,
+                'duration_forecast': self.duration,
+            })

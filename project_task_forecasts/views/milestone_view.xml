@@ -21,6 +21,14 @@
             <field name="model">project.milestone</field>
             <field name="arch" type="xml">
                 <form>
+                    <header>
+                        <button string="Add in tasks"
+                                name="add_in_tasks"
+                                type="object"
+                                confirm="Are you sure?"
+                                groups="base.group_no_one"
+                                />
+                    </header>
                     <sheet>
                         <div class="oe_title">
                             <h2>
