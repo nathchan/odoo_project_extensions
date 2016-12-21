@@ -22,6 +22,8 @@
                             <field name="project_id" required="1" options="{'no_open': True, 'no_create': True}"/>
                             <label for="milestone_ids" />
                             <field name="milestone_ids" widget="many2many_tags" options="{'no_open': True, 'no_create': True}"/>
+                            <label for="report_type" />
+                            <field name="report_type" required="1"/>
                             <label for="timestamp" />
                             <field name="timestamp" required="1"/>
                         </div>

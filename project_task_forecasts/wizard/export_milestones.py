@@ -11,9 +11,9 @@ from babel.dates import format_datetime
 
 
 def print_date(date):
-    dayy = datetime.datetime.strptime(date, tools.DEFAULT_SERVER_DATE_FORMAT)
-    res = format_datetime(dayy, format="d-MMM-yy", locale="en")
-    return res
+    day = datetime.datetime.strptime(date, tools.DEFAULT_SERVER_DATE_FORMAT)
+    # res = format_datetime(day, format="d-MMM-yy", locale="en")
+    return day
 
 class ExportMilestonesWizard(models.TransientModel):
     _name = 'project.export.milestones.wizard'
@@ -36,11 +36,18 @@ class ExportMilestonesWizard(models.TransientModel):
     milestone_ids = fields.Many2many('project.milestone', string='Milestones', domain="[('project_id', '=', project_id)]")
     data = fields.Binary('File', readonly=True)
     name = fields.Char('File Name', readonly=True)
+    report_type = fields.Selection([('fc', 'Forecasts'), ('ac', 'Actuals'), ('both', 'Both')], 'Report type', default='fc', required=True)
     state = fields.Selection([('choose', 'Choose'), ('get', 'Get')], 'State', default='choose')
 
     @api.multi
     def get_report(self):
         this = self[0]
+        is_ac = False
+        is_fc = False
+
+        date_style = Style(number_format="DD-MMM-YY")
+        number_style = Style(number_format="0")
+        seven_days_before_now = (datetime.datetime.now() - datetime.timedelta(days=7)).strftime(tools.DEFAULT_SERVER_DATE_FORMAT)
 
         if not this.project_id.project_code or not this.project_id.project_wp_code:
             raise e.UserError('Project ID and DWP ID are missing for ' + this.project_id.name + '.')
@@ -52,54 +59,88 @@ class ExportMilestonesWizard(models.TransientModel):
         else:
             selected_milestones = self.env['project.milestone'].search([('project_id', '=', this.project_id.id)], order='sequence DESC')
 
-        for milestone in selected_milestones:
+        for i in ['fc', 'ac']:
 
-            # SERVER VERSION
-            # ws = wb.create_sheet(0, milestone.name)
-            # LOCAL VERSION
-            # ws = wb.create_sheet(milestone.name, 0)
-            ws = wb.create_sheet(0, milestone.name)
+            if i == 'ac':
+                if this.report_type not in ['ac', 'both']:
+                    continue
+                is_fc = False
+                is_ac = True
 
-            ws['A1'] = 'Project ID'
-            ws['A2'] = this.project_id.project_code
+            if i == 'fc':
+                if this.report_type not in ['fc', 'both']:
+                    continue
+                is_fc = True
+                is_ac = False
 
-            ws['B1'] = 'DWP ID'
-            ws['B2'] = this.project_id.project_wp_code
+            for milestone in selected_milestones:
 
-            ws['C1'] = 'Site ID'
-            ws['D1'] = 'WP ID'
-            ws['E1'] = milestone.name
-            ws['E3'] = 'Forecast'
+                # SERVER VERSION
+                if is_fc is True:
+                    ws = wb.create_sheet(0, milestone.name+'-FC')
+                elif is_ac is True:
+                    ws = wb.create_sheet(0, milestone.name+'-AC')
 
-            lines = self.env['project.task.milestone.forecast'].search([('project_id', '=', this.project_id.id),
-                                                                        ('milestone_id', '=', milestone.id),
-                                                                        ('forecast_date', '!=', False),
-                                                                        ('write_date', '>=', this.timestamp)])
-            n = 3
-            for line in lines:
-                n += 1
-                ws['C'+str(n)] = line.task_id.name
+                # LOCAL VERSION
+                # if is_fc is True:
+                #     ws = wb.create_sheet(milestone.name+'-FC', 0)
+                # elif is_ac is True:
+                #     ws = wb.create_sheet(milestone.name+'-AC', 0)
 
+                ws['A1'] = 'Project ID'
+                ws['A2'] = this.project_id.project_code
+                # ws['A2'].style = number_style
 
-                field = line.milestone_id.export_task_wp_code
-                wp_code = False
-                if field == 'sa':
-                    wp_code = line.task_id.sa_work_package_code
-                elif field == 'cw':
-                    wp_code = line.task_id.cw_work_package_code
-                elif field == 'ti':
-                    wp_code = line.task_id.ti_work_package_code
-                if not wp_code:
-                    wp_code = '--- WP ID is missing ---'
+                ws['B1'] = 'DWP ID'
+                ws['B2'] = this.project_id.project_wp_code
+                # ws['B2'].style = number_style
 
-                ws['D'+str(n)] = wp_code
-                ws['E'+str(n)] = print_date(line.forecast_date) if line.forecast_date else ''
+                ws['C1'] = 'Site ID'
 
+                ws['D1'] = 'WP ID'
 
+                ws['E1'] = milestone.name
+                # ws['E1'].style = number_style
 
+                if is_fc is True:
+                    ws['E3'] = 'Forecast'
+                    lines = self.env['project.task.milestone.forecast'].search([('project_id', '=', this.project_id.id),
+                                                                                ('milestone_id', '=', milestone.id),
+                                                                                ('forecast_date', '!=', False),
+                                                                                ('forecast_date', '>=', seven_days_before_now),
+                                                                                ('write_date', '>=', this.timestamp)])
 
+                elif is_ac is True:
+                    ws['E3'] = 'Actual'
+                    lines = self.env['project.task.milestone.forecast'].search([('project_id', '=', this.project_id.id),
+                                                                                ('milestone_id', '=', milestone.id),
+                                                                                ('actual_date', '!=', False),
+                                                                                ('actual_date', '>=', seven_days_before_now),
+                                                                                ('write_date', '>=', this.timestamp)])
 
+                n = 3
+                for line in lines:
+                    n += 1
+                    ws['C'+str(n)] = line.task_id.name
 
+                    field = line.milestone_id.export_task_wp_code
+                    wp_code = False
+                    if field == 'sa':
+                        wp_code = line.task_id.sa_work_package_code
+                    elif field == 'cw':
+                        wp_code = line.task_id.cw_work_package_code
+                    elif field == 'ti':
+                        wp_code = line.task_id.ti_work_package_code
+                    if not wp_code:
+                        wp_code = '--- WP ID is missing ---'
+
+                    ws['D'+str(n)] = wp_code
+                    if is_fc is True:
+                        ws['E'+str(n)] = print_date(line.forecast_date) if line.forecast_date else ''
+                        ws['E'+str(n)].style = date_style
+                    elif is_ac is True:
+                        ws['E'+str(n)] = print_date(line.actual_date) if line.actual_date else ''
+                        ws['E'+str(n)].style = date_style
 
         buf = cStringIO.StringIO()
         wb.save(buf)

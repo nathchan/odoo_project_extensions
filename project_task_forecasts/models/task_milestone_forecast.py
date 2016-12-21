@@ -230,6 +230,7 @@ class ProjectTaskMilestoneForecast(models.Model):
 
     @api.multi
     def write(self, vals):
+        date_seven_days_ago = (datetime.datetime.now() - datetime.timedelta(days=7))
 
         if 'forecast_date' in vals and vals['forecast_date'] is not False \
                 and 'duration_forecast' in vals and vals['duration_forecast'] is not False \
@@ -247,6 +248,9 @@ class ProjectTaskMilestoneForecast(models.Model):
             if opened_issues > 0:
                 raise e.ValidationError('There is one or more opened issues related to this milestone. Please \
                         close all issues before setting Actual date.')
+
+            if datetime.datetime.strptime(vals['actual_date'], tools.DEFAULT_SERVER_DATE_FORMAT) <= date_seven_days_ago:
+                raise e.ValidationError('Actual date can not be older than 7 days.')
 
             if 'forecast_date' in vals:
                 forecast = vals['forecast_date']
@@ -306,6 +310,8 @@ class ProjectTaskMilestoneForecast(models.Model):
                 old_date = datetime.datetime.strptime(vals['forecast_date'], tools.DEFAULT_SERVER_DATE_FORMAT)
             new_date = datetime.datetime.strptime(vals['forecast_date'], tools.DEFAULT_SERVER_DATE_FORMAT)
 
+            if new_date <= date_seven_days_ago:
+                raise e.ValidationError('Forecast date can not be older than 7 days.')
             if new_date.weekday() in [5, 6] or old_date.weekday() in [5, 6]:
                 raise e.ValidationError('Forecast date is Weekend day. Please choose another working day.')
 
