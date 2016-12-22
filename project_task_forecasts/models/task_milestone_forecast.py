@@ -89,7 +89,7 @@ class ProjectTaskMilestoneForecast(models.Model):
                 year = str(fc.isocalendar()[0]) + '-W'
                 rec.forecast_week = year + week
             else:
-                rec.forecast_week = ''
+                rec.forecast_week = False
 
             if rec.actual_date:
                 ac = datetime.datetime.strptime(rec.actual_date, tools.DEFAULT_SERVER_DATE_FORMAT)
@@ -98,7 +98,7 @@ class ProjectTaskMilestoneForecast(models.Model):
                 year = str(ac.isocalendar()[0]) + '-W'
                 rec.actual_week = year + week
             else:
-                rec.actual_week = ''
+                rec.actual_week = False
 
     @api.one
     def _compute_predecessors_forecast_actual(self):
