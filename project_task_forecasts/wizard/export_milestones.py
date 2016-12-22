@@ -103,7 +103,7 @@ class ExportMilestonesWizard(models.TransientModel):
                 # ws['E1'].style = number_style
 
                 if is_fc is True:
-                    ws['E3'] = 'Forecast'
+                    ws['E2'] = 'Forecast'
                     lines = self.env['project.task.milestone.forecast'].search([('project_id', '=', this.project_id.id),
                                                                                 ('milestone_id', '=', milestone.id),
                                                                                 ('forecast_date', '!=', False),
@@ -111,14 +111,14 @@ class ExportMilestonesWizard(models.TransientModel):
                                                                                 ('write_date', '>=', this.timestamp)])
 
                 elif is_ac is True:
-                    ws['E3'] = 'Actual'
+                    ws['E2'] = 'Actual'
                     lines = self.env['project.task.milestone.forecast'].search([('project_id', '=', this.project_id.id),
                                                                                 ('milestone_id', '=', milestone.id),
                                                                                 ('actual_date', '!=', False),
                                                                                 ('actual_date', '>=', seven_days_before_now),
                                                                                 ('write_date', '>=', this.timestamp)])
 
-                n = 3
+                n = 2
                 for line in lines:
                     n += 1
                     ws['C'+str(n)] = line.task_id.name
