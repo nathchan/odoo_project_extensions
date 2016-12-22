@@ -10,7 +10,7 @@
             <data>
 
                 <xpath expr="//field[@name='task_id']" position="after">
-                    <field name="milestone_id" options="{'no_open': True, 'no_create': True}" />
+                    <field name="milestone_id" required="1" options="{'no_open': True, 'no_create': True}" />
                 </xpath>
 
             </data>
