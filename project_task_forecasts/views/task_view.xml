@@ -75,12 +75,11 @@
 
                     <xpath expr="//field[@name='tag_ids']/.." position="after">
                         <group attrs="{'invisible': [('milestone_count', '>', 0)]}">
-                            <field name="forecast_start_date" />
-                            <button name="action_fill_forecast_dates"
+                            <button name="action_fill_milestones"
                                     type="object"
-                                    string="Calculate FC"
-                                    icon="fa-calculator"
-                                    help="calculate milestone dates for this task"
+                                    string="Add milestones"
+                                    icon="fa-line-chart"
+                                    help="add milestones for this task"
                                     confirm="Are you sure?"
                                     />
                         </group>

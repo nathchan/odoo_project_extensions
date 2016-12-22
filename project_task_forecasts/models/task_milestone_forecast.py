@@ -4,57 +4,36 @@ from openerp import models, fields, api, tools, exceptions as e
 import datetime
 
 
+
 class ProjectTaskMilestoneForecast(models.Model):
     _name = 'project.task.milestone.forecast'
     _inherit = ['mail.thread', 'ir.needaction_mixin']
     _rec_name = 'milestone_id'
     _order = 'sequence_order'
 
+    def _skip_date(self, date):
+        if not isinstance(date, basestring):
+            str_date = date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)
+        else:
+            str_date = date
+        query = """
+            select
+                case when '%s' in (select date from hr_day_off)
+                        then 1
+                        else 0
+                end as res
+        """
+        self.env.cr.execute(query % (str_date,))
+        res = self.env.cr.fetchone()
+        if res[0] == 1:
+            return True
+        else:
+            return False
+
     @api.multi
     def _get_default_duration(self):
         for rec in self:
             rec.duration_days = rec.milestone_id.duration
-
-    @api.multi
-    @api.depends('forecast_date', 'duration_forecast')
-    def _compute_forecast_start_date(self):
-        for rec in self:
-            if rec.forecast_date:
-                business_days_to_add = rec.duration_forecast
-                current_date = datetime.datetime.strptime(rec.forecast_date, tools.DEFAULT_SERVER_DATE_FORMAT)
-                while business_days_to_add > 0:
-                    current_date -= datetime.timedelta(days=1)
-                    weekday = current_date.weekday()
-                    if weekday >= 5:
-                        # sunday = 6
-                        continue
-                    business_days_to_add -= 1
-                rec.forecast_start_date = current_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)
-
-    # @api.one
-    # @api.onchange('duration_forecast')
-    # def _onchange_duration_forecast(self):
-    #     if self.duration_forecast:
-    #         old_duration = self.browse([('id', '=', self.id)]).duration_forecast
-    #         new_duration = self.duration_forecast
-    #         days_diff = new_duration - old_duration
-    #         if days_diff != 0:
-    #             operation = 'plus' if days_diff > 0 else 'minus'
-    #             # add days
-    #             business_days_to_add = abs(days_diff)
-    #             current_date = datetime.datetime.strptime(self.forecast_date, tools.DEFAULT_SERVER_DATE_FORMAT)
-    #             while business_days_to_add > 0:
-    #                 if operation == 'plus':
-    #                     current_date += datetime.timedelta(days=1)
-    #                 else:
-    #                     current_date -= datetime.timedelta(days=1)
-    #
-    #                 weekday = current_date.weekday()
-    #                 if weekday >= 5:
-    #                     # sunday = 6
-    #                     continue
-    #                 business_days_to_add -= 1
-    #             self.forecast_date = current_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)
 
     @api.multi
     def _get_name(self):
@@ -142,6 +121,19 @@ class ProjectTaskMilestoneForecast(models.Model):
         if self.task_id and self.task_id.user_id:
             self.assigned_to = self.task_id.user_id
 
+    @api.depends('forecast_date', 'actual_date')
+    @api.multi
+    def _fc_ac_holiday(self):
+        for rec in self:
+            if rec.forecast_date and self._skip_date(rec.forecast_date):
+                rec.forecast_is_holiday = True
+            else:
+                rec.forecast_is_holiday = False
+            if rec.actual_date and self._skip_date(rec.actual_date):
+                rec.actual_is_holiday = True
+            else:
+                rec.actual_is_holiday = False
+
     #active = fields.Boolean('Active', default=True)
     same_week_tasks_count = fields.Integer('Task FC in same week', compute=_compute_same_week_tasks_count)
     predecessors_forecast_actual = fields.Html('Predecessors', compute=_compute_predecessors_forecast_actual)
@@ -156,19 +148,19 @@ class ProjectTaskMilestoneForecast(models.Model):
     force_update = fields.Boolean('Force update', default=False)
     forecast_date = fields.Date('Forecast date', track_visibility='onchange')
     forecast_week = fields.Char('Forecast week', track_visibility='onchange', compute=_compute_weeks, store=True)
+    forecast_is_holiday = fields.Boolean('FC is holiday', compute=_fc_ac_holiday)
     actual_date = fields.Date('Actual date', track_visibility='onchange')
     actual_week = fields.Char('Actual week', track_visibility='onchange', compute=_compute_weeks, store=True)
+    actual_is_holiday = fields.Boolean('AC is holiday', compute=_fc_ac_holiday)
 
     name = fields.Char('Name', compute=_get_name)
 
     baseline_duration = fields.Integer('Baseline duration', default=_get_default_duration, group_operator="avg", track_visibility='onchange')
     duration_forecast = fields.Integer('Duration forecast', default=_get_default_duration, group_operator="avg", track_visibility='onchange')
-    forecast_start_date = fields.Date('Forecast start date', compute=_compute_forecast_start_date, store=True)
 
     _sql_constraints = [
         ('unique_task_milestone', 'unique(task_id, milestone_id)', 'Combination of task and milestone must be unique!')
     ]
-
 
     @api.one
     def calculate_forecast(self, vals):
@@ -216,8 +208,7 @@ class ProjectTaskMilestoneForecast(models.Model):
 
             while business_days_to_add > 0:
                 current_date += datetime.timedelta(days=1)
-                weekday = current_date.weekday()
-                if weekday >= 5: # sunday = 6
+                if self._skip_date(current_date):
                     continue
                 business_days_to_add -= 1
             data = {
@@ -260,9 +251,6 @@ class ProjectTaskMilestoneForecast(models.Model):
             fc_date = datetime.datetime.strptime(forecast, tools.DEFAULT_SERVER_DATE_FORMAT)
             ac_date = datetime.datetime.strptime(vals['actual_date'], tools.DEFAULT_SERVER_DATE_FORMAT)
 
-            if fc_date.weekday() in [5, 6] or ac_date.weekday() in [5, 6]:
-                raise e.ValidationError('Forecast or Actual date is Weekend day. Please choose another working day.')
-
             if ac_date > fc_date:
                 if self.issue_count < 1:
                     raise e.ValidationError('There is no Issues related to this milestone. \
@@ -275,9 +263,7 @@ class ProjectTaskMilestoneForecast(models.Model):
                     while True:
                         current_date += datetime.timedelta(days=1)
 
-                        weekday = current_date.weekday()
-                        if weekday >= 5:
-                            # sunday = 6
+                        if self._skip_date(current_date) and current_date != ac_date:
                             continue
                         business_days_to_add += 1
                         if current_date == ac_date:
@@ -289,9 +275,7 @@ class ProjectTaskMilestoneForecast(models.Model):
                     while True:
                         current_date -= datetime.timedelta(days=1)
 
-                        weekday = current_date.weekday()
-                        if weekday >= 5:
-                            # sunday = 6
+                        if self._skip_date(current_date) and current_date != ac_date:
                             continue
                         business_days_to_add += 1
                         if current_date == ac_date:
@@ -312,8 +296,6 @@ class ProjectTaskMilestoneForecast(models.Model):
 
             if new_date <= date_seven_days_ago:
                 raise e.ValidationError('Forecast date can not be older than 7 days.')
-            if new_date.weekday() in [5, 6] or old_date.weekday() in [5, 6]:
-                raise e.ValidationError('Forecast date is Weekend day. Please choose another working day.')
 
             if old_date != new_date:
                 recalculate = True
@@ -329,9 +311,7 @@ class ProjectTaskMilestoneForecast(models.Model):
                     while True:
                         current_date += datetime.timedelta(days=1)
 
-                        weekday = current_date.weekday()
-                        if weekday >= 5:
-                            # sunday = 6
+                        if self._skip_date(current_date) and current_date != new_date:
                             continue
                         business_days_to_add += 1
                         if current_date == new_date:
@@ -343,9 +323,7 @@ class ProjectTaskMilestoneForecast(models.Model):
                     while True:
                         current_date -= datetime.timedelta(days=1)
 
-                        weekday = current_date.weekday()
-                        if weekday >= 5:
-                            # sunday = 6
+                        if self._skip_date(current_date) and current_date != new_date:
                             continue
                         business_days_to_add += 1
                         if current_date == new_date:
@@ -384,9 +362,7 @@ class ProjectTaskMilestoneForecast(models.Model):
                     else:
                         current_date -= datetime.timedelta(days=1)
 
-                    weekday = current_date.weekday()
-                    if weekday >= 5:
-                        # sunday = 6
+                    if self._skip_date(current_date):
                         continue
                     business_days_to_add -= 1
                 vals['forecast_date'] = current_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)

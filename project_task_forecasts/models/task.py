@@ -125,73 +125,30 @@ class ProjectTask(models.Model):
         return new_id
 
     @api.one
-    def action_fill_forecast_dates(self):
-        pass
-        if not self.forecast_start_date:
-            raise e.Warning('First enter forecast start date, please.')
-
-
-        lines = None
+    def action_fill_milestones(self):
         forecast_ref = self.env['project.task.milestone.forecast']
         records_existing = forecast_ref.search([('task_id', '=', self.id),
-                                                ('project_id', '=', self.project_id.id)], order='sequence_order')
+                                                ('project_id', '=', self.project_id.id)],
+                                               order='sequence_order')
 
         if records_existing and len(records_existing) > 0:
-            lines = records_existing
-        else:
-            milestones = self.env['project.milestone'].search([('project_id', '=', self.project_id.id)],
-                                                              order='sequence')
-            if not milestones or len(milestones) < 1:
-                raise Warning('Project does not have any related milestones.')
+            return
 
-            for milestone in milestones:
-                forecast_ref.create({
-                    'project_id': self.project_id.id,
-                    'task_id': self.id,
-                    'milestone_id': milestone.id,
-                    'baseline_duration': milestone.duration,
-                    'duration_forecast': milestone.duration,
-                })
-            lines = forecast_ref.search([('task_id', '=', self.id), ('project_id', '=', self.project_id.id)],
-                                        order='sequence_order')
-        start_date = datetime.datetime.strptime(self.forecast_start_date, tools.DEFAULT_SERVER_DATE_FORMAT)
+        milestones = self.env['project.milestone'].search([('project_id', '=', self.project_id.id)],
+                                                          order='sequence')
+        if not milestones or len(milestones) < 1:
+            raise Warning('Project does not have any related milestones.')
 
-        for line in lines:
+        for milestone in milestones:
+            forecast_ref.create({
+                'project_id': self.project_id.id,
+                'task_id': self.id,
+                'milestone_id': milestone.id,
+                'baseline_duration': milestone.duration,
+                'duration_forecast': milestone.duration,
+            })
 
-            current_date = start_date
-
-            if line.milestone_id.predecessor_milestone_ids and len(line.milestone_id.predecessor_milestone_ids) > 0:
-                dates = []
-                for item in line.milestone_id.predecessor_milestone_ids:
-                    predecessor = lines.filtered(lambda r: r.milestone_id.id == item.id)
-                    if predecessor and len(predecessor) == 1:
-                        dates.append(predecessor.forecast_date)
-
-                if len(dates) > 0:
-                    current_date = max(datetime.datetime.strptime(date, tools.DEFAULT_SERVER_DATE_FORMAT) for date in dates)
-                else:
-                    current_date = start_date
-
-            else:
-                current_date = start_date
-
-            # TODO: recalculate duration forecast based on issues related to task/milestone
-            business_days_to_add = line.duration_forecast
-
-            while business_days_to_add > 0:
-                current_date += datetime.timedelta(days=1)
-                weekday = current_date.weekday()
-                if weekday >= 5: # sunday = 6
-                    continue
-                business_days_to_add -= 1
-            data = {
-                'force_update': True,
-                'forecast_date': current_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT),
-            }
-            line.write(data)
-            start_date = current_date
-
-        return True
+        return
 
     def return_action_to_open_milestones(self, cr, uid, ids, context=None):
         if context is None:
