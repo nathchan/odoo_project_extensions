@@ -88,18 +88,18 @@ class ExportMilestonesWizard(models.TransientModel):
                 #     ws = wb.create_sheet(milestone.name+'-AC', 0)
 
                 ws['A1'] = 'Project ID'
-                ws['A2'] = this.project_id.project_code
+                ws['A2'] = int(this.project_id.project_code)
                 # ws['A2'].style = number_style
 
                 ws['B1'] = 'DWP ID'
-                ws['B2'] = this.project_id.project_wp_code
+                ws['B2'] = int(this.project_id.project_wp_code)
                 # ws['B2'].style = number_style
 
                 ws['C1'] = 'Site ID'
 
                 ws['D1'] = 'WP ID'
 
-                ws['E1'] = milestone.name
+                ws['E1'] = int(milestone.name)
                 # ws['E1'].style = number_style
 
                 if is_fc is True:
