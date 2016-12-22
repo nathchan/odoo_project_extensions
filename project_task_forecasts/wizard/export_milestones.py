@@ -45,7 +45,7 @@ class ExportMilestonesWizard(models.TransientModel):
         is_ac = False
         is_fc = False
 
-        date_style = Style(number_format="DD-MMM-YY")
+        date_style = Style(number_format="DD.MM.YYYY")
         number_style = Style(number_format="0")
         seven_days_before_now = (datetime.datetime.now() - datetime.timedelta(days=7)).strftime(tools.DEFAULT_SERVER_DATE_FORMAT)
 
