@@ -126,11 +126,11 @@ class ExportMilestonesWizard(models.TransientModel):
                     field = line.milestone_id.export_task_wp_code
                     wp_code = False
                     if field == 'sa':
-                        wp_code = line.task_id.sa_work_package_code
+                        wp_code = int(line.task_id.sa_work_package_code)
                     elif field == 'cw':
-                        wp_code = line.task_id.cw_work_package_code
+                        wp_code = int(line.task_id.cw_work_package_code)
                     elif field == 'ti':
-                        wp_code = line.task_id.ti_work_package_code
+                        wp_code = int(line.task_id.ti_work_package_code)
                     if not wp_code:
                         wp_code = '--- WP ID is missing ---'
 
