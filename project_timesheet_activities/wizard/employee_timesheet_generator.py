@@ -9,6 +9,7 @@ from openerp import models, fields, api, tools
 from datetime import datetime
 from calendar import monthrange
 import datetime as d
+from dateutil import relativedelta
 
 from babel.dates import format_datetime
 
@@ -110,6 +111,23 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                                                             string='Employees')
     state = fields.Selection([('choose', 'Choose'), ('get', 'Get')], 'State', default='choose')
     lines_count = fields.Integer(compute=_get_lines_count, string='Employees count')
+    display_sap_report = fields.Boolean('Display SAP report?', default=False)
+    sap_date_from = fields.Date('SAP Date from')
+    sap_date_to = fields.Date('SAP Date to')
+
+    @api.onchange('sap_date_from')
+    def onchange_sap_date_from(self):
+        if self.sap_date_from:
+            sap_date = datetime.strptime(self.sap_date_from, tools.DEFAULT_SERVER_DATE_FORMAT)
+            self.sap_date_from = (sap_date + relativedelta.relativedelta(weekday=0, days=-6)).strftime(tools.DEFAULT_SERVER_DATE_FORMAT)
+            self.sap_date_to = (sap_date + relativedelta.relativedelta(weekday=6)).strftime(tools.DEFAULT_SERVER_DATE_FORMAT)
+
+    @api.onchange('sap_date_to')
+    def onchange_sap_date_to(self):
+        if self.sap_date_from:
+            sap_date = datetime.strptime(self.sap_date_to, tools.DEFAULT_SERVER_DATE_FORMAT)
+            self.sap_date_from = (sap_date + relativedelta.relativedelta(weekday=0, days=-6)).strftime(tools.DEFAULT_SERVER_DATE_FORMAT)
+            self.sap_date_to = (sap_date + relativedelta.relativedelta(weekday=6)).strftime(tools.DEFAULT_SERVER_DATE_FORMAT)
 
     @api.multi
     def fill_lines(self):
@@ -546,12 +564,13 @@ class EmployeeTimesheetGenerator(models.TransientModel):
 
             write_footer(ws, n, working_time_sum, working_time_per_day_sum)
 
-        if len(employees)>0:
+        if this.display_sap_report is True and len(employees)>0:
             lines = sheet_lines.search([('user_id', 'in', [item.user_id.id for item in employees]),
                                         ('is_timesheet', '=', True),
                                         ('task_id', '!=', False),
-                                        ('date', '>=', start_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)),
-                                        ('date', '<=', end_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT))],
+                                        ('project_activity_id.show_on_sap_report', '=', True),
+                                        ('date', '>=', this.sap_date_from),
+                                        ('date', '<=', this.sap_date_to)],
                                        order='user_id, date, write_date')
 
             # SERVER VERSION
@@ -598,7 +617,14 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 ws['C'+str(n)] = format_float_time(line.timesheet_start_time)
                 ws['D'+str(n)] = format_float_time(line.timesheet_end_time)
                 ws['E'+str(n)] = format_float_time(line.unit_amount)
-                ws['F'+str(n)] = '---'
+                activity_code = '---'
+                if line.account_id.sap_report_category == 'sa':
+                    activity_code = '7331_AT'
+                elif line.account_id.sap_report_category == 'cw':
+                    activity_code = '7332_AT'
+                if activity_code != '---' and line.project_activity_id.name == 'Travel':
+                    activity_code += '_R'
+                ws['F'+str(n)] = activity_code
                 ws['G'+str(n)] = ''
                 ws['H'+str(n)] = ''
                 ws['I'+str(n)] = line.task_id.name + '-1' if line.task_id else ''

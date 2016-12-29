@@ -18,6 +18,19 @@
                             <label for="year" />
                             <field name="year" required="1" />
 
+                            <label for="display_sap_report" />
+                            <field name="display_sap_report" />
+                            <group attrs="{'invisible': [('display_sap_report', '=', False)]}">
+                                <div class="o_row">
+                                    <strong>SAP</strong> from
+                                    <field name="sap_date_from" attrs="{'required': [('display_sap_report', '=', True)]}" />
+                                    to
+                                    <field class="oe_inline" name="sap_date_to" attrs="{'required': [('display_sap_report', '=', True)]}" />
+                                </div>
+                            </group>
+
+
+
                             <div>
                                 <label for="department_id" />
                                 <field name="department_id" />
