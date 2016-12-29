@@ -10,6 +10,7 @@ class ProjectActivity(models.Model):
     info = fields.Text('Description')
     category = fields.Selection([('effective', 'Effective'), ('ineffective', 'Ineffective')], 'Category')
     on_site_activity = fields.Boolean('On site activity')
+    show_on_sap_report = fields.Boolean('Show on SAP report')
 
 
 
