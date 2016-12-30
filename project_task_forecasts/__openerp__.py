@@ -24,6 +24,8 @@
         'views/issue_view.xml',
         'views/milestone_view.xml',
         'views/project_view.xml',
+        'views/backlog_cw_view.xml',
+        'views/backlog_sa_view.xml',
         'wizard/export_milestones_view.xml',
         'wizard/task_package_forecast_calculation_view.xml',
         'views/menuitems.xml',

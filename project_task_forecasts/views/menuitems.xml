@@ -2,6 +2,18 @@
 <openerp>
     <data>
 
+        <menuitem name="Backlog SA"
+                  id="menu_project_backlog_sa"
+                  parent="project.menu_project_management"
+                  action="action_project_backlog_sa"
+                  sequence="24"/>
+
+        <menuitem name="Backlog CW"
+                  id="menu_project_backlog_cw"
+                  parent="project.menu_project_management"
+                  action="action_project_backlog_cw"
+                  sequence="25"/>
+
         <menuitem name="Milestones"
                   id="menu_project_milestones_tracking"
                   parent="project.menu_project_management"
