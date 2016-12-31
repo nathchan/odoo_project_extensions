@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, fields, api, tools
+from openerp import models, fields, api, tools, exceptions as e
 
 
 class ProjectBacklogCw(models.Model):
@@ -16,6 +16,14 @@ class ProjectBacklogCw(models.Model):
     forecast_date = fields.Date('Forecast date', readonly=True)
     forecast_week = fields.Char('Forecast week', readonly=True)
     sequence_order = fields.Integer('Sequence', readonly=True)
+
+    @api.model
+    def write(self, vals):
+        raise e.UserError('You are about to write some data...')
+
+    @api.one
+    def set_actual(self):
+        raise e.UserError('Not implemented yet... :)')
 
     def _select(self):
         select_str = """

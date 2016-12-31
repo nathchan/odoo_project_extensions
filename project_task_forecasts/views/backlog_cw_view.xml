@@ -21,7 +21,7 @@
             <field name="name">project.backlog.cw.kanban</field>
             <field name="model">project.backlog.cw</field>
             <field name="arch" type="xml">
-                <kanban default_group_by="milestone_id" class="o_kanban_small_column">
+                <kanban edit="true" create="false" quick_create="false" default_group_by="milestone_id" class="o_kanban_small_column">
                     <field name="project_id"/>
                     <field name="task_id"/>
                     <field name="milestone_id"/>
@@ -31,14 +31,23 @@
 
                     <templates>
                     <t t-name="kanban-box">
+
+
+
                         <div t-attf-class="oe_kanban_card oe_kanban_global_click">
                             <div class="oe_kanban_content">
+                                <div class="pull-right">
+                                    <button name="set_actual"
+                                            type="object"
+                                            class="btn btn-xs btn-default">Set actual</button>
+                                </div>
                                 <div>
                                     <strong><field name="task_id"/></strong>
                                 </div>
                                 <div class="text-muted">
                                     <field name="user_id"/>
                                 </div>
+
                                 <div class="oe_kanban_bottom_right">
                                     <img t-att-src="kanban_image('res.users', 'image_small', record.user_id.raw_value)"
                                          t-att-title="record.user_id.value"
