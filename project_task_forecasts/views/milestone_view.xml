@@ -11,6 +11,7 @@
                     <field name="name"/>
                     <field name="duration"/>
                     <field name="project_id"/>
+                    <field name="str_predecessor_milestone_ids" />
                     <field name="sequence" />
                 </tree>
             </field>

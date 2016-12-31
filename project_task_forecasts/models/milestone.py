@@ -7,10 +7,19 @@ class ProjectMilestone(models.Model):
     _name = 'project.milestone'
     _inherit = ['mail.thread', 'ir.needaction_mixin']
 
+    @api.multi
+    def _compute_str_predecessors(self):
+        for rec in self:
+            if len(rec.predecessor_milestone_ids) > 0:
+                rec.str_predecessor_milestone_ids = ', '.join([item.name for item in rec.predecessor_milestone_ids])
+            else:
+                rec.str_predecessor_milestone_ids = ''
+
     active = fields.Boolean('Active', default=True, track_visibility='onchange')
     sequence = fields.Integer('Sequence', track_visibility='onchange')
     name = fields.Char('Name', required=True, track_visibility='onchange')
     duration = fields.Integer('Duration', required=True, default=0, track_visibility='onchange')
+    str_predecessor_milestone_ids = fields.Char('Predecessors', compute=_compute_str_predecessors)
     predecessor_milestone_id = fields.Many2one('project.milestone', 'Predecessor', track_visibility='onchange')
     predecessor_milestone_ids = fields.Many2many('project.milestone', 'milestone_predecessor_rel', 'current_milestone_id', 'predecessor_milestone_id', 'Predecessors')
     project_id = fields.Many2one('project.project', 'Project', track_visibility='onchange', required=True)
