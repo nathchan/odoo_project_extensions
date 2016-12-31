@@ -20,7 +20,7 @@
                   action="action_task_milestones"
                   sequence="30"/>
 
-        <menuitem name="Milestones"
+        <menuitem name="Milestones template"
                   id="menu_project_milestones_config"
                   parent="project.menu_project_config"
                   action="action_project_milestones"
