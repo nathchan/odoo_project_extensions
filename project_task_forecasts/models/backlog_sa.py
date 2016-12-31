@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, fields, api, tools
+from openerp import models, fields, api, tools, exceptions as e
 
 
 class ProjectBacklogSa(models.Model):
@@ -12,9 +12,13 @@ class ProjectBacklogSa(models.Model):
     milestone_id = fields.Many2one('project.milestone', 'Milestone', readonly=True)
     project_id = fields.Many2one('project.project', 'Project', readonly=True)
     task_id = fields.Many2one('project.task', 'Task', readonly=True)
+    user_id = fields.Many2one('res.users', 'Assigned to', readonly=True)
     forecast_date = fields.Date('Forecast date', readonly=True)
     forecast_week = fields.Char('Forecast week', readonly=True)
     sequence_order = fields.Integer('Sequence', readonly=True)
+
+    def write(self, vals):
+        raise e.UserError('You are about to write some data...')
 
     def _select(self):
         select_str = """
@@ -22,6 +26,7 @@ class ProjectBacklogSa(models.Model):
             f.milestone_id,
             f.project_id,
             f.task_id,
+            t.user_id,
             f.forecast_date,
             f.forecast_week,
             f.sequence_order,
@@ -35,6 +40,7 @@ class ProjectBacklogSa(models.Model):
             project_task_milestone_forecast f
             left join project_project p on p.id = f.project_id
             left join account_analytic_account a on a.id = p.analytic_account_id
+            left join project_task t on t.id = f.task_id
         """
         return from_str
 
