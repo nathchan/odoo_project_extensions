@@ -107,7 +107,7 @@ class ExportMilestonesWizard(models.TransientModel):
                     lines = self.env['project.task.milestone.forecast'].search([('project_id', '=', this.project_id.id),
                                                                                 ('milestone_id', '=', milestone.id),
                                                                                 ('forecast_date', '!=', False),
-                                                                                ('forecast_date', '>=', seven_days_before_now),
+                                                                                #('forecast_date', '>=', seven_days_before_now),
                                                                                 ('write_date', '>=', this.timestamp)])
 
                 elif is_ac is True:
@@ -115,7 +115,7 @@ class ExportMilestonesWizard(models.TransientModel):
                     lines = self.env['project.task.milestone.forecast'].search([('project_id', '=', this.project_id.id),
                                                                                 ('milestone_id', '=', milestone.id),
                                                                                 ('actual_date', '!=', False),
-                                                                                ('actual_date', '>=', seven_days_before_now),
+                                                                                #('actual_date', '>=', seven_days_before_now),
                                                                                 ('write_date', '>=', this.timestamp)])
 
                 n = 2
