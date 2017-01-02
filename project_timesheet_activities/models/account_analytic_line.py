@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, fields, api
+from openerp import models, fields, api, tools
 from openerp import exceptions as e
+import datetime
 
 
 
@@ -38,6 +39,17 @@ class AccountAnalyticLine(models.Model):
         self.account_id_use_issues = self.account_id.use_issues
         self.account_id_use_tasks = self.account_id.use_tasks
 
+    @api.multi
+    @api.depends('date')
+    def _compute_color_record(self):
+        for rec in self:
+            if rec.date:
+                date = datetime.datetime.strptime(rec.date, tools.DEFAULT_SERVER_DATE_FORMAT)
+                if (date - datetime.datetime(1900, 1, 1)).days % 2 == 0:
+                    rec.timesheet_color_record = True
+                else:
+                    rec.timesheet_color_record = False
+
     account_id_use_tasks = fields.Boolean(compute=_compute_project_use_task_issues)
     account_id_use_issues = fields.Boolean(compute=_compute_project_use_task_issues)
 
@@ -67,6 +79,8 @@ class AccountAnalyticLine(models.Model):
     timesheet_end_time = fields.Float('End time')
     timesheet_break_amount = fields.Float('Break')
     timesheet_comment = fields.Char('Comment', size=20)
+
+    timesheet_color_record = fields.Boolean('Color record', compute=_compute_color_record)
 
     # sheet_id = fields.Many2one('hr_timesheet_sheet.sheet', string='Sheet', ondelete="cascade")
 

@@ -113,12 +113,14 @@
 
                     <xpath expr="//field[@name='timesheet_ids']/tree" position="attributes">
                         <attribute name="default_order">date, timesheet_start_time</attribute>
+                        <attribute name="decoration-info">timesheet_color_record==True</attribute>
                     </xpath>
 
                     <xpath expr="//field[@name='timesheet_ids']/tree/field[@name='account_id']" position="after">
                         <field name="account_id_use_tasks" invisible="1" />
                         <field name="account_id_use_issues" invisible="1" />
                         <field name="timesheet_on_site_activity" invisible="1" />
+                        <field name="timesheet_color_record" invisible="1" />
 
                         <field name="project_activity_id"
                                attrs="{'required': [('account_id_use_tasks', '=', True),
