@@ -145,7 +145,7 @@
             <field name="arch" type="xml">
                 <search>
 
-                    <filter domain="[('forecast_date','&lt;', current_date)]" help="FC in the past" />
+                    <filter domain="[('forecast_date','&lt;', current_date), ('actual_date', '=', False)]" help="FC in the past" />
 
                     <filter name="group_milestone_id" string="Milestone" context="{'group_by':'milestone_id'}"/>
                     <filter name="group_project_id" string="Project" context="{'group_by':'project_id'}"/>
