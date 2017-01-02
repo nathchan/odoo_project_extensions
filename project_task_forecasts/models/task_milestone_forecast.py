@@ -222,151 +222,152 @@ class ProjectTaskMilestoneForecast(models.Model):
     @api.multi
     def write(self, vals):
         date_seven_days_ago = (datetime.datetime.now() - datetime.timedelta(days=7))
+        if self.env.user.id != tools.SUPERUSER_ID:
 
-        if 'forecast_date' in vals and vals['forecast_date'] is not False \
-                and 'duration_forecast' in vals and vals['duration_forecast'] is not False \
-                and ('force_update' not in vals or vals['force_update'] is False):
+            if 'forecast_date' in vals and vals['forecast_date'] is not False \
+                    and 'duration_forecast' in vals and vals['duration_forecast'] is not False \
+                    and ('force_update' not in vals or vals['force_update'] is False):
 
-            raise e.ValidationError('Forecast date end and Duration forecast updated together and system can not \
-                            determine which value to use for calculation of future forecasts. Please discard current \
-                            changes and update only one of these two fields.')
+                raise e.ValidationError('Forecast date end and Duration forecast updated together and system can not \
+                                determine which value to use for calculation of future forecasts. Please discard current \
+                                changes and update only one of these two fields.')
 
-        if 'actual_date' in vals and vals['actual_date'] is not False\
-                and ('force_update' not in vals or vals['force_update'] is False):
-            opened_issues = self.env['project.issue'].search([('task_id', '=', self.task_id.id),
-                                                              ('milestone_id', '=', self.id),
-                                                              ('active', '=', True)], count=True)
-            if opened_issues > 0:
-                raise e.ValidationError('There is one or more opened issues related to this milestone. Please \
-                        close all issues before setting Actual date.')
+            if 'actual_date' in vals and vals['actual_date'] is not False\
+                    and ('force_update' not in vals or vals['force_update'] is False):
+                opened_issues = self.env['project.issue'].search([('task_id', '=', self.task_id.id),
+                                                                  ('milestone_id', '=', self.id),
+                                                                  ('active', '=', True)], count=True)
+                if opened_issues > 0:
+                    raise e.ValidationError('There is one or more opened issues related to this milestone. Please \
+                            close all issues before setting Actual date.')
 
-            if datetime.datetime.strptime(vals['actual_date'], tools.DEFAULT_SERVER_DATE_FORMAT) <= date_seven_days_ago:
-                raise e.ValidationError('Actual date can not be older than 7 days.')
+                if datetime.datetime.strptime(vals['actual_date'], tools.DEFAULT_SERVER_DATE_FORMAT) <= date_seven_days_ago:
+                    raise e.ValidationError('Actual date can not be older than 7 days.')
 
-            if 'forecast_date' in vals:
-                forecast = vals['forecast_date']
-            else:
-                forecast = self.forecast_date
-
-            fc_date = datetime.datetime.strptime(forecast, tools.DEFAULT_SERVER_DATE_FORMAT)
-            ac_date = datetime.datetime.strptime(vals['actual_date'], tools.DEFAULT_SERVER_DATE_FORMAT)
-
-            if ac_date > fc_date:
-                if self.issue_count < 1:
-                    raise e.ValidationError('There is no Issues related to this milestone. \
-                            First enter at least one Issue to explain postponement, please.')
-
-            if fc_date != ac_date:
-                if ac_date > fc_date:
-                    business_days_to_add = 0
-                    current_date = fc_date
-                    while True:
-                        current_date += datetime.timedelta(days=1)
-
-                        if self._skip_date(current_date) and current_date != ac_date:
-                            continue
-                        business_days_to_add += 1
-                        if current_date == ac_date:
-                            break
-                    vals['duration_forecast'] = self.duration_forecast + business_days_to_add
+                if 'forecast_date' in vals:
+                    forecast = vals['forecast_date']
                 else:
-                    business_days_to_add = 0
-                    current_date = fc_date
-                    while True:
-                        current_date -= datetime.timedelta(days=1)
+                    forecast = self.forecast_date
 
-                        if self._skip_date(current_date) and current_date != ac_date:
-                            continue
-                        business_days_to_add += 1
-                        if current_date == ac_date:
-                            break
-                    days = self.duration_forecast - business_days_to_add
-                    vals['duration_forecast'] = days if days >= 0 else 0
+                fc_date = datetime.datetime.strptime(forecast, tools.DEFAULT_SERVER_DATE_FORMAT)
+                ac_date = datetime.datetime.strptime(vals['actual_date'], tools.DEFAULT_SERVER_DATE_FORMAT)
 
-            return super(ProjectTaskMilestoneForecast, self).write(vals)
-
-        if 'forecast_date' in vals and vals['forecast_date'] is not False\
-                and ('duration_forecast' not in vals or vals['duration_forecast'] is False) \
-                and ('force_update' not in vals or vals['force_update'] is False):
-            if self.forecast_date:
-                old_date = datetime.datetime.strptime(self.forecast_date, tools.DEFAULT_SERVER_DATE_FORMAT)
-            else:
-                old_date = datetime.datetime.strptime(vals['forecast_date'], tools.DEFAULT_SERVER_DATE_FORMAT)
-            new_date = datetime.datetime.strptime(vals['forecast_date'], tools.DEFAULT_SERVER_DATE_FORMAT)
-
-            if new_date <= date_seven_days_ago:
-                raise e.ValidationError('Forecast date can not be older than 7 days.')
-
-            if old_date != new_date:
-                recalculate = True
-                end_date = new_date
-                if new_date > old_date:
+                if ac_date > fc_date:
                     if self.issue_count < 1:
-                        raise e.ValidationError('There is no Issues related to this milestone ['+self.milestone_id.name+']. \
+                        raise e.ValidationError('There is no Issues related to this milestone. \
                                 First enter at least one Issue to explain postponement, please.')
 
+                if fc_date != ac_date:
+                    if ac_date > fc_date:
+                        business_days_to_add = 0
+                        current_date = fc_date
+                        while True:
+                            current_date += datetime.timedelta(days=1)
 
-                    business_days_to_add = 0
-                    current_date = old_date
-                    while True:
-                        current_date += datetime.timedelta(days=1)
-
-                        if self._skip_date(current_date) and current_date != new_date:
-                            continue
-                        business_days_to_add += 1
-                        if current_date == new_date:
-                            break
-                    vals['duration_forecast'] = self.duration_forecast + business_days_to_add
-                else:
-                    business_days_to_add = 0
-                    current_date = old_date
-                    while True:
-                        current_date -= datetime.timedelta(days=1)
-
-                        if self._skip_date(current_date) and current_date != new_date:
-                            continue
-                        business_days_to_add += 1
-                        if current_date == new_date:
-                            break
-                    days = self.duration_forecast - business_days_to_add
-                    vals['duration_forecast'] = days if days >= 0 else 0
-
-        elif 'duration_forecast' in vals and vals['duration_forecast'] is not False \
-                and ('forecast_date' not in vals or vals['forecast_date'] is False):
-            if self.duration_forecast:
-                old_duration = self.duration_forecast
-            else:
-                old_duration = 0
-            new_duration = vals['duration_forecast']
-            days_diff = new_duration - old_duration
-
-            if self.task_id and self.milestone_id and self.project_id:
-                issue_count = self.env['project.issue'].search([('task_id', '=', self.task_id.id),
-                                                                ('milestone_id', '=', self.id),
-                                                                ('project_id', '=', self.project_id.id),
-                                                                '|',
-                                                                ('active', '=', True),
-                                                                ('active', '=', False)], count=True)
-                if days_diff > 0 and issue_count < 1:
-                    raise e.ValidationError('There is no Issues related to this milestone. First enter at least one Issue to explain postponement, please.')
-
-            if days_diff != 0:
-                recalculate = True
-                operation = 'plus' if days_diff > 0 else 'minus'
-                # add days
-                business_days_to_add = abs(days_diff)
-                current_date = datetime.datetime.strptime(self.forecast_date, tools.DEFAULT_SERVER_DATE_FORMAT)
-                while business_days_to_add > 0:
-                    if operation == 'plus':
-                        current_date += datetime.timedelta(days=1)
+                            if self._skip_date(current_date) and current_date != ac_date:
+                                continue
+                            business_days_to_add += 1
+                            if current_date == ac_date:
+                                break
+                        vals['duration_forecast'] = self.duration_forecast + business_days_to_add
                     else:
-                        current_date -= datetime.timedelta(days=1)
+                        business_days_to_add = 0
+                        current_date = fc_date
+                        while True:
+                            current_date -= datetime.timedelta(days=1)
 
-                    if self._skip_date(current_date):
-                        continue
-                    business_days_to_add -= 1
-                vals['forecast_date'] = current_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)
-                end_date = current_date
+                            if self._skip_date(current_date) and current_date != ac_date:
+                                continue
+                            business_days_to_add += 1
+                            if current_date == ac_date:
+                                break
+                        days = self.duration_forecast - business_days_to_add
+                        vals['duration_forecast'] = days if days >= 0 else 0
+
+                return super(ProjectTaskMilestoneForecast, self).write(vals)
+
+            if 'forecast_date' in vals and vals['forecast_date'] is not False\
+                    and ('duration_forecast' not in vals or vals['duration_forecast'] is False) \
+                    and ('force_update' not in vals or vals['force_update'] is False):
+                if self.forecast_date:
+                    old_date = datetime.datetime.strptime(self.forecast_date, tools.DEFAULT_SERVER_DATE_FORMAT)
+                else:
+                    old_date = datetime.datetime.strptime(vals['forecast_date'], tools.DEFAULT_SERVER_DATE_FORMAT)
+                new_date = datetime.datetime.strptime(vals['forecast_date'], tools.DEFAULT_SERVER_DATE_FORMAT)
+
+                if new_date <= date_seven_days_ago:
+                    raise e.ValidationError('Forecast date can not be older than 7 days.')
+
+                if old_date != new_date:
+                    recalculate = True
+                    end_date = new_date
+                    if new_date > old_date:
+                        if self.issue_count < 1:
+                            raise e.ValidationError('There is no Issues related to this milestone ['+self.milestone_id.name+']. \
+                                    First enter at least one Issue to explain postponement, please.')
+
+
+                        business_days_to_add = 0
+                        current_date = old_date
+                        while True:
+                            current_date += datetime.timedelta(days=1)
+
+                            if self._skip_date(current_date) and current_date != new_date:
+                                continue
+                            business_days_to_add += 1
+                            if current_date == new_date:
+                                break
+                        vals['duration_forecast'] = self.duration_forecast + business_days_to_add
+                    else:
+                        business_days_to_add = 0
+                        current_date = old_date
+                        while True:
+                            current_date -= datetime.timedelta(days=1)
+
+                            if self._skip_date(current_date) and current_date != new_date:
+                                continue
+                            business_days_to_add += 1
+                            if current_date == new_date:
+                                break
+                        days = self.duration_forecast - business_days_to_add
+                        vals['duration_forecast'] = days if days >= 0 else 0
+
+            elif 'duration_forecast' in vals and vals['duration_forecast'] is not False \
+                    and ('forecast_date' not in vals or vals['forecast_date'] is False):
+                if self.duration_forecast:
+                    old_duration = self.duration_forecast
+                else:
+                    old_duration = 0
+                new_duration = vals['duration_forecast']
+                days_diff = new_duration - old_duration
+
+                if self.task_id and self.milestone_id and self.project_id:
+                    issue_count = self.env['project.issue'].search([('task_id', '=', self.task_id.id),
+                                                                    ('milestone_id', '=', self.id),
+                                                                    ('project_id', '=', self.project_id.id),
+                                                                    '|',
+                                                                    ('active', '=', True),
+                                                                    ('active', '=', False)], count=True)
+                    if days_diff > 0 and issue_count < 1:
+                        raise e.ValidationError('There is no Issues related to this milestone. First enter at least one Issue to explain postponement, please.')
+
+                if days_diff != 0:
+                    recalculate = True
+                    operation = 'plus' if days_diff > 0 else 'minus'
+                    # add days
+                    business_days_to_add = abs(days_diff)
+                    current_date = datetime.datetime.strptime(self.forecast_date, tools.DEFAULT_SERVER_DATE_FORMAT)
+                    while business_days_to_add > 0:
+                        if operation == 'plus':
+                            current_date += datetime.timedelta(days=1)
+                        else:
+                            current_date -= datetime.timedelta(days=1)
+
+                        if self._skip_date(current_date):
+                            continue
+                        business_days_to_add -= 1
+                    vals['forecast_date'] = current_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)
+                    end_date = current_date
 
         return super(ProjectTaskMilestoneForecast, self).write(vals)
 
