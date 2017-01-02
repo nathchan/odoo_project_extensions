@@ -20,7 +20,8 @@
                     <field name="forecast_week" string="FC Week" />
                     <field name="actual_week" string="AC Week" />
                     <field name="same_week_tasks_count" />
-                    <field name="issue_count" string="Issue count"/>
+                    <field name="issue_count" string="Issue Count"/>
+                    <field name="opened_issue_count" string="Opened Issue Count"/>
                     <field name="write_uid" />
                     <field name="write_date" />
                 </tree>
@@ -146,10 +147,11 @@
 
                     <filter domain="[('forecast_date','&lt;', current_date)]" help="FC in the past" />
 
+                    <filter name="group_milestone_id" string="Milestone" context="{'group_by':'milestone_id'}"/>
+                    <filter name="group_project_id" string="Project" context="{'group_by':'project_id'}"/>
                     <filter name="group_task_id" string="Task" context="{'group_by':'task_id'}"/>
                     <filter name="group_assigned_to" string="Assigned to" context="{'group_by':'assigned_to'}"/>
-                    <filter name="group_project_id" string="Project" context="{'group_by':'project_id'}"/>
-                    <filter name="group_milestone_id" string="Milestone" context="{'group_by':'milestone_id'}"/>
+
                     <filter name="group_forecast_date" string="Forecast date" context="{'group_by':'forecast_date'}"/>
                     <filter name="group_actual_date" string="Actual date" context="{'group_by':'actual_date'}"/>
 
@@ -212,7 +214,8 @@
             <field name="name">Milestones</field>
             <field name="res_model">project.task.milestone.forecast</field>
             <field name="search_view_id" ref="view_task_milestones_search" />
-            <field name="context">{"search_default_group_milestone_id":1}</field>
+            <field name="context">{"search_default_group_project_id":1,
+                                   "search_default_group_task_id":1}</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form,graph,pivot</field>
         </record>
