@@ -16,8 +16,8 @@
                     <field name="baseline_duration" string="BL Duration" />
                     <field name="duration_forecast" string="Duration" />
                     <field name="forecast_date" string="Forecast" />
-                    <field name="actual_date" string="Actual" />
                     <field name="forecast_week" string="FC Week" />
+                    <field name="actual_date" string="Actual" />
                     <field name="actual_week" string="AC Week" />
                     <field name="same_week_tasks_count" />
                     <field name="issue_count" string="Issue Count"/>

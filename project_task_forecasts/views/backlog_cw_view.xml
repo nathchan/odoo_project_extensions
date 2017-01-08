@@ -32,9 +32,8 @@
                     <templates>
                     <t t-name="kanban-box">
 
-
-
                         <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+
                             <div class="oe_kanban_content">
                                 <div class="pull-right">
                                     <button name="set_actual"
@@ -42,7 +41,9 @@
                                             class="btn btn-xs btn-default">Set actual</button>
                                 </div>
                                 <div>
-                                    <strong><field name="task_id"/></strong>
+                                    <a name="action_show_task_from_milestone" type="object">
+                                        <strong><field name="task_id"/></strong>
+                                    </a>
                                 </div>
 
                                 <div class="oe_kanban_bottom_right">
