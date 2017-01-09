@@ -9,6 +9,12 @@
                   groups="project.group_project_user"
                   sequence="20"/>
 
+        <menuitem action="act_hr_timesheet_sheet_my_task_activities"
+                  id="menu_act_hr_timesheet_sheet_my_task_activities"
+                  parent="hr_attendance.menu_hr_time_tracking"
+                  groups="base.group_user"
+                  sequence="5" />
+
 
     </data>
 </openerp>

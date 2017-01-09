@@ -8,6 +8,7 @@ import datetime
 
 class AccountAnalyticLine(models.Model):
     _inherit = 'account.analytic.line'
+    _order = 'date DESC'
 
     @api.onchange('project_activity_id')
     def _change_project_activity(self):
@@ -50,6 +51,13 @@ class AccountAnalyticLine(models.Model):
                 else:
                     rec.timesheet_color_record = False
 
+    @api.multi
+    @api.depends('task_id.user_id')
+    def _compute_task_assigned_to(self):
+        for rec in self:
+            if rec.task_id and rec.task_id.user_id:
+                rec.timesheet_task_assigned_to = rec.task_id.user_id
+
     account_id_use_tasks = fields.Boolean(compute=_compute_project_use_task_issues)
     account_id_use_issues = fields.Boolean(compute=_compute_project_use_task_issues)
 
@@ -80,7 +88,13 @@ class AccountAnalyticLine(models.Model):
     timesheet_break_amount = fields.Float('Break')
     timesheet_comment = fields.Char('Comment', size=20)
 
+    timesheet_approved_status = fields.Selection([('draft', 'Waiting Approval'),
+                                                  ('approved', 'Approved'),
+                                                  ('refused', 'Refused')], 'Approval status', default='draft')
+
     timesheet_color_record = fields.Boolean('Color record', compute=_compute_color_record)
+    timesheet_task_assigned_to = fields.Many2one('res.users', 'Task Assigned to', compute=_compute_task_assigned_to, store=True)
+
 
     # sheet_id = fields.Many2one('hr_timesheet_sheet.sheet', string='Sheet', ondelete="cascade")
 

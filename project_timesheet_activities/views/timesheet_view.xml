@@ -11,9 +11,14 @@
 
                 <xpath expr="//tree" position="attributes">
                     <attribute name="editable"></attribute>
+                    <attribute name="create">false</attribute>
+                    <attribute name="edit">false</attribute>
+                    <attribute name="decoration-danger">timesheet_approved_status=='refused'</attribute>
+                    <attribute name="decoration-success">timesheet_approved_status=='approved'</attribute>
                 </xpath>
 
                 <xpath expr="//field[@name='date']" position="after">
+                    <field name="timesheet_approved_status" />
                     <field name="timesheet_department_id" />
                     <field name="timesheet_start_time" invisible="1" />
                 </xpath>
@@ -36,6 +41,47 @@
                 <!--</xpath>-->
 
             </field>
+        </record>
+
+        <record id="hr_timesheet_line_search_inherit" model="ir.ui.view">
+            <field name="name">account.analytic.line.search.inherit</field>
+            <field name="model">account.analytic.line</field>
+            <field name="inherit_id" ref="hr_timesheet.hr_timesheet_line_search" />
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='account_id']" position="after">
+                    <field name="task_id" />
+                    <field name="timesheet_department_id" />
+                    <field name="project_activity_id" />
+                    <field name="unit_amount" />
+
+                    <filter name="my_tasks" string="My tasks" domain="[('timesheet_task_assigned_to', '=', uid)]" />
+
+                    <filter name="waiting_approval" string="Waiting approval" domain="[('timesheet_approved_status', '=', 'draft')]" />
+                    <filter name="approved" string="Approved" domain="[('timesheet_approved_status', '=', 'approved')]" />
+                    <filter name="refused" string="Refused" domain="[('timesheet_approved_status', '=', 'refused')]" />
+
+                    <filter name="group_department_id" string="Department" context="{'group_by': 'timesheet_department_id'}" domain="" />
+                    <filter name="group_user_id" string="User" context="{'group_by': 'user_id'}" domain="" />
+                    <filter name="group_task_id" string="Task" context="{'group_by': 'task_id'}" domain="" />
+                    <filter name="group_project_activity_id" string="Activity" context="{'group_by': 'project_activity_id'}" domain="" />
+                    <filter name="group_timesheet_approved_status" string="Approval status" context="{'group_by': 'timesheet_approved_status'}" domain="" />
+
+                </xpath>
+
+            </field>
+        </record>
+
+
+
+        <record id="act_hr_timesheet_sheet_my_task_activities" model="ir.actions.act_window">
+            <field name="name">My Task Activities</field>
+            <field name="res_model">account.analytic.line</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_timesheet.hr_timesheet_line_tree"/>
+            <field name="domain">[('is_timesheet', '=', True), ('timesheet_task_assigned_to', '=', uid)]</field>
+            <field name="context">{"search_default_waiting_approval":1, "search_default_group_user_id": 1}</field>
+            <field name="search_view_id" ref="hr_timesheet.hr_timesheet_line_search"/>
         </record>
 
 
