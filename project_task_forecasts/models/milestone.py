@@ -6,6 +6,7 @@ from openerp import models, fields, api
 class ProjectMilestone(models.Model):
     _name = 'project.milestone'
     _inherit = ['mail.thread', 'ir.needaction_mixin']
+    _order = 'sequence'
 
     @api.multi
     def _compute_str_predecessors(self):

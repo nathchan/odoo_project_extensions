@@ -10,6 +10,15 @@ class ProjectBacklogCw(models.AbstractModel):
     _order = 'sequence_order'
     _project_name = ''
 
+    @api.multi
+    def _compute_color(self):
+        for rec in self:
+            rec.color = rec.task_id.color
+
+    create_uid = fields.Many2one('res.users', 'Created by', readonly=True)
+    create_date = fields.Datetime('Created date', readonly=True)
+    write_uid = fields.Many2one('res.users', 'Updated by', readonly=True)
+    write_date = fields.Datetime('Updated date', readonly=True)
     milestone_id = fields.Many2one('project.milestone', 'Milestone', readonly=True)
     project_id = fields.Many2one('project.project', 'Project', readonly=True)
     task_id = fields.Many2one('project.task', 'Task', readonly=True)
@@ -17,6 +26,20 @@ class ProjectBacklogCw(models.AbstractModel):
     forecast_date = fields.Date('Forecast date', readonly=True)
     forecast_week = fields.Char('Forecast week', readonly=True)
     sequence_order = fields.Integer('Sequence', readonly=True)
+    color = fields.Char('Color Index', compute=_compute_color)
+
+    @api.multi
+    def write(self, vals):
+        if len(vals) == 1 and 'kanban_state' in vals:
+            for rec in self:
+                milestone_forecast = self.env['project.task.milestone.forecast'].search([('task_id', '=', rec.task_id.id),
+                                                                                         ('milestone_id', '=', rec.milestone_id.id)],
+                                                                                        limit=1)
+                milestone_forecast.write({
+                    'kanban_state': vals['kanban_state']
+                })
+
+        return True
 
     @api.multi
     def action_show_task_from_milestone(self):
@@ -62,15 +85,17 @@ class ProjectBacklogCw(models.AbstractModel):
     def _select(self):
         select_str = """
             (ROW_NUMBER() OVER (ORDER BY f.create_date)) as id,
+            f.create_date,
+            f.create_uid,
+            f.write_date,
+            f.write_uid,
             f.milestone_id,
             f.project_id,
             f.task_id,
             t.user_id,
             f.forecast_date,
             f.forecast_week,
-            f.sequence_order,
-            f.write_date,
-            f.write_uid
+            f.sequence_order
         """
         return select_str
 

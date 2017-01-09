@@ -164,6 +164,14 @@ class ProjectTaskMilestoneForecast(models.Model):
     baseline_duration = fields.Integer('Baseline duration', default=_get_default_duration, group_operator="avg", track_visibility='onchange')
     duration_forecast = fields.Integer('Duration forecast', default=_get_default_duration, group_operator="avg", track_visibility='onchange')
 
+    kanban_state = fields.Selection([('normal', 'In Progress'),
+                                     ('done', 'Ready for next stage'),
+                                     ('blocked', 'Blocked')], 'Kanban State',
+                                    track_visibility='onchange',
+                                    default="normal",
+                                    required=True,
+                                    copy=False)
+
     _sql_constraints = [
         ('unique_task_milestone', 'unique(task_id, milestone_id)', 'Combination of task and milestone must be unique!')
     ]
