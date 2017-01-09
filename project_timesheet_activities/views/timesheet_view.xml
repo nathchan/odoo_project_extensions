@@ -63,6 +63,7 @@
 
                     <filter name="group_department_id" string="Department" context="{'group_by': 'timesheet_department_id'}" domain="" />
                     <filter name="group_user_id" string="User" context="{'group_by': 'user_id'}" domain="" />
+                    <filter name="group_timesheet_task_assigned_to" string="Task Assigned to" context="{'group_by': 'timesheet_task_assigned_to'}" domain="" />
                     <filter name="group_task_id" string="Task" context="{'group_by': 'task_id'}" domain="" />
                     <filter name="group_project_activity_id" string="Activity" context="{'group_by': 'project_activity_id'}" domain="" />
                     <filter name="group_timesheet_approved_status" string="Approval status" context="{'group_by': 'timesheet_approved_status'}" domain="" />
