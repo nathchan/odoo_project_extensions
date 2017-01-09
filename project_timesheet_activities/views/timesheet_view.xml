@@ -55,7 +55,7 @@
                     <field name="project_activity_id" />
                     <field name="unit_amount" />
 
-                    <filter name="my_tasks" string="My tasks" domain="[('timesheet_task_assigned_to', '=', uid)]" />
+                    <!--<filter name="my_tasks" string="My tasks" domain="[('timesheet_task_assigned_to', '=', uid)]" />-->
 
                     <filter name="waiting_approval" string="Waiting approval" domain="[('timesheet_approved_status', '=', 'draft')]" />
                     <filter name="approved" string="Approved" domain="[('timesheet_approved_status', '=', 'approved')]" />
