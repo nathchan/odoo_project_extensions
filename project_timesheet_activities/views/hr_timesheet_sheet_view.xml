@@ -43,9 +43,10 @@
 
 
                     <xpath expr="//div[@class='oe_button_box']" position="replace">
-                        <field name="state" invisible="1" />
+
                     </xpath>
-                    <xpath expr="//header" position="replace"></xpath>
+
+                    <!--<xpath expr="//header" position="replace"></xpath>-->
 
 
 

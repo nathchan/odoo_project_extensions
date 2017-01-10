@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, fields, api
+from openerp import models, fields, api, tools
+import datetime
 
 class HrTimesheetSheet(models.Model):
     _inherit = 'hr_timesheet_sheet.sheet'
@@ -80,6 +81,9 @@ class HrTimesheetSheet(models.Model):
 
     no_break_warning = fields.Boolean('No break warning', compute=_compute_no_break_working_hours_warning, search=_search_no_break_warning)
     working_hours_warning = fields.Boolean('Working hours warning', compute=_compute_no_break_working_hours_warning, search=_search_working_hours_warning)
+
+    date_from = fields.Date('Date from', default=datetime.datetime.now().strftime(tools.DEFAULT_SERVER_DATE_FORMAT))
+    date_to = fields.Date('Date to', default=datetime.datetime.now().strftime(tools.DEFAULT_SERVER_DATE_FORMAT))
 
     @api.multi
     def write(self, vals):
