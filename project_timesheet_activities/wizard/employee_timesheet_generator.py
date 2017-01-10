@@ -614,7 +614,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 n += 1
                 emp = self.env['hr.employee'].search([('user_id', '=', line.user_id.id)], limit=1)
                 ws['A'+str(n)] = emp.other_id if emp and emp.other_id else '---'
-                ws['B'+str(n)] = d.datetime.strptime(line.date, tools.DEFAULT_SERVER_DATE_FORMAT).strftime("%M/%d/%Y")
+                ws['B'+str(n)] = d.datetime.strptime(line.date, tools.DEFAULT_SERVER_DATE_FORMAT).strftime("%m/%d/%Y")
                 ws['C'+str(n)] = format_float_time(line.timesheet_start_time)
                 ws['D'+str(n)] = format_float_time(line.timesheet_end_time)
                 ws['E'+str(n)] = format_float_time(line.unit_amount)
