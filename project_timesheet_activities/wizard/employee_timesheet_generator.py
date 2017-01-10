@@ -187,10 +187,9 @@ class EmployeeTimesheetGenerator(models.TransientModel):
 
 
             # SERVER VERSION
-            # ws = wb.create_sheet(0, employee.employee_id.name)
-            # LOCAL VERSION
-            # ws = wb.create_sheet(employee.employee_id.name, 0)
             ws = wb.create_sheet(0, employee.name)
+            # LOCAL VERSION
+            # ws = wb.create_sheet(employee.name, 0)
 
 
             ws.merge_cells('A2:C2')
@@ -567,17 +566,16 @@ class EmployeeTimesheetGenerator(models.TransientModel):
         if this.display_sap_report is True and len(employees)>0:
             lines = sheet_lines.search([('user_id', 'in', [item.user_id.id for item in employees]),
                                         ('is_timesheet', '=', True),
-                                        ('task_id', '!=', False),
+                                        # ('task_id', '!=', False),
                                         ('project_activity_id.show_on_sap_report', '=', True),
                                         ('date', '>=', this.sap_date_from),
                                         ('date', '<=', this.sap_date_to)],
                                        order='user_id, date, write_date')
 
             # SERVER VERSION
-            # ws = wb.create_sheet(0, employee.employee_id.name)
-            # LOCAL VERSION
-            # ws = wb.create_sheet(employee.employee_id.name, 0)
             ws = wb.create_sheet(0, 'SAP UPLOAD')
+            # LOCAL VERSION
+            # ws = wb.create_sheet('SAP UPLOAD', 0)
 
             ws['A1'] = 'Personalnummer *'
             ws['A1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
@@ -601,10 +599,13 @@ class EmployeeTimesheetGenerator(models.TransientModel):
             ws['J1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
             ws['K1'] = 'Arbeitsbeschreibung'
             ws['K1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
-            ws['L1'] = 'Interner Kommentar'
+            ws['L1'] = 'Field of activity'
             ws['L1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
-            ws['M1'] = 'Mitarbeiter'
+            ws['M1'] = 'Interner Kommentar'
             ws['M1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+            ws['N1'] = 'Mitarbeiter'
+            ws['N1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+
 
             ws.row_dimensions[1].height = 50
 
@@ -630,8 +631,9 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 ws['I'+str(n)] = line.task_id.name + '-1' if line.task_id else ''
                 ws['J'+str(n)] = ''
                 ws['K'+str(n)] = ''
-                ws['L'+str(n)] = line.project_activity_id.name if line.project_activity_id else ''
-                ws['M'+str(n)] = line.user_id.name
+                ws['L'+str(n)] = line.account_id.name if line.account_id else ''
+                ws['M'+str(n)] = line.project_activity_id.name if line.project_activity_id else ''
+                ws['N'+str(n)] = line.user_id.name
 
 
         buf = cStringIO.StringIO()
