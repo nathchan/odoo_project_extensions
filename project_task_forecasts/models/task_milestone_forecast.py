@@ -255,6 +255,9 @@ class ProjectTaskMilestoneForecast(models.Model):
                     raise e.ValidationError('There is one or more opened issues related to this milestone. Please \
                             close all issues before setting Actual date.')
 
+                if datetime.datetime.strptime(vals['actual_date'], tools.DEFAULT_SERVER_DATE_FORMAT) > datetime.datetime.now():
+                    raise e.ValidationError('Actual date can not be date in future.')
+
                 if datetime.datetime.strptime(vals['actual_date'], tools.DEFAULT_SERVER_DATE_FORMAT) <= date_seven_days_ago:
                     raise e.ValidationError('Actual date can not be older than 7 days.')
 
