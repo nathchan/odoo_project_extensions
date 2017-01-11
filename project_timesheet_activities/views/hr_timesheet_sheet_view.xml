@@ -126,12 +126,16 @@
                         <field name="timesheet_approved_status" invisible="1" />
                         <field name="account_id_use_tasks" invisible="1" />
                         <field name="account_id_use_issues" invisible="1" />
+                        <field name="account_id_name" invisible="1" />
                         <field name="timesheet_on_site_activity" invisible="1" />
                         <field name="timesheet_color_record" invisible="1" />
 
                         <field name="project_activity_id"
-                               attrs="{'required': [('account_id_use_tasks', '=', True),
-                                                    ('account_id_use_issues', '=', True)]}"
+                               attrs="{'required': ['|',
+                                                    '&amp;',
+                                                    ('account_id_use_tasks', '=', True),
+                                                    ('account_id_use_issues', '=', True),
+                                                    ('account_id_name', '=', 'General')]}"
                                options="{'no_open': True, 'no_create': True}" />
                         <field name="task_id"
                                attrs="{'required': [('account_id_use_tasks', '=', True),

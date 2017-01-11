@@ -36,9 +36,10 @@ class AccountAnalyticLine(models.Model):
 
     @api.one
     @api.depends('account_id')
-    def _compute_project_use_task_issues(self):
+    def _compute_project_use_task_issues_name(self):
         self.account_id_use_issues = self.account_id.use_issues
         self.account_id_use_tasks = self.account_id.use_tasks
+        self.account_id_name = self.account_id.name
 
     @api.multi
     @api.depends('date')
@@ -58,8 +59,9 @@ class AccountAnalyticLine(models.Model):
             if rec.task_id and rec.task_id.user_id:
                 rec.timesheet_task_assigned_to = rec.task_id.user_id
 
-    account_id_use_tasks = fields.Boolean(compute=_compute_project_use_task_issues)
-    account_id_use_issues = fields.Boolean(compute=_compute_project_use_task_issues)
+    account_id_use_tasks = fields.Boolean(compute=_compute_project_use_task_issues_name)
+    account_id_use_issues = fields.Boolean(compute=_compute_project_use_task_issues_name)
+    account_id_name = fields.Char(compute=_compute_project_use_task_issues_name)
 
     project_activity_id = fields.Many2one('project.activity', 'Activity')
     timesheet_activity_category = fields.Selection([('effective', 'Effective'), ('ineffective', 'Ineffective')],
