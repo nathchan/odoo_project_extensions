@@ -115,12 +115,14 @@ class AccountAnalyticLine(models.Model):
     @api.multi
     def approve(self):
         for rec in self:
-            rec.timesheet_approved_status = 'approved'
+            if (rec.timesheet_task_assigned_to.id == self.env.user.id) or self.env.user._has_group(self.env.cr, self.env.user.id, 'project_timesheet_activities.group_hr_timesheet_rollout_manager'):
+                rec.timesheet_approved_status = 'approved'
 
     @api.multi
     def refuse(self):
         for rec in self:
-            rec.timesheet_approved_status = 'refused'
+            if (rec.timesheet_task_assigned_to.id == self.env.user.id) or self.env.user._has_group(self.env.cr, self.env.user.id, 'project_timesheet_activities.group_hr_timesheet_rollout_manager'):
+                rec.timesheet_approved_status = 'refused'
 
 
     @api.one
