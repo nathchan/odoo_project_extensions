@@ -281,7 +281,7 @@
         </record>
 
         <record id="act_hr_timesheet_sheet_waiting_approval" model="ir.actions.act_window">
-            <field name="name">My Task Timesheets</field>
+            <field name="name">My Task's Timesheets</field>
             <field name="res_model">hr_timesheet_sheet.sheet</field>
             <field name="view_type">form</field>
             <field name="view_id" ref="hr_timesheet_sheet.hr_timesheet_sheet_tree_simplified"/>

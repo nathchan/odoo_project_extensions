@@ -76,7 +76,7 @@
 
 
         <record id="act_hr_timesheet_sheet_my_task_activities" model="ir.actions.act_window">
-            <field name="name">My Task Activities</field>
+            <field name="name">My Task's Activities</field>
             <field name="res_model">account.analytic.line</field>
             <field name="view_type">form</field>
             <field name="view_id" ref="hr_timesheet.hr_timesheet_line_tree"/>
