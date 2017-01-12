@@ -153,11 +153,13 @@ class AccountAnalyticLine(models.Model):
                 elif old_state != 'refused' and vals['timesheet_approved_status'] == 'refused':
                     self.sheet_id.message_post(self.env.user.name+' Refused: '+ ', '.join([self.date, self.account_id.name, self.project_activity_id.name or '', format_float_time_str(self.unit_amount)]))
                 if vals['timesheet_approved_status'] == 'approved':
-                    if len(self.sheet_id.timesheet_ids) == self.timesheet_ids.filtered(lambda r: r.timesheet_approved_status == 'approved'):
-                        self.sheet_id.approved_status = 'approved'
+                    sheet = self.env['hr_timesheet_sheet.sheet'].search([('id', '=', self.sheet_id.id)], limit=1)
+                    if len(sheet.timesheet_ids) == sheet.timesheet_ids.filtered(lambda r: r.timesheet_approved_status == 'approved'):
+                        sheet.approved_status = 'approved'
                 elif vals['timesheet_approved_status'] == 'refused':
-                    if len(self.sheet_id.timesheet_ids) == self.timesheet_ids.filtered(lambda r: r.timesheet_approved_status == 'refused'):
-                        self.sheet_id.approved_status = 'refused'
+                    sheet = self.env['hr_timesheet_sheet.sheet'].search([('id', '=', self.sheet_id.id)], limit=1)
+                    if len(sheet.timesheet_ids) == sheet.timesheet_ids.filtered(lambda r: r.timesheet_approved_status == 'refused'):
+                        sheet.approved_status = 'refused'
             else:
                 raise e.ValidationError('You can not edit approved timesheet line.')
         else:
@@ -169,10 +171,12 @@ class AccountAnalyticLine(models.Model):
                 elif old_state != 'refused' and vals['timesheet_approved_status'] == 'refused':
                     self.sheet_id.message_post(self.env.user.name+' Refused: '+ ', '.join([self.date, self.account_id.name, self.project_activity_id.name or '', format_float_time_str(self.unit_amount)]))
                 if vals['timesheet_approved_status'] == 'approved':
-                    if len(self.sheet_id.timesheet_ids) == self.timesheet_ids.filtered(lambda r: r.timesheet_approved_status == 'approved'):
-                        self.sheet_id.approved_status = 'approved'
+                    sheet = self.env['hr_timesheet_sheet.sheet'].search([('id', '=', self.sheet_id.id)], limit=1)
+                    if len(sheet.timesheet_ids) == sheet.timesheet_ids.filtered(lambda r: r.timesheet_approved_status == 'approved'):
+                        sheet.approved_status = 'approved'
                 elif vals['timesheet_approved_status'] == 'refused':
-                    if len(self.sheet_id.timesheet_ids) == self.timesheet_ids.filtered(lambda r: r.timesheet_approved_status == 'refused'):
-                        self.sheet_id.approved_status = 'refused'
+                    sheet = self.env['hr_timesheet_sheet.sheet'].search([('id', '=', self.sheet_id.id)], limit=1)
+                    if len(sheet.timesheet_ids) == sheet.timesheet_ids.filtered(lambda r: r.timesheet_approved_status == 'refused'):
+                        sheet.approved_status = 'refused'
             else:
                 super(AccountAnalyticLine, self).write(vals)
