@@ -49,7 +49,7 @@
                     <xpath expr="//header" position="replace">
                         <header>
                             <button name="button_submit_to_manager"
-                                    attrs="{'invisible':[('approved_status', 'in', ['draft', 'approved', 'refused'])]}"
+                                    attrs="{'invisible':[('approved_status', 'in', ['draft', 'approved'])]}"
                                     string="Submit to Manager"
                                     type="object"
                                     class="oe_highlight"
@@ -60,7 +60,7 @@
                                     string="Approve all"
                                     type="object"
                                     class="oe_highlight"
-                                    groups="base.group_hr_manager"
+                                    groups="project_timesheet_activities.group_hr_timesheet_rollout_manager"
                                     confirm="All lines will be approved. Are you sure?"/>
 
                             <button name="button_refuse_all"
@@ -68,7 +68,7 @@
                                     string="Refuse all"
                                     type="object"
                                     class="oe_highlight"
-                                    groups="base.group_hr_manager"
+                                    groups="project_timesheet_activities.group_hr_timesheet_rollout_manager"
                                     confirm="All lines will be refused. Are you sure?"/>
 
                             <field name="approved_status" widget="statusbar" statusbar_visible="new,draft,approved"/>
@@ -276,12 +276,12 @@
             <field name="res_model">hr_timesheet_sheet.sheet</field>
             <field name="view_type">form</field>
             <field name="view_id" ref="hr_timesheet_sheet.hr_timesheet_sheet_tree_simplified"/>
-            <field name="domain">[('approved_status', 'in', ['refused', 'draft'])]</field>
+            <field name="domain">[('approved_status', 'in', ['draft'])]</field>
             <field name="context">{"search_default_group_employee": 1}</field>
         </record>
 
         <record id="act_hr_timesheet_sheet_waiting_approval" model="ir.actions.act_window">
-            <field name="name">Waiting Approval</field>
+            <field name="name">My Task Timesheets</field>
             <field name="res_model">hr_timesheet_sheet.sheet</field>
             <field name="view_type">form</field>
             <field name="view_id" ref="hr_timesheet_sheet.hr_timesheet_sheet_tree_simplified"/>
