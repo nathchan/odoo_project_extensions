@@ -18,6 +18,7 @@
         'fleet',
     ],
     'data': [
+        'security/security.xml',
         'views/project_activity_view.xml',
         'views/task_view.xml',
         'views/timesheet_view.xml',
@@ -27,7 +28,6 @@
         'views/hr_my_timesheets_action.xml',
         'views/account_analytic_account_view.xml',
         'security/ir.model.access.csv',
-        'security/security.xml',
     ],
     'demo': [],
     'qweb': [],
