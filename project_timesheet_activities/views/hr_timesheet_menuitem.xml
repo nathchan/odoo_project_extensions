@@ -2,19 +2,47 @@
 <openerp>
     <data>
 
+        <delete id="hr_timesheet_sheet.menu_act_hr_timesheet_sheet_form" model="ir.ui.menu" />
+        <delete id="hr_timesheet.menu_hr_working_hours" model="ir.ui.menu" />
+
+
+
+
+        <menuitem action="act_hr_timesheet_sheet_controlling"
+                  id="menu_act_hr_timesheet_sheet_controlling"
+                  parent="hr_attendance.menu_hr_time_tracking"
+                  groups="project_timesheet_activities.group_hr_timesheet_rollout_manager"
+                  sequence="10" />
+
+        <menuitem action="act_hr_timesheet_sheet_waiting_approval"
+                  id="menu_act_hr_timesheet_sheet_waiting_approval"
+                  parent="hr_attendance.menu_hr_time_tracking"
+                  groups="project_timesheet_activities.group_hr_timesheet_supervisor"
+                  sequence="15" />
+
+
+
+
+        <menuitem action="act_hr_timesheet_sheet_my_task_activities"
+                  id="menu_act_hr_timesheet_sheet_my_task_activities"
+                  parent="hr_attendance.menu_hr_time_tracking"
+                  groups="project_timesheet_activities.group_hr_timesheet_supervisor"
+                  sequence="35" />
+
+        <menuitem action="act_hr_timesheet_sheet_all_activities"
+                  id="menu_act_hr_timesheet_sheet_all_activities"
+                  parent="hr_attendance.menu_hr_time_tracking"
+                  groups="project_timesheet_activities.group_hr_timesheet_supervisor"
+                  sequence="40" />
+
+
+
         <menuitem string="Generate XLS timesheets"
                   action="act_hr_timesheet_sheet_generate_timesheets_xls"
                   id="menu_act_hr_timesheet_sheet_generate_timesheets_xls"
                   parent="hr_attendance.menu_hr_time_tracking"
                   groups="project.group_project_user"
-                  sequence="20"/>
-
-        <menuitem action="act_hr_timesheet_sheet_my_task_activities"
-                  id="menu_act_hr_timesheet_sheet_my_task_activities"
-                  parent="hr_attendance.menu_hr_time_tracking"
-                  groups="base.group_user"
-                  sequence="5" />
-
+                  sequence="50"/>
 
     </data>
 </openerp>

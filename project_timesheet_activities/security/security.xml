@@ -2,6 +2,31 @@
 <openerp>
     <data noupdate="0">
 
+        <record model="ir.module.category" id="module_hr_timesheet_category">
+            <field name="name">HR Timesheet</field>
+            <field name="sequence">17</field>
+        </record>
+
+        <record id="group_hr_timesheet_employee" model="res.groups">
+            <field name="name">Employee</field>
+            <field name="category_id" ref="module_hr_timesheet_category"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+        </record>
+
+        <record id="group_hr_timesheet_supervisor" model="res.groups">
+            <field name="name">Supervisor</field>
+            <field name="category_id" ref="module_hr_timesheet_category"/>
+            <field name="implied_ids" eval="[(4, ref('group_hr_timesheet_employee'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+        </record>
+
+        <record id="group_hr_timesheet_rollout_manager" model="res.groups">
+            <field name="name">Rollout Manager</field>
+            <field name="category_id" ref="module_hr_timesheet_category"/>
+            <field name="implied_ids" eval="[(4, ref('group_hr_timesheet_supervisor'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+        </record>
+
         <delete id="fleet.fleet_user_vehicle_visibility" model="ir.rule" />
 
     </data>

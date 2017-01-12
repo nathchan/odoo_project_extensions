@@ -46,7 +46,35 @@
 
                     </xpath>
 
-                    <!--<xpath expr="//header" position="replace"></xpath>-->
+                    <xpath expr="//header" position="replace">
+                        <header>
+                            <button name="button_submit_to_manager"
+                                    attrs="{'invisible':[('approved_status', 'in', ['draft', 'approved', 'refused'])]}"
+                                    string="Submit to Manager"
+                                    type="object"
+                                    class="oe_highlight"
+                                    confirm="This timesheet will be submitted to manager. Are you sure?"/>
+
+                            <button name="button_approve_all"
+                                    attrs="{'invisible':[('approved_status', 'in', ['new', 'approved'])]}"
+                                    string="Approve all"
+                                    type="object"
+                                    class="oe_highlight"
+                                    groups="base.group_hr_manager"
+                                    confirm="All lines will be approved. Are you sure?"/>
+
+                            <button name="button_refuse_all"
+                                    attrs="{'invisible':[('approved_status', 'in', ['new'])]}"
+                                    string="Refuse all"
+                                    type="object"
+                                    class="oe_highlight"
+                                    groups="base.group_hr_manager"
+                                    confirm="All lines will be refused. Are you sure?"/>
+
+                            <field name="approved_status" widget="statusbar" statusbar_visible="new,draft,approved"/>
+                            <field name="state" invisible="1" />
+                        </header>
+                    </xpath>
 
 
 
@@ -151,6 +179,8 @@
                         <field name="timesheet_vehicle_id" options="{'no_open': True, 'no_create': True}" />
                         <field name="timesheet_accommodation" />
                         <field name="timesheet_comment" />
+                        <button name="approve" string="Approve" groups="project_timesheet_activities.group_hr_timesheet_supervisor" type="object" icon="fa-check" attrs="{'invisible': [('timesheet_approved_status', 'in', ['new', 'approved'])]}" />
+                        <button name="refuse" string="Refuse" groups="project_timesheet_activities.group_hr_timesheet_supervisor" type="object" icon="fa-times" attrs="{'invisible': [('timesheet_approved_status', 'in', ['new', 'refused'])]}" />
                     </xpath>
 
                     <xpath expr="//field[@name='timesheet_ids']/form//field[@name='account_id']" position="after">
@@ -208,17 +238,55 @@
                     <xpath expr="//field[@name='total_attendance']" position="replace"></xpath>
                     <xpath expr="//field[@name='total_difference']" position="replace"></xpath>
 
-                    <xpath expr="//field[@name='state']" position="after">
+                    <xpath expr="//field[@name='state']" position="replace">
+                        <field name="approved_status" />
+                        <field name="state" invisible="1" />
+                        <field name="supervisor_must_approve" invisible="1" />
                         <field name="no_break_warning" invisible="1" />
                         <field name="working_hours_warning" invisible="1" />
                     </xpath>
 
                     <xpath expr="//tree" position="attributes">
-                        <attribute name="decoration-danger">no_break_warning or working_hours_warning</attribute>
+                        <attribute name="decoration-info"></attribute>
+                        <attribute name="decoration-muted"></attribute>
+                        <attribute name="decoration-success">approved_status == 'approved'</attribute>
+                        <attribute name="decoration-danger">approved_status == 'refused'</attribute>
                     </xpath>
 
                 </data>
             </field>
+        </record>
+
+
+        <record id="view_hr_timesheet_sheet_filter_inherit" model="ir.ui.view">
+            <field name="name">hr.timesheet.sheet.search.inherit</field>
+            <field name="model">hr_timesheet_sheet.sheet</field>
+            <field name="inherit_id" ref="hr_timesheet_sheet.view_hr_timesheet_sheet_filter"></field>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@expand='0']" position="replace">
+                    <filter name="group_employee" string="Employee" context="{'group_by':'employee_id'}" />
+                    <filter name="group_department" string="Department" context="{'group_by':'department_id'}"/>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="act_hr_timesheet_sheet_controlling" model="ir.actions.act_window">
+            <field name="name">Controlling</field>
+            <field name="res_model">hr_timesheet_sheet.sheet</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_timesheet_sheet.hr_timesheet_sheet_tree_simplified"/>
+            <field name="domain">[('approved_status', 'in', ['refused', 'draft'])]</field>
+            <field name="context">{"search_default_group_employee": 1}</field>
+        </record>
+
+        <record id="act_hr_timesheet_sheet_waiting_approval" model="ir.actions.act_window">
+            <field name="name">Waiting Approval</field>
+            <field name="res_model">hr_timesheet_sheet.sheet</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_timesheet_sheet.hr_timesheet_sheet_tree_simplified"/>
+            <field name="domain">[('supervisor_must_approve', '=', True)]</field>
+            <field name="context">{"search_default_group_employee": 1}</field>
         </record>
 
 

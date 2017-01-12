@@ -3,7 +3,21 @@
 from openerp import models, fields, api, tools
 from openerp import exceptions as e
 import datetime
+import math
 
+
+def format_float_time_str(time):
+    x = math.modf(time)
+    decimal = abs(int(x[0] * 61))
+    whole = abs(int(x[1]))
+    if decimal >= 60:
+        decimal -= 60
+        whole += 1
+    res = str(whole) if whole >= 10 else '0'+str(whole)
+    res += ':'
+    res += str(decimal) if decimal >= 10 else '0'+str(decimal)
+    res += ':00'
+    return res
 
 
 class AccountAnalyticLine(models.Model):
@@ -90,15 +104,24 @@ class AccountAnalyticLine(models.Model):
     timesheet_break_amount = fields.Float('Break')
     timesheet_comment = fields.Char('Comment', size=20)
 
-    timesheet_approved_status = fields.Selection([('draft', 'Waiting Approval'),
+    timesheet_approved_status = fields.Selection([('new', 'New'),
+                                                  ('draft', 'Waiting Approval'),
                                                   ('approved', 'Approved'),
-                                                  ('refused', 'Refused')], 'Approval status', default='draft')
+                                                  ('refused', 'Refused')], 'Approval status', default='new')
 
     timesheet_color_record = fields.Boolean('Color record', compute=_compute_color_record)
     timesheet_task_assigned_to = fields.Many2one('res.users', 'Task Assigned to', compute=_compute_task_assigned_to, store=True)
 
+    @api.multi
+    def approve(self):
+        for rec in self:
+            rec.timesheet_approved_status = 'approved'
 
-    # sheet_id = fields.Many2one('hr_timesheet_sheet.sheet', string='Sheet', ondelete="cascade")
+    @api.multi
+    def refuse(self):
+        for rec in self:
+            rec.timesheet_approved_status = 'refused'
+
 
     @api.one
     @api.constrains('timesheet_start_time', 'timesheet_end_time')
@@ -116,3 +139,26 @@ class AccountAnalyticLine(models.Model):
             raise e.ValidationError('Total hours must be non negative.')
         if self.timesheet_break_amount < 0:
             raise e.ValidationError('Break must be non negative.')
+
+    @api.multi
+    def write(self, vals):
+        if self.timesheet_approved_status == 'approved':
+            if len(vals) == 1 and 'timesheet_approved_status' in vals:
+                old_state = self.timesheet_approved_status
+                super(AccountAnalyticLine, self).write(vals)
+                if old_state != 'approved' and vals['timesheet_approved_status'] == 'approved':
+                    self.sheet_id.message_post(self.env.user.name+' Approved: '+ ', '.join([self.date, self.account_id.name, self.project_activity_id.name or '', format_float_time_str(self.unit_amount)]))
+                elif old_state != 'refused' and vals['timesheet_approved_status'] == 'refused':
+                    self.sheet_id.message_post(self.env.user.name+' Refused: '+ ', '.join([self.date, self.account_id.name, self.project_activity_id.name or '', format_float_time_str(self.unit_amount)]))
+            else:
+                raise e.ValidationError('You can not edit approved timesheet line.')
+        else:
+            if 'timesheet_approved_status' in vals and vals['timesheet_approved_status'] in ['approved', 'refused']:
+                old_state = self.timesheet_approved_status
+                super(AccountAnalyticLine, self).write(vals)
+                if old_state != 'approved' and vals['timesheet_approved_status'] == 'approved':
+                    self.sheet_id.message_post(self.env.user.name+' Approved: '+ ', '.join([self.date, self.account_id.name, self.project_activity_id.name or '', format_float_time_str(self.unit_amount)]))
+                elif old_state != 'refused' and vals['timesheet_approved_status'] == 'refused':
+                    self.sheet_id.message_post(self.env.user.name+' Refused: '+ ', '.join([self.date, self.account_id.name, self.project_activity_id.name or '', format_float_time_str(self.unit_amount)]))
+            else:
+                super(AccountAnalyticLine, self).write(vals)

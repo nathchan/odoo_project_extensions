@@ -85,6 +85,16 @@
             <field name="search_view_id" ref="hr_timesheet.hr_timesheet_line_search"/>
         </record>
 
+        <record id="act_hr_timesheet_sheet_all_activities" model="ir.actions.act_window">
+            <field name="name">All Activities</field>
+            <field name="res_model">account.analytic.line</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_timesheet.hr_timesheet_line_tree"/>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="search_view_id" ref="hr_timesheet.hr_timesheet_line_search"/>
+        </record>
+
 
     </data>
 </openerp>
