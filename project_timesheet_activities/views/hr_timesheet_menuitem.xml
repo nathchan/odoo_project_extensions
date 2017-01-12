@@ -12,7 +12,7 @@
                   id="menu_act_hr_timesheet_sheet_controlling"
                   parent="hr_attendance.menu_hr_time_tracking"
                   groups="project_timesheet_activities.group_hr_timesheet_rollout_manager"
-                  sequence="10" />
+                  sequence="38" />
 
         <menuitem action="act_hr_timesheet_sheet_waiting_approval"
                   id="menu_act_hr_timesheet_sheet_waiting_approval"
