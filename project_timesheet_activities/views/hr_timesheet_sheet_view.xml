@@ -25,6 +25,10 @@
             <field name="arch" type="xml">
                 <data>
 
+                    <xpath expr="//field[@name='timesheet_ids']" position="attributes">
+                        <attribute name="attrs">{'readonly': [('approved_status', 'in', ['draft', 'approved'])]}</attribute>
+                    </xpath>
+
                     <xpath expr="//button[@name='button_confirm']" position="attributes">
                         <attribute name="confirm">This timesheet will be submitted to manager. Are you sure?</attribute>
                     </xpath>
@@ -97,7 +101,6 @@
 
                         </group>
                     </xpath>
-
 
 
 
