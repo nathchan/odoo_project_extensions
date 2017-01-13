@@ -163,12 +163,15 @@
                         <field name="timesheet_color_record" invisible="1" />
 
                         <field name="project_activity_id"
+                               domain="[('filter_activities', '=', account_id_name)]"
                                attrs="{'required': ['|',
                                                     '&amp;',
                                                     ('account_id_use_tasks', '=', True),
                                                     ('account_id_use_issues', '=', True),
                                                     ('account_id_name', '=', 'General')]}"
                                options="{'no_open': True, 'no_create': True}" />
+
+
                         <field name="task_id"
                                attrs="{'required': [('account_id_use_tasks', '=', True),
                                                     ('account_id_use_issues', '=', True),

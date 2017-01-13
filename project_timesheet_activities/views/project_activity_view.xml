@@ -34,6 +34,7 @@
                     <field name="category" />
                     <field name="on_site_activity" />
                     <field name="show_on_sap_report" />
+                    <field name="is_general_activity" />
                     <field name="info" />
                 </tree>
             </field>
