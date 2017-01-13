@@ -38,7 +38,6 @@
                     <field name="task_id" />
                     <field name="timesheet_travel_start" />
                     <field name="timesheet_travel_end" />
-                    <field name="timesheet_vehicle_id" />
                     <field name="timesheet_accommodation" />
                     <field name="timesheet_comment" />
                     <field name="timesheet_approved_status" invisible="1"/>
