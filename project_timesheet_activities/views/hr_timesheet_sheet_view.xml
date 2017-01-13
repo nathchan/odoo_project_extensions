@@ -124,6 +124,10 @@
                         <field name="timesheet_break_amount" widget="float_time" />
                         <field name="unit_amount" widget="float_time" string="Hours" sum="Hours"/>
                     </xpath>
+                    <xpath expr="//field[@name='timesheet_ids']/tree//field[@name='date']" position="before">
+                        <button name="approve" string="Approve" groups="project_timesheet_activities.group_hr_timesheet_supervisor" type="object" icon="fa-check" attrs="{'invisible': [('timesheet_approved_status', 'in', ['new', 'approved'])]}" />
+                        <button name="refuse" string="Refuse" groups="project_timesheet_activities.group_hr_timesheet_supervisor" type="object" icon="fa-times" attrs="{'invisible': [('timesheet_approved_status', 'in', ['new', 'refused'])]}" />
+                    </xpath>
 
                     <xpath expr="//field[@name='timesheet_ids']/form//field[@name='date']" position="after">
                         <field name="timesheet_department_id" options="{'no_open': True, 'no_create': True}" />
@@ -179,8 +183,6 @@
                         <field name="timesheet_vehicle_id" options="{'no_open': True, 'no_create': True}" />
                         <field name="timesheet_accommodation" />
                         <field name="timesheet_comment" />
-                        <button name="approve" string="Approve" groups="project_timesheet_activities.group_hr_timesheet_supervisor" type="object" icon="fa-check" attrs="{'invisible': [('timesheet_approved_status', 'in', ['new', 'approved'])]}" />
-                        <button name="refuse" string="Refuse" groups="project_timesheet_activities.group_hr_timesheet_supervisor" type="object" icon="fa-times" attrs="{'invisible': [('timesheet_approved_status', 'in', ['new', 'refused'])]}" />
                     </xpath>
 
                     <xpath expr="//field[@name='timesheet_ids']/form//field[@name='account_id']" position="after">
