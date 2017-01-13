@@ -14,6 +14,7 @@ class ProjectBacklogCw(models.AbstractModel):
     def _compute_color(self):
         for rec in self:
             rec.color = rec.task_id.color
+            rec.task_blocked = True if rec.task_id.kanban_state == 'blocked' else False
 
     create_uid = fields.Many2one('res.users', 'Created by', readonly=True)
     create_date = fields.Datetime('Created date', readonly=True)
@@ -26,6 +27,7 @@ class ProjectBacklogCw(models.AbstractModel):
     forecast_date = fields.Date('Forecast date', readonly=True)
     forecast_week = fields.Char('Forecast week', readonly=True)
     sequence_order = fields.Integer('Sequence', readonly=True)
+    task_blocked = fields.Boolean('Task blocked', compute=_compute_color)
     color = fields.Char('Color Index', compute=_compute_color)
 
     @api.multi

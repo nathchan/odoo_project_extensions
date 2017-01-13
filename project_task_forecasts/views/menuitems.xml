@@ -2,14 +2,16 @@
 <openerp>
     <data>
 
-        <menuitem name="Backlog SA"
+        <menuitem name="Kanban SA"
                   id="menu_project_backlog_sa"
+                  groups="project.group_project_user"
                   parent="project.menu_project_management"
                   action="action_project_backlog_sa"
                   sequence="24"/>
 
-        <menuitem name="Backlog CW"
+        <menuitem name="Kanban CW"
                   id="menu_project_backlog_cw"
+                  groups="project.group_project_user"
                   parent="project.menu_project_management"
                   action="action_project_backlog_cw"
                   sequence="25"/>

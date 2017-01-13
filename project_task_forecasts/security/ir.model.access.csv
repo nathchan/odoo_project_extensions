@@ -6,3 +6,6 @@
 "access_project_task_milestone_forecast_manager","project.task.milestone.forecast.manager","model_project_task_milestone_forecast","project.group_project_manager",1,1,1,0
 "access_project_task_stage_process_user","project.task.stage.process.user","model_project_task_stage_process","project.group_project_user",1,0,0,0
 "access_project_task_stage_process_manager","project.task.stage.process.manager","model_project_task_stage_process","project.group_project_manager",1,1,1,0
+"access_project_base_backlog_user","project.base.backlog.user","model_project_base_backlog","project.group_project_user",1,0,0,0
+"access_project_backlog_sa_user","project.backlog.sa.user","model_project_backlog_sa","project.group_project_user",1,0,0,0
+"access_project_backlog_cw_user","project.backlog.cw.user","model_project_backlog_cw","project.group_project_user",1,0,0,0
