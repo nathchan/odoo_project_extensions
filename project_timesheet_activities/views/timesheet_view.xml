@@ -17,20 +17,35 @@
                     <attribute name="decoration-success">timesheet_approved_status=='approved'</attribute>
                 </xpath>
 
+                <xpath expr="//field[@name='user_id']" position="replace">
+                </xpath>
+
+                <xpath expr="//field[@name='account_id']" position="replace">
+                </xpath>
+
+                <xpath expr="//field[@name='unit_amount']" position="replace">
+                </xpath>
+
                 <xpath expr="//field[@name='date']" position="after">
-                    <field name="timesheet_approved_status" />
+                    <field name="user_id" />
                     <field name="timesheet_department_id" />
-                    <field name="timesheet_start_time" invisible="1" />
+                    <field name="timesheet_start_time" widget="float_time" />
+                    <field name="timesheet_end_time" widget="float_time" />
+                    <field name="timesheet_break_amount" widget="float_time" />
+                    <field name="unit_amount" widget="float_time" string="Hours" sum="Hours"/>
+                    <field name="account_id" string="Field of activity" />
+                    <field name="project_activity_id" required="1" />
+                    <field name="task_id" />
+                    <field name="timesheet_travel_start" />
+                    <field name="timesheet_travel_end" />
+                    <field name="timesheet_vehicle_id" />
+                    <field name="timesheet_accommodation" />
+                    <field name="timesheet_comment" />
+                    <field name="timesheet_approved_status" />
+                    <button name="approve" string="Approve" groups="project_timesheet_activities.group_hr_timesheet_supervisor" type="object" icon="fa-check" attrs="{'invisible': [('timesheet_approved_status', 'in', ['new', 'approved'])]}" />
+                    <button name="refuse" string="Refuse" groups="project_timesheet_activities.group_hr_timesheet_supervisor" type="object" icon="fa-times" attrs="{'invisible': [('timesheet_approved_status', 'in', ['new', 'refused'])]}" />
                 </xpath>
 
-                <xpath expr="//field[@name='user_id']" position="after">
-                    <field name="project_activity_id" required="1" widget="selection" />
-                    <field name="timesheet_activity_category" readonly="1" />
-                </xpath>
-
-                <xpath expr="//field[@name='account_id']" position="after">
-                    <field name="timesheet_analytic_account_category" readonly="1" />
-                </xpath>
 
                 <xpath expr="//field[@name='name']" position="attributes">
                     <attribute name="invisible">1</attribute>
