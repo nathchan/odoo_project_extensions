@@ -25,6 +25,11 @@
 
                 <xpath expr="//field[@name='unit_amount']" position="replace">
                 </xpath>
+                <xpath expr="//field[@name='date']" position="after">
+                    <button name="approve" string="Approve" groups="project_timesheet_activities.group_hr_timesheet_supervisor" type="object" icon="fa-check" attrs="{'invisible': [('timesheet_approved_status', 'in', ['new', 'approved'])]}" />
+                    <button name="refuse" string="Refuse" groups="project_timesheet_activities.group_hr_timesheet_supervisor" type="object" icon="fa-times" attrs="{'invisible': [('timesheet_approved_status', 'in', ['new', 'refused'])]}" />
+                </xpath>
+
 
                 <xpath expr="//field[@name='date']" position="after">
                     <field name="user_id" />
@@ -41,8 +46,6 @@
                     <field name="timesheet_accommodation" />
                     <field name="timesheet_comment" />
                     <field name="timesheet_approved_status" invisible="1"/>
-                    <button name="approve" string="Approve" groups="project_timesheet_activities.group_hr_timesheet_supervisor" type="object" icon="fa-check" attrs="{'invisible': [('timesheet_approved_status', 'in', ['new', 'approved'])]}" />
-                    <button name="refuse" string="Refuse" groups="project_timesheet_activities.group_hr_timesheet_supervisor" type="object" icon="fa-times" attrs="{'invisible': [('timesheet_approved_status', 'in', ['new', 'refused'])]}" />
                 </xpath>
 
 
