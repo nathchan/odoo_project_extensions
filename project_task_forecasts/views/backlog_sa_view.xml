@@ -24,6 +24,7 @@
                 <kanban default_group_by="milestone_id" class="o_kanban_small_column">
                     <field name="project_id"/>
                     <field name="task_id"/>
+                    <field name="task_blocked" />
                     <field name="milestone_id"/>
                     <field name="forecast_date" />
                     <field name="forecast_week" />
@@ -41,6 +42,9 @@
                                             class="btn btn-xs btn-default">Set actual</button>
                                 </div>
                                 <div>
+
+                                    <span attrs="{'invisible': [('task_blocked', '=', False)]}" style="color:red;" class="fa fa-exclamation-triangle"></span>
+
                                     <a name="action_show_task_from_milestone" type="object">
                                         <strong><field name="task_id"/></strong>
                                     </a>
