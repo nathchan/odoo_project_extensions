@@ -122,9 +122,14 @@ class ProjectTaskMilestoneForecast(models.Model):
 
     @api.depends('task_id.user_id')
     @api.one
-    def _compute_assigned_to(self):
-        if self.task_id and self.task_id.user_id:
-            self.assigned_to = self.task_id.user_id
+    def _compute_assigned_to_active(self):
+        if self.task_id:
+            if self.task_id.user_id:
+                self.assigned_to = self.task_id.user_id
+            else:
+                self.assigned_to = False
+
+            self.task_active = self.task_id.active
 
     @api.depends('forecast_date', 'actual_date')
     @api.multi
@@ -146,7 +151,8 @@ class ProjectTaskMilestoneForecast(models.Model):
     opened_issue_count = fields.Integer('Opened Issue Count', compute=_compute_issue_count)
     project_id = fields.Many2one('project.project', 'Project', required=True, track_visibility='onchange')
     task_id = fields.Many2one('project.task', 'Task', required=True, ondelete='cascade', track_visibility='onchange')
-    assigned_to = fields.Many2one('res.users', 'Assigned to', compute=_compute_assigned_to, store=True)
+    task_active = fields.Boolean('Task Active', compute=_compute_assigned_to_active, store=True)
+    assigned_to = fields.Many2one('res.users', 'Assigned to', compute=_compute_assigned_to_active, store=True)
     sequence_order = fields.Integer('Sequence', related='milestone_id.sequence', store=True)
 
     milestone_id = fields.Many2one('project.milestone', 'Milestone', required=True, ondelete='restrict', track_visibility='onchange')

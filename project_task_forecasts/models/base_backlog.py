@@ -23,6 +23,9 @@ class ProjectBacklogCw(models.AbstractModel):
     milestone_id = fields.Many2one('project.milestone', 'Milestone', readonly=True)
     project_id = fields.Many2one('project.project', 'Project', readonly=True)
     task_id = fields.Many2one('project.task', 'Task', readonly=True)
+    task_active = fields.Boolean('Task Active', readonly=True)
+    task_group_id = fields.Many2one('project.task.group', 'Rollout group', readonly=True)
+    subcontractor_id = fields.Many2one('res.partner', 'Subcontractor', readonly=True)
     user_id = fields.Many2one('res.users', 'Assigned to', readonly=True)
     forecast_date = fields.Date('Forecast date', readonly=True)
     forecast_week = fields.Char('Forecast week', readonly=True)
@@ -94,7 +97,10 @@ class ProjectBacklogCw(models.AbstractModel):
             f.milestone_id,
             f.project_id,
             f.task_id,
+            t.active as task_active,
             t.user_id,
+            t.task_group_id,
+            t.subcontractor_id,
             f.forecast_date,
             f.forecast_week,
             f.sequence_order

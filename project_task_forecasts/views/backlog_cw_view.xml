@@ -6,7 +6,8 @@
             <field name="name">project.backlog.cw.tree</field>
             <field name="model">project.backlog.cw</field>
             <field name="arch" type="xml">
-                <tree string="Backlog CW">
+                <tree string="Backlog CW" create="false" edit="false">
+                    <button type="object" string="Open Task" name="action_show_task_from_milestone" />
                     <field name="project_id"/>
                     <field name="task_id"/>
                     <field name="milestone_id"/>
@@ -78,9 +79,13 @@
                     <field name="milestone_id"/>
 
                     <filter name="filter_my_tasks" string="My Tasks" domain="[('user_id', '=', uid)]" />
+                    <filter name="filter_archived" string="Archived" domain="[('task_active', '=', False)]" />
 
                     <filter string="Assigned to" name="group_user" context="{'group_by':'user_id'}"/>
+                    <filter string="Subcontractor" name="group_subcontractor" context="{'group_by':'subcontractor_id'}"/>
+                    <filter string="Task Group" name="group_task_group" context="{'group_by':'task_group_id'}"/>
                     <filter string="Milestone" name="group_milestone" context="{'group_by':'milestone_id'}"/>
+
 
                 </search>
             </field>

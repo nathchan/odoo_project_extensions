@@ -9,6 +9,7 @@
             <field name="arch" type="xml">
                 <tree string="Milestones">
                     <field name="sequence_order" invisible="1" />
+                    <field name="task_active" invisible="1" />
                     <field name="project_id" />
                     <field name="task_id" />
                     <field name="assigned_to" />
@@ -87,6 +88,7 @@
                             <group>
                                 <field name="project_id" readonly="1" />
                                 <field name="sequence_order" invisible="1" />
+                                <field name="task_active" invisible="1" />
                                 <field name="task_id" readonly="1" />
                                 <field name="assigned_to" readonly="1" />
                                 <field name="milestone_id" readonly="1" />
@@ -146,11 +148,12 @@
                 <search>
 
                     <filter domain="[('forecast_date','&lt;', current_date), ('actual_date', '=', False)]" help="FC in the past" />
+                    <filter domain="[('task_active','=', False)]" help="Task Archived" />
 
                     <filter name="group_milestone_id" string="Milestone" context="{'group_by':'milestone_id'}"/>
                     <filter name="group_project_id" string="Project" context="{'group_by':'project_id'}"/>
-                    <filter name="group_task_id" string="Task" context="{'group_by':'task_id'}"/>
                     <filter name="group_assigned_to" string="Assigned to" context="{'group_by':'assigned_to'}"/>
+                    <filter name="group_task_id" string="Task" context="{'group_by':'task_id'}"/>
 
                     <filter name="group_forecast_date" string="Forecast date" context="{'group_by':'forecast_date'}"/>
                     <filter name="group_actual_date" string="Actual date" context="{'group_by':'actual_date'}"/>
@@ -215,6 +218,7 @@
             <field name="res_model">project.task.milestone.forecast</field>
             <field name="search_view_id" ref="view_task_milestones_search" />
             <field name="context">{"search_default_group_project_id":1,
+                                   "search_default_group_assigned_to":1,
                                    "search_default_group_task_id":1}</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form,graph,pivot</field>
