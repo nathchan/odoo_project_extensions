@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, fields, api, tools
+from openerp import models, fields, api, tools, exceptions as e
 import datetime
 
 class HrTimesheetSheet(models.Model):
@@ -21,8 +21,10 @@ class HrTimesheetSheet(models.Model):
                             count(*)
                         from
                             account_analytic_line l
+                            left join account_analytic_account acc on acc.id = l.account_id
                         where
                             l.sheet_id = %d
+                            and not (acc.name = 'Urlaub / Holiday' or acc.name = 'Krankenstand / Illness')
                         group by
                             sheet_id, date
                         having
@@ -143,6 +145,8 @@ class HrTimesheetSheet(models.Model):
     @api.multi
     def button_submit_to_manager(self):
         for rec in self:
+            if rec.no_break_warning is True:
+                raise e.ValidationError("Timesheet with no break warning can't be submitted to manager.")
             rec.approved_status = 'draft'
             for line in rec.timesheet_ids:
                 if line.timesheet_approved_status == 'new' or line.timesheet_approved_status == 'refused':
@@ -162,7 +166,7 @@ class HrTimesheetSheet(models.Model):
             for line in rec.timesheet_ids:
                 line.timesheet_approved_status = 'refused'
 
-    @api.multi
+    @api.one
     def write(self, vals):
 
         user_id = None

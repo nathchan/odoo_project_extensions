@@ -34,10 +34,9 @@ class AccountAnalyticLine(models.Model):
     @api.onchange('account_id')
     def _change_account_id(self):
         self.name = self.account_id.name
-        if(self.account_id.name == 'Feiertag'):
+        if self.account_id.name == 'Feiertag':
             self.timesheet_start_time = 9.0
             self.timesheet_end_time = 15.695
-
 
     @api.onchange('unit_amount', 'timesheet_start_time', 'timesheet_end_time', 'timesheet_break_amount')
     def _change_times_to_calc_total(self):
@@ -135,14 +134,14 @@ class AccountAnalyticLine(models.Model):
                 raise e.ValidationError('Start and end time must be non negative.')
 
     @api.one
-    @api.constrains('timesheet_break_amount')
+    @api.constrains('timesheet_break_amount', 'account_id', 'unit_amount')
     def _check_break_amount(self):
-        if self.unit_amount <= 0:
-            raise e.ValidationError('Total hours must be non negative.')
+        if self.unit_amount <= 0 and not (self.account_id_name == 'Urlaub / Holiday' or self.account_id_name == 'Krankenstand / Illness'):
+            raise e.ValidationError('Total hours must be above zero.')
         if self.timesheet_break_amount < 0:
             raise e.ValidationError('Break must be non negative.')
 
-    @api.multi
+    @api.one
     def write(self, vals):
         if self.timesheet_approved_status in ['draft', 'approved']:
             if len(vals) == 1 and 'timesheet_approved_status' in vals:

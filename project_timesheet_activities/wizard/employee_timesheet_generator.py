@@ -528,9 +528,8 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 if days_index % 2 == 0:
                     color = '9bbcff'
 
-                days_off_count = self.env['hr.day.off'].search([('date', '=', iteration_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT))],
-                                                               count=True)
-                if days_off_count > 0:
+                day_off = self.env['hr.day.off'].search([('date', '=', iteration_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT))], limit=1)
+                if day_off:
                     color = '999a9e'
 
                 # ovdje ispitati da li je day_off ili samo nema linija
@@ -541,7 +540,17 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 if len(analytic_lines) < 1:
                     # nema zapisa da je radio, pa treba napraviti jedan prazan red
                     n[0] += 1
-                    write_line(ws, n, color, iteration_date)
+
+                    if day_off and day_off.category_id.name == 'Public Holiday':
+                        write_pub_holiday_line(ws, n, color, iteration_date)
+                        ws['F'+str(7+n[0])] = format_float_time_str(6.695)
+                        ws['F'+str(7+n[0])].style = Style(number_format="HH:MM:SS",
+                                                          fill=PatternFill(patternType='solid',
+                                                                           fill_type='solid',
+                                                                           fgColor=Color(color)))
+                    else:
+                        write_line(ws, n, color, iteration_date)
+
                     iteration_date += d.timedelta(days=1)
                     continue
                 else:
@@ -810,6 +819,201 @@ def write_line(ws, n, color, current_date, line=None):
                                    )
 
     ws['N'+str(7+n[0])] = line.timesheet_accommodation if not empty_line and line.timesheet_accommodation else ''
+    ws['N'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
+                                      fill=PatternFill(patternType='solid',
+                                                       fill_type='solid',
+                                                       fgColor=Color(color)),
+                                      border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                    right=Side(style='thick', color=colors.BLACK),
+                                                    top=Side(style='thin', color=colors.BLACK),
+                                                    bottom=Side(style='thin', color=colors.BLACK)),
+                                      )
+
+    ws['O'+str(7+n[0])] = '---'
+    ws['O'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
+                                      fill=PatternFill(patternType='solid',
+                                                       fill_type='solid',
+                                                       fgColor=Color(color)),
+                                      border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                    right=Side(style='thick', color=colors.BLACK),
+                                                    top=Side(style='thin', color=colors.BLACK),
+                                                    bottom=Side(style='thin', color=colors.BLACK)),
+                                      )
+
+    ws['P'+str(7+n[0])] = '---'
+    ws['P'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
+                                      fill=PatternFill(patternType='solid',
+                                                       fill_type='solid',
+                                                       fgColor=Color(color)),
+                                      border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                    right=Side(style='thick', color=colors.BLACK),
+                                                    top=Side(style='thin', color=colors.BLACK),
+                                                    bottom=Side(style='thin', color=colors.BLACK)),
+                                      )
+
+    ws['Q'+str(7+n[0])] = '---'
+    ws['Q'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
+                                      fill=PatternFill(patternType='solid',
+                                                       fill_type='solid',
+                                                       fgColor=Color(color)),
+                                      border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                    right=Side(style='thick', color=colors.BLACK),
+                                                    top=Side(style='thin', color=colors.BLACK),
+                                                    bottom=Side(style='thin', color=colors.BLACK)),
+                                      )
+
+
+def write_pub_holiday_line(ws, n, color, current_date):
+
+    ws['A'+str(7+n[0])] = print_date(current_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT))
+    ws['A'+str(7+n[0])].style = Style(font=Font(bold=True),
+                                      alignment=Alignment(horizontal='center',
+                                                          wrap_text=True),
+                                      fill=PatternFill(patternType='solid',
+                                                       fill_type='solid',
+                                                       fgColor=Color(color)),
+                                      border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                    right=Side(style='thick', color=colors.BLACK),
+                                                    top=Side(style='thin', color=colors.BLACK),
+                                                    bottom=Side(style='thin', color=colors.BLACK)),
+)
+
+    ws['B'+str(7+n[0])] = format_float_time(9.0)
+    ws['B'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
+                                      fill=PatternFill(patternType='solid',
+                                                       fill_type='solid',
+                                                       fgColor=Color(color)),
+                                      border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                    right=Side(style='thick', color=colors.BLACK),
+                                                    top=Side(style='thin', color=colors.BLACK),
+                                                    bottom=Side(style='thin', color=colors.BLACK)),
+                                      number_format="HH:MM:SS"
+                                      )
+
+    ws['C'+str(7+n[0])] = format_float_time(15.695)
+    ws['C'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
+                                      fill=PatternFill(patternType='solid',
+                                                       fill_type='solid',
+                                                       fgColor=Color(color)),
+                                      border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                    right=Side(style='thick', color=colors.BLACK),
+                                                    top=Side(style='thin', color=colors.BLACK),
+                                                    bottom=Side(style='thin', color=colors.BLACK)),
+                                      number_format="HH:MM:SS"
+                                      )
+
+    ws['D'+str(7+n[0])] = format_float_time(0.0)
+    ws['D'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
+                                      fill=PatternFill(patternType='solid',
+                                                       fill_type='solid',
+                                                       fgColor=Color(color)),
+                                      border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                    right=Side(style='thick', color=colors.BLACK),
+                                                    top=Side(style='thin', color=colors.BLACK),
+                                                    bottom=Side(style='thin', color=colors.BLACK)),
+                                      number_format="HH:MM:SS"
+                                      )
+
+    ws['E'+str(7+n[0])] = format_float_time(6.695)
+    ws['E'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
+                                      fill=PatternFill(patternType='solid',
+                                                       fill_type='solid',
+                                                       fgColor=Color(color)),
+                                      border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                    right=Side(style='thick', color=colors.BLACK),
+                                                    top=Side(style='thin', color=colors.BLACK),
+                                                    bottom=Side(style='thin', color=colors.BLACK)),
+                                      number_format="HH:MM:SS"
+                                      )
+
+    ws['F'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
+                                      fill=PatternFill(patternType='solid',
+                                                       fill_type='solid',
+                                                       fgColor=Color(color)),
+                                      border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                    right=Side(style='thick', color=colors.BLACK),
+                                                    top=Side(style='thin', color=colors.BLACK),
+                                                    bottom=Side(style='thin', color=colors.BLACK)),
+                                      )
+
+    ws['G'+str(7+n[0])] = 'Public Holiday'
+    ws['G'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
+                                      fill=PatternFill(patternType='solid',
+                                                       fill_type='solid',
+                                                       fgColor=Color(color)),
+                                      border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                    right=Side(style='thick', color=colors.BLACK),
+                                                    top=Side(style='thin', color=colors.BLACK),
+                                                    bottom=Side(style='thin', color=colors.BLACK)),
+                                      )
+
+    ws['H'+str(7+n[0])] = ''
+    ws['H'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
+                                      fill=PatternFill(patternType='solid',
+                                                       fill_type='solid',
+                                                       fgColor=Color(color)),
+                                      border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                    right=Side(style='thick', color=colors.BLACK),
+                                                    top=Side(style='thin', color=colors.BLACK),
+                                                    bottom=Side(style='thin', color=colors.BLACK)),
+                                      )
+
+    ws['I'+str(7+n[0])] = ''
+    ws['I'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
+                                      fill=PatternFill(patternType='solid',
+                                                       fill_type='solid',
+                                                       fgColor=Color(color)),
+                                      border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                    right=Side(style='thick', color=colors.BLACK),
+                                                    top=Side(style='thin', color=colors.BLACK),
+                                                    bottom=Side(style='thin', color=colors.BLACK)),
+                                      )
+
+    ws['J'+str(7+n[0])] = ''
+    ws['J'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
+                                      fill=PatternFill(patternType='solid',
+                                                       fill_type='solid',
+                                                       fgColor=Color(color)),
+                                      border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                    right=Side(style='thick', color=colors.BLACK),
+                                                    top=Side(style='thin', color=colors.BLACK),
+                                                    bottom=Side(style='thin', color=colors.BLACK)),
+                                      )
+
+    ws['K'+str(7+n[0])] = ''
+    ws['K'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
+                                      fill=PatternFill(patternType='solid',
+                                                       fill_type='solid',
+                                                       fgColor=Color(color)),
+                                      border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                    right=Side(style='thick', color=colors.BLACK),
+                                                    top=Side(style='thin', color=colors.BLACK),
+                                                    bottom=Side(style='thin', color=colors.BLACK)),
+                                      )
+
+    ws['L'+str(7+n[0])] = ''
+    ws['L'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
+                                      fill=PatternFill(patternType='solid',
+                                                       fill_type='solid',
+                                                       fgColor=Color(color)),
+                                      border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                    right=Side(style='thick', color=colors.BLACK),
+                                                    top=Side(style='thin', color=colors.BLACK),
+                                                    bottom=Side(style='thin', color=colors.BLACK)),
+                                      )
+
+    ws['M'+str(7+n[0])] = ''
+    ws['M'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
+                                      fill=PatternFill(patternType='solid',
+                                                       fill_type='solid',
+                                                       fgColor=Color(color)),
+                                      border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                    right=Side(style='thick', color=colors.BLACK),
+                                                    top=Side(style='thin', color=colors.BLACK),
+                                                    bottom=Side(style='thin', color=colors.BLACK)),
+                                   )
+
+    ws['N'+str(7+n[0])] = ''
     ws['N'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
                                       fill=PatternFill(patternType='solid',
                                                        fill_type='solid',
