@@ -160,16 +160,16 @@ class ExportMilestonesWizard(models.TransientModel):
                     ws['D'+str(n)] = wp_code
                     if is_fc is True:
                         ws['E'+str(n)] = print_date(line.forecast_date) if line.forecast_date else ''
-                        ws['E'+str(n)].style = Style(number_format="DD.MM.YYYY")
-                    elif is_ac is True:
-                        ws['E'+str(n)] = print_date(line.actual_date) if line.actual_date else ''
-                        if line.forecast_date == False:
+                        if line.actual_date == False:
                             ws['E'+str(n)].style = Style(number_format="DD.MM.YYYY")
                         else:
                             ws['E'+str(n)].style = Style(number_format="DD.MM.YYYY",
                                                          fill=PatternFill(patternType='solid',
                                                                           fill_type='solid',
                                                                           fgColor=Color('999a9e')))
+                    elif is_ac is True:
+                        ws['E'+str(n)] = print_date(line.actual_date) if line.actual_date else ''
+                        ws['E'+str(n)].style = Style(number_format="DD.MM.YYYY")
 
 
         buf = cStringIO.StringIO()
