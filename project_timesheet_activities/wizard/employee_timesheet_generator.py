@@ -657,9 +657,15 @@ class EmployeeTimesheetGenerator(models.TransientModel):
         out = base64.encodestring(buf.read())
         buf.close()
 
+        file_name = 'employee_timesheets_'+dict(MONTHS).get(month)+'_'+dict(YEARS).get(year)
+        if this.display_sap_report is True:
+            week_no = datetime.strptime(this.sap_date_from, tools.DEFAULT_SERVER_DATE_FORMAT).isocalendar()[1]
+            week = str(week_no) if week_no > 9 else '0' + str(week_no)
+            file_name += '_W' + week
+
         self.write({'state': 'get',
                                   'data': out,
-                                  'name': 'employee_timesheets_'+dict(MONTHS).get(month)+'_'+dict(YEARS).get(year)+'.xlsx'})
+                                  'name': file_name + '.xlsx'})
         return {
             'type': 'ir.actions.act_window',
             'res_id': self[0].id,
