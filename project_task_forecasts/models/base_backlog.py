@@ -56,7 +56,7 @@ class ProjectBacklogCw(models.AbstractModel):
             'view_mode': 'form',
             'res_model': 'project.task',
             # 'target': 'new',
-            'context': self.env.context,
+            # 'context': self.env.context,
         }
 
     @api.multi
