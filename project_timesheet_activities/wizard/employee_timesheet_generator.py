@@ -623,21 +623,27 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 n += 1
                 emp = self.env['hr.employee'].search([('user_id', '=', line.user_id.id)], limit=1)
                 ws['A'+str(n)] = emp.other_id if emp and emp.other_id else '---'
-                ws['B'+str(n)] = d.datetime.strptime(line.date, tools.DEFAULT_SERVER_DATE_FORMAT).strftime("%m/%d/%Y")
+                ws['B'+str(n)] = d.datetime.strptime(line.date, tools.DEFAULT_SERVER_DATE_FORMAT)
+                ws['F'+str(n)].style = Style(number_format="dd.mm.yyyy")
                 ws['C'+str(n)] = format_float_time(line.timesheet_start_time)
                 ws['D'+str(n)] = format_float_time(line.timesheet_end_time)
                 ws['E'+str(n)] = format_float_time(line.unit_amount)
                 activity_code = '---'
                 if line.account_id.sap_report_category == 'sa':
-                    activity_code = '7331_AT'
+                    activity_code = '7332_AT_SA_STUNDEN_MA'
                 elif line.account_id.sap_report_category == 'cw':
-                    activity_code = '7332_AT'
+                    activity_code = '7331_AT'
                 if activity_code != '---' and line.project_activity_id.name == 'Travel':
                     activity_code += '_R'
                 ws['F'+str(n)] = activity_code
                 ws['G'+str(n)] = ''
                 ws['H'+str(n)] = ''
-                ws['I'+str(n)] = line.task_id.name + '-1' if line.task_id else ''
+                task_sufix = '--'
+                if line.account_id.sap_report_category == 'sa':
+                    task_sufix = '-4'
+                elif line.account_id.sap_report_category == 'cw':
+                    task_sufix = '-1'
+                ws['I'+str(n)] = line.task_id.name + task_sufix if line.task_id else ''
                 ws['J'+str(n)] = ''
                 ws['K'+str(n)] = ''
                 ws['L'+str(n)] = line.account_id.name if line.account_id else ''

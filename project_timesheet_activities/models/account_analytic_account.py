@@ -13,4 +13,4 @@ class AccountAnalyticAccount(models.Model):
                                  ('not_in_production', 'Not in production')], 'Category')
 
     choose_on_timesheets = fields.Boolean('Display as an option in timesheets')
-    sap_report_category = fields.Selection([('sa', 'SA'), ('cw', 'CW')], 'SAP report category')
+    sap_report_category = fields.Selection([('sa', '7332'), ('cw', '7331')], 'SAP report category')
