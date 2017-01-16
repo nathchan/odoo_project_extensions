@@ -307,6 +307,11 @@ class ProjectTaskMilestoneForecast(models.Model):
                         days = self.duration_forecast - business_days_to_add
                         vals['duration_forecast'] = days if days >= 0 else 0
 
+                self.env['project.task.milestone.update.log'].create({
+                    'timestamp': datetime.datetime.now().strftime(tools.DEFAULT_SERVER_DATE_FORMAT),
+                    'milestone_line_id': self.id,
+                    'updated_field': 'actual'
+                })
                 return super(ProjectTaskMilestoneForecast, self).write(vals)
 
             if 'forecast_date' in vals and vals['forecast_date'] is not False\
@@ -391,7 +396,18 @@ class ProjectTaskMilestoneForecast(models.Model):
                         business_days_to_add -= 1
                     vals['forecast_date'] = current_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)
                     end_date = current_date
-
+        if 'forecast_date' in vals:
+            self.env['project.task.milestone.update.log'].create({
+                'timestamp': datetime.datetime.now().strftime(tools.DEFAULT_SERVER_DATE_FORMAT),
+                'milestone_line_id': self.id,
+                'updated_field': 'forecast'
+            })
+        if 'actual_date' in vals:
+            self.env['project.task.milestone.update.log'].create({
+                'timestamp': datetime.datetime.now().strftime(tools.DEFAULT_SERVER_DATE_FORMAT),
+                'milestone_line_id': self.id,
+                'updated_field': 'actual'
+            })
         return super(ProjectTaskMilestoneForecast, self).write(vals)
 
     def return_action_to_open_issues(self, cr, uid, ids, context=None):

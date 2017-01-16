@@ -47,7 +47,7 @@ class ExportMilestonesWizard(models.TransientModel):
 
         date_style = Style(number_format="DD.MM.YYYY")
         number_style = Style(number_format="0")
-        seven_days_before_now = (datetime.datetime.now() - datetime.timedelta(days=7)).strftime(tools.DEFAULT_SERVER_DATE_FORMAT)
+        date_limit = (datetime.datetime.now() - datetime.timedelta(days=14)).strftime(tools.DEFAULT_SERVER_DATE_FORMAT)
 
         if not this.project_id.project_code or not this.project_id.project_wp_code:
             raise e.UserError('Project ID and DWP ID are missing for ' + this.project_id.name + '.')
@@ -104,19 +104,42 @@ class ExportMilestonesWizard(models.TransientModel):
 
                 if is_fc is True:
                     ws['E2'] = 'Forecast'
+                    self.env.cr.execute("""
+                        select
+                            milestone_line_id
+                        from
+                            project_task_milestone_update_log
+                        where
+                            timestamp >= '%s'
+                            and updated_field = 'forecast'
+                    """ % this.timestamp)
+                    logs = self.env.cr.fetchall()
+                    line_ids = [log[0] for log in logs]
+
                     lines = self.env['project.task.milestone.forecast'].search([('project_id', '=', this.project_id.id),
                                                                                 ('milestone_id', '=', milestone.id),
                                                                                 ('forecast_date', '!=', False),
-                                                                                #('forecast_date', '>=', seven_days_before_now),
-                                                                                ('write_date', '>=', this.timestamp)])
+                                                                                ('forecast_date', '>=', date_limit),
+                                                                                ('id', 'in', line_ids)])
 
                 elif is_ac is True:
                     ws['E2'] = 'Actual'
+                    self.env.cr.execute("""
+                        select
+                            milestone_line_id
+                        from
+                            project_task_milestone_update_log
+                        where
+                            timestamp >= '%s'
+                            and updated_field = 'actual'
+                    """ % this.timestamp)
+                    logs = self.env.cr.fetchall()
+                    line_ids = [log[0] for log in logs]
                     lines = self.env['project.task.milestone.forecast'].search([('project_id', '=', this.project_id.id),
                                                                                 ('milestone_id', '=', milestone.id),
                                                                                 ('actual_date', '!=', False),
-                                                                                #('actual_date', '>=', seven_days_before_now),
-                                                                                ('write_date', '>=', this.timestamp)])
+                                                                                ('actual_date', '>=', date_limit),
+                                                                                ('id', 'in', line_ids)])
 
                 n = 2
                 for line in lines:
@@ -137,10 +160,17 @@ class ExportMilestonesWizard(models.TransientModel):
                     ws['D'+str(n)] = wp_code
                     if is_fc is True:
                         ws['E'+str(n)] = print_date(line.forecast_date) if line.forecast_date else ''
-                        ws['E'+str(n)].style = date_style
+                        ws['E'+str(n)].style = Style(number_format="DD.MM.YYYY")
                     elif is_ac is True:
                         ws['E'+str(n)] = print_date(line.actual_date) if line.actual_date else ''
-                        ws['E'+str(n)].style = date_style
+                        if line.forecast_date == False:
+                            ws['E'+str(n)].style = Style(number_format="DD.MM.YYYY")
+                        else:
+                            ws['E'+str(n)].style = Style(number_format="DD.MM.YYYY",
+                                                         fill=PatternFill(patternType='solid',
+                                                                          fill_type='solid',
+                                                                          fgColor=Color('999a9e')))
+
 
         buf = cStringIO.StringIO()
         wb.save(buf)

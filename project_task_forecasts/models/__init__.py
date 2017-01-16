@@ -6,6 +6,7 @@ import issue
 import milestone
 import project
 import export_milestones_log
+import task_milestone_update_log
 import base_backlog
 import backlog_sa
 import backlog_cw
