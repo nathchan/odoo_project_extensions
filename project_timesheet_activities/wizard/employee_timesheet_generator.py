@@ -589,7 +589,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
             ws['A1'] = 'Personalnummer *'
             ws['A1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
             ws['B1'] = 'Datum *'
-            ws['B1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+            # ws['B1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
             ws['C1'] = 'Beginn (HH:MM)'
             ws['C1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
             ws['D1'] = 'Ende (HH:MM)'
@@ -624,7 +624,8 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 emp = self.env['hr.employee'].search([('user_id', '=', line.user_id.id)], limit=1)
                 ws['A'+str(n)] = emp.other_id if emp and emp.other_id else '---'
                 ws['B'+str(n)] = d.datetime.strptime(line.date, tools.DEFAULT_SERVER_DATE_FORMAT)
-                ws['F'+str(n)].style = Style(number_format="DD.MM.YYYY")
+                ws['B'+str(n)].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
+                                             number_format="DD.MM.YYYY")
                 ws['C'+str(n)] = format_float_time(line.timesheet_start_time)
                 ws['D'+str(n)] = format_float_time(line.timesheet_end_time)
                 ws['E'+str(n)] = format_float_time(line.unit_amount)
