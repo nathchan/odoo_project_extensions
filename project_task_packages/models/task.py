@@ -53,9 +53,9 @@ class ProjectTask(models.Model):
                                             ('75', '75 %'),
                                             ('100', '100 %')], string='CW % Complete', default='0')
 
-    a_goods_ordered_date = fields.Date('A Goods Ordered')
-    b_goods_ordered_date = fields.Date('B Goods Ordered')
-    c_goods_ordered_date = fields.Date('C Goods Ordered')
+    # a_goods_ordered_date = fields.Date('A Goods Ordered')
+    # b_goods_ordered_date = fields.Date('B Goods Ordered')
+    # c_goods_ordered_date = fields.Date('C Goods Ordered')
 
     task_package_id = fields.Many2one('project.task.package', 'Task package')
 
@@ -81,115 +81,64 @@ class ProjectTask(models.Model):
                                             (7, 'Site deconstruction')], 'CW package')
 
     def _search_A_ordered_on(self, operator, value):
-        res_ids = []
-        if operator == '=' and value is not False:
-            operator = 'in'
-            res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'a_goods'),
-                                                                                                   ('ordered_date', '=', value)])]
-        else:
-            operator = 'in'
-            res_ids = [item.id for item in self.search([])]
-        return [('id', operator, res_ids)]
+        new_operator = 'in'
+        res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'a_goods'),
+                                                                                               ('ordered_date', operator, value)])]
+        return [('id', new_operator, res_ids)]
 
     def _search_B_ordered_on(self, operator, value):
-        res_ids = []
-        if operator == '=' and value is not False:
-            operator = 'in'
-            res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'b_goods'),
-                                                                                                   ('ordered_date', '=', value)])]
-        else:
-            operator = 'in'
-            res_ids = [item.id for item in self.search([])]
-        return [('id', operator, res_ids)]
+        new_operator = 'in'
+        res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'b_goods'),
+                                                                                               ('ordered_date', operator, value)])]
+        return [('id', new_operator, res_ids)]
 
     def _search_C_ordered_on(self, operator, value):
-        res_ids = []
-        if operator == '=' and value is not False:
-            operator = 'in'
-            res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'c_goods'),
-                                                                                                   ('ordered_date', '=', value)])]
-        else:
-            operator = 'in'
-            res_ids = [item.id for item in self.search([])]
-        return [('id', operator, res_ids)]
+        new_operator = 'in'
+        res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'c_goods'),
+                                                                                               ('ordered_date', operator, value)])]
+        return [('id', new_operator, res_ids)]
 
     def _search_STEEL_ordered_on(self, operator, value):
-        res_ids = []
-        if operator == '=' and value is not False:
-            operator = 'in'
-            res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'steel'),
-                                                                                                   ('ordered_date', '=', value)])]
-        else:
-            operator = 'in'
-            res_ids = [item.id for item in self.search([])]
-        return [('id', operator, res_ids)]
+        new_operator = 'in'
+        res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'steel'),
+                                                                                               ('ordered_date', operator, value)])]
+        return [('id', new_operator, res_ids)]
 
     def _search_CRANE_ordered_on(self, operator, value):
-        res_ids = []
-        if operator == '=' and value is not False:
-            operator = 'in'
-            res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'crane'),
-                                                                                                   ('ordered_date', '=', value)])]
-        else:
-            operator = 'in'
-            res_ids = [item.id for item in self.search([])]
-        return [('id', operator, res_ids)]
-
+        new_operator = 'in'
+        res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'crane'),
+                                                                                               ('ordered_date', operator, value)])]
+        return [('id', new_operator, res_ids)]
 
     def _search_A_actual(self, operator, value):
-        res_ids = []
-        if operator == '=' and value is not False:
-            operator = 'in'
-            res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'a_goods'),
-                                                                                                   ('delivery_actual_date', '=', value)])]
-        else:
-            operator = 'in'
-            res_ids = [item.id for item in self.search([])]
-        return [('id', operator, res_ids)]
+        new_operator = 'in'
+        res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'a_goods'),
+                                                                                               ('delivery_actual_date', operator, value)])]
+        return [('id', new_operator, res_ids)]
 
     def _search_B_actual(self, operator, value):
-        res_ids = []
-        if operator == '=' and value is not False:
-            operator = 'in'
-            res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'b_goods'),
-                                                                                                   ('delivery_actual_date', '=', value)])]
-        else:
-            operator = 'in'
-            res_ids = [item.id for item in self.search([])]
-        return [('id', operator, res_ids)]
+        new_operator = 'in'
+        res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'b_goods'),
+                                                                                               ('delivery_actual_date', operator, value)])]
+        return [('id', new_operator, res_ids)]
 
     def _search_C_actual(self, operator, value):
-        res_ids = []
-        if operator == '=' and value is not False:
-            operator = 'in'
-            res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'c_goods'),
-                                                                                                   ('delivery_actual_date', '=', value)])]
-        else:
-            operator = 'in'
-            res_ids = [item.id for item in self.search([])]
-        return [('id', operator, res_ids)]
+        new_operator = 'in'
+        res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'c_goods'),
+                                                                                               ('delivery_actual_date', operator, value)])]
+        return [('id', new_operator, res_ids)]
 
     def _search_STEEL_actual(self, operator, value):
-        res_ids = []
-        if operator == '=' and value is not False:
-            operator = 'in'
-            res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'steel'),
-                                                                                                   ('delivery_actual_date', '=', value)])]
-        else:
-            operator = 'in'
-            res_ids = [item.id for item in self.search([])]
-        return [('id', operator, res_ids)]
+        new_operator = 'in'
+        res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'steel'),
+                                                                                               ('delivery_actual_date', operator, value)])]
+        return [('id', new_operator, res_ids)]
 
     def _search_CRANE_actual(self, operator, value):
-        res_ids = []
-        if operator == '=' and value is not False:
-            operator = 'in'
-            res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'crane'),
-                                                                                                   ('delivery_actual_date', '=', value)])]
-        else:
-            operator = 'in'
-            res_ids = [item.id for item in self.search([])]
-        return [('id', operator, res_ids)]
+        new_operator = 'in'
+        res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'crane'),
+                                                                                               ('delivery_actual_date', operator, value)])]
+        return [('id', new_operator, res_ids)]
 
     filter_A_ordered_on = fields.Date(string='A Ordered on', compute=_compute_filters, search=_search_A_ordered_on)
     filter_B_ordered_on = fields.Date(string='B Ordered on', compute=_compute_filters, search=_search_B_ordered_on)
