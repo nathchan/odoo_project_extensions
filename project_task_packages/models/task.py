@@ -28,6 +28,20 @@ class ProjectTask(models.Model):
             rec.alert_material_order_due_soon = due_soon
             rec.alert_material_order_overdue = overdue
 
+    @api.multi
+    def _compute_filters(self):
+        for rec in self:
+            rec.filter_A_ordered_on = False
+            rec.filter_B_ordered_on = False
+            rec.filter_C_ordered_on = False
+            rec.filter_STEEL_ordered_on = False
+            rec.filter_CRANE_ordered_on = False
+            rec.filter_A_actual = False
+            rec.filter_B_actual = False
+            rec.filter_C_actual = False
+            rec.filter_STEEL_actual = False
+            rec.filter_CRANE_actual = False
+
     material_order_ids = fields.One2many('project.task.material.order', 'task_id', 'Material orders')
 
     alert_material_order_due_soon = fields.Boolean('Material order due soon', compute=_compute_alerts, store=True)
@@ -65,6 +79,129 @@ class ProjectTask(models.Model):
                                             (5, 'New Greenfield Outdoor site'),
                                             (6, 'Moving sharing partner'),
                                             (7, 'Site deconstruction')], 'CW package')
+
+    def _search_A_ordered_on(self, operator, value):
+        res_ids = []
+        if operator == '=' and value is not False:
+            operator = 'in'
+            res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'a_goods'),
+                                                                                                   ('ordered_date', '=', value)])]
+        else:
+            operator = 'in'
+            res_ids = [item.id for item in self.search([])]
+        return [('id', operator, res_ids)]
+
+    def _search_B_ordered_on(self, operator, value):
+        res_ids = []
+        if operator == '=' and value is not False:
+            operator = 'in'
+            res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'b_goods'),
+                                                                                                   ('ordered_date', '=', value)])]
+        else:
+            operator = 'in'
+            res_ids = [item.id for item in self.search([])]
+        return [('id', operator, res_ids)]
+
+    def _search_C_ordered_on(self, operator, value):
+        res_ids = []
+        if operator == '=' and value is not False:
+            operator = 'in'
+            res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'c_goods'),
+                                                                                                   ('ordered_date', '=', value)])]
+        else:
+            operator = 'in'
+            res_ids = [item.id for item in self.search([])]
+        return [('id', operator, res_ids)]
+
+    def _search_STEEL_ordered_on(self, operator, value):
+        res_ids = []
+        if operator == '=' and value is not False:
+            operator = 'in'
+            res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'steel'),
+                                                                                                   ('ordered_date', '=', value)])]
+        else:
+            operator = 'in'
+            res_ids = [item.id for item in self.search([])]
+        return [('id', operator, res_ids)]
+
+    def _search_CRANE_ordered_on(self, operator, value):
+        res_ids = []
+        if operator == '=' and value is not False:
+            operator = 'in'
+            res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'crane'),
+                                                                                                   ('ordered_date', '=', value)])]
+        else:
+            operator = 'in'
+            res_ids = [item.id for item in self.search([])]
+        return [('id', operator, res_ids)]
+
+
+    def _search_A_actual(self, operator, value):
+        res_ids = []
+        if operator == '=' and value is not False:
+            operator = 'in'
+            res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'a_goods'),
+                                                                                                   ('delivery_actual_date', '=', value)])]
+        else:
+            operator = 'in'
+            res_ids = [item.id for item in self.search([])]
+        return [('id', operator, res_ids)]
+
+    def _search_B_actual(self, operator, value):
+        res_ids = []
+        if operator == '=' and value is not False:
+            operator = 'in'
+            res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'b_goods'),
+                                                                                                   ('delivery_actual_date', '=', value)])]
+        else:
+            operator = 'in'
+            res_ids = [item.id for item in self.search([])]
+        return [('id', operator, res_ids)]
+
+    def _search_C_actual(self, operator, value):
+        res_ids = []
+        if operator == '=' and value is not False:
+            operator = 'in'
+            res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'c_goods'),
+                                                                                                   ('delivery_actual_date', '=', value)])]
+        else:
+            operator = 'in'
+            res_ids = [item.id for item in self.search([])]
+        return [('id', operator, res_ids)]
+
+    def _search_STEEL_actual(self, operator, value):
+        res_ids = []
+        if operator == '=' and value is not False:
+            operator = 'in'
+            res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'steel'),
+                                                                                                   ('delivery_actual_date', '=', value)])]
+        else:
+            operator = 'in'
+            res_ids = [item.id for item in self.search([])]
+        return [('id', operator, res_ids)]
+
+    def _search_CRANE_actual(self, operator, value):
+        res_ids = []
+        if operator == '=' and value is not False:
+            operator = 'in'
+            res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'crane'),
+                                                                                                   ('delivery_actual_date', '=', value)])]
+        else:
+            operator = 'in'
+            res_ids = [item.id for item in self.search([])]
+        return [('id', operator, res_ids)]
+
+    filter_A_ordered_on = fields.Date(string='A Ordered on', compute=_compute_filters, search=_search_A_ordered_on)
+    filter_B_ordered_on = fields.Date(string='B Ordered on', compute=_compute_filters, search=_search_B_ordered_on)
+    filter_C_ordered_on = fields.Date(string='C Ordered on', compute=_compute_filters, search=_search_C_ordered_on)
+    filter_STEEL_ordered_on = fields.Date(string='STEEL Ordered on', compute=_compute_filters, search=_search_STEEL_ordered_on)
+    filter_CRANE_ordered_on = fields.Date(string='CRANE Ordered on', compute=_compute_filters, search=_search_CRANE_ordered_on)
+
+    filter_A_actual = fields.Date(string='A Delivery actual', compute=_compute_filters, search=_search_A_actual)
+    filter_B_actual = fields.Date(string='B Delivery actual', compute=_compute_filters, search=_search_B_actual)
+    filter_C_actual = fields.Date(string='C Delivery actual', compute=_compute_filters, search=_search_C_actual)
+    filter_STEEL_actual = fields.Date(string='STEEL Delivery actual', compute=_compute_filters, search=_search_STEEL_actual)
+    filter_CRANE_actual = fields.Date(string='CRANE Delivery actual', compute=_compute_filters, search=_search_CRANE_actual)
 
     @api.model
     def create(self, vals):

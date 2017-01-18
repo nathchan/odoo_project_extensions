@@ -86,6 +86,19 @@
             <data>
                 <xpath expr="//filter[@name='inactive']" position="after">
                     <separator />
+
+                    <field name="filter_A_ordered_on" />
+                    <field name="filter_B_ordered_on" />
+                    <field name="filter_C_ordered_on" />
+                    <field name="filter_STEEL_ordered_on" />
+                    <field name="filter_CRANE_ordered_on" />
+
+                    <field name="filter_A_actual" />
+                    <field name="filter_B_actual" />
+                    <field name="filter_C_actual" />
+                    <field name="filter_STEEL_actual" />
+                    <field name="filter_CRANE_actual" />
+
                     <filter string="Materials due soon" name="materials_due_soon" domain="[('alert_material_order_due_soon', '=', True)]" />
                     <filter string="Materials overdue" name="materials_overdue" domain="[('alert_material_order_overdue', '=', True)]" />
                 </xpath>
