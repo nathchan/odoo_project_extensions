@@ -543,7 +543,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
 
                     if day_off and day_off.category_id.name == 'Public Holiday':
                         write_pub_holiday_line(ws, n, color, iteration_date)
-                        ws['F'+str(7+n[0])] = format_float_time_str(6.695)
+                        ws['F'+str(7+n[0])] = format_float_time_str(7.695)
                         ws['F'+str(7+n[0])].style = Style(number_format="HH:MM:SS",
                                                           fill=PatternFill(patternType='solid',
                                                                            fill_type='solid',
@@ -891,7 +891,7 @@ def write_pub_holiday_line(ws, n, color, current_date):
                                                     bottom=Side(style='thin', color=colors.BLACK)),
 )
 
-    ws['B'+str(7+n[0])] = format_float_time(9.0)
+    ws['B'+str(7+n[0])] = format_float_time(8.0)
     ws['B'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
                                       fill=PatternFill(patternType='solid',
                                                        fill_type='solid',
@@ -927,7 +927,7 @@ def write_pub_holiday_line(ws, n, color, current_date):
                                       number_format="HH:MM:SS"
                                       )
 
-    ws['E'+str(7+n[0])] = format_float_time(6.695)
+    ws['E'+str(7+n[0])] = format_float_time(7.695)
     ws['E'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
                                       fill=PatternFill(patternType='solid',
                                                        fill_type='solid',

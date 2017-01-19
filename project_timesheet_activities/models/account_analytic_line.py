@@ -35,7 +35,7 @@ class AccountAnalyticLine(models.Model):
     def _change_account_id(self):
         self.name = self.account_id.name
         if self.account_id.name == 'Feiertag':
-            self.timesheet_start_time = 9.0
+            self.timesheet_start_time = 8.0
             self.timesheet_end_time = 15.695
 
     @api.onchange('unit_amount', 'timesheet_start_time', 'timesheet_end_time', 'timesheet_break_amount')
