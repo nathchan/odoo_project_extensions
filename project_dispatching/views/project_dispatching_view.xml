@@ -56,15 +56,23 @@
                             <group>
                                 <field name="analytic_account_id_use_tasks" invisible="1" />
                                 <field name="project_id" invisible="1" />
-                                <field name="analytic_account_id" />
-                                <field name="task_id" attrs="{'required': [('analytic_account_id_use_tasks', '=', True)],
+                                <field name="analytic_account_id"
+                                       options="{'no_open': True, 'no_create': True}"/>
+                                <field name="task_id"
+                                       options="{'no_open': True, 'no_create': True}"
+                                       attrs="{'required': [('analytic_account_id_use_tasks', '=', True)],
                                                               'invisible': [('analytic_account_id_use_tasks', '=', False)]}" />
 
-                                <field name="activity_id" attrs="{'required': [('analytic_account_id_use_tasks', '=', True)],
+                                <field name="activity_id"
+                                       options="{'no_open': True, 'no_create': True}"
+                                       attrs="{'required': [('analytic_account_id_use_tasks', '=', True)],
                                                                   'invisible': [('analytic_account_id_use_tasks', '=', False)]}" />
-                                <field name="department_id" />
-                                <field name="vehicle_id" />
-                                <field name="percent_complete" />
+                                <field name="department_id"
+                                       options="{'no_open': True, 'no_create': True}"/>
+                                <field name="vehicle_id"
+                                       options="{'no_open': True, 'no_create': True}"/>
+                                <field name="percent_complete"
+                                       options="{'no_open': True, 'no_create': True}"/>
                             </group>
                             <group>
                                 <field name="all_day" />
