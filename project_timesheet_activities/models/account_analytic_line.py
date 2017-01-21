@@ -123,6 +123,41 @@ class AccountAnalyticLine(models.Model):
             if (rec.timesheet_task_assigned_to.id == self.env.user.id) or self.env.user._has_group(self.env.cr, self.env.user.id, 'project_timesheet_activities.group_hr_timesheet_rollout_manager'):
                 rec.timesheet_approved_status = 'refused'
 
+    @api.one
+    @api.constrains('timesheet_start_time', 'timesheet_end_time', 'date', 'user_id')
+    def _check_activity_overlap_for_user(self):
+        count_1 = self.search([('user_id', '=', self.user_id.id),
+                               ('id', '!=', self.id),
+                               ('date', '=', self.date),
+                               ('timesheet_start_time', '<', self.timesheet_end_time),
+                               ('timesheet_start_time', '>', self.timesheet_start_time)], count=True)
+        if count_1 > 0:
+            raise e.ValidationError('You have activities that overlaps.')
+
+        count_2 = self.search([('user_id', '=', self.user_id.id),
+                               ('id', '!=', self.id),
+                               ('date', '=', self.date),
+                               ('timesheet_end_time', '>', self.timesheet_start_time),
+                               ('timesheet_end_time', '<', self.timesheet_end_time)], count=True)
+        if count_2 > 0:
+            raise e.ValidationError('You have activities that overlaps.')
+
+        count_3 = self.search([('user_id', '=', self.user_id.id),
+                               ('date', '=', self.date),
+                               ('id', '!=', self.id),
+                               ('timesheet_start_time', '<=', self.timesheet_start_time),
+                               ('timesheet_end_time', '>=', self.timesheet_end_time)], count=True)
+        if count_3 > 0:
+            raise e.ValidationError('You have activities that overlaps.')
+
+        count_4 = self.search([('user_id', '=', self.user_id.id),
+                               ('id', '!=', self.id),
+                               ('date', '=', self.date),
+                               ('timesheet_start_time', '>=', self.timesheet_start_time),
+                               ('timesheet_end_time', '<=', self.timesheet_end_time)], count=True)
+        if count_4 > 0:
+            raise e.ValidationError('You have activities that overlaps.')
+
 
     @api.one
     @api.constrains('timesheet_start_time', 'timesheet_end_time')
