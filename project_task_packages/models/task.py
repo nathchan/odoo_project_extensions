@@ -165,10 +165,10 @@ class ProjectTask(models.Model):
     filter_STEEL_inbound = fields.Date(string='STEEL IRIS inbound', compute=_compute_filters, search=_search_STEEL_inbound)
     filter_CRANE_inbound = fields.Date(string='CRANE IRIS inbound', compute=_compute_filters, search=_search_CRANE_inbound)
 
-    filter_A_B_outbound = fields.Date(string='A+B IRIS inbound', compute=_compute_filters, search=_search_A_B_inbound)
-    filter_C_outbound = fields.Date(string='C IRIS inbound', compute=_compute_filters, search=_search_C_inbound)
-    filter_STEEL_outbound = fields.Date(string='STEEL IRIS inbound', compute=_compute_filters, search=_search_STEEL_inbound)
-    filter_CRANE_outbound = fields.Date(string='CRANE IRIS inbound', compute=_compute_filters, search=_search_CRANE_inbound)
+    filter_A_B_outbound = fields.Date(string='A+B IRIS outbound', compute=_compute_filters, search=_search_A_B_outbound)
+    filter_C_outbound = fields.Date(string='C IRIS outbound', compute=_compute_filters, search=_search_C_outbound)
+    filter_STEEL_outbound = fields.Date(string='STEEL IRIS outbound', compute=_compute_filters, search=_search_STEEL_outbound)
+    filter_CRANE_outbound = fields.Date(string='CRANE IRIS outbound', compute=_compute_filters, search=_search_CRANE_outbound)
 
     @api.model
     def create(self, vals):
