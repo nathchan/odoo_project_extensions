@@ -33,6 +33,7 @@ class ProjectBacklogCw(models.AbstractModel):
     task_blocked = fields.Boolean('Task blocked', compute=_compute_color)
     color = fields.Char('Color Index', compute=_compute_color)
 
+
     filter_A_B_ordered_on = fields.Date(string='A+B Ordered on', related='task_id.filter_A_B_ordered_on')
     filter_C_ordered_on = fields.Date(string='C Ordered on', related='task_id.filter_C_ordered_on')
     filter_STEEL_ordered_on = fields.Date(string='STEEL Ordered on', related='task_id.filter_STEEL_ordered_on')
