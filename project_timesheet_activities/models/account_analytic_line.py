@@ -72,6 +72,13 @@ class AccountAnalyticLine(models.Model):
             if rec.task_id and rec.task_id.user_id:
                 rec.timesheet_task_assigned_to = rec.task_id.user_id
 
+
+    @api.multi
+    @api.depends('date')
+    def _compute_day(self):
+        for rec in self:
+            rec.day = datetime.datetime.strptime(rec.date, tools.DEFAULT_SERVER_DATE_FORMAT).strftime('%d. %B %Y.')
+
     account_id_use_tasks = fields.Boolean(compute=_compute_project_use_task_issues_name)
     account_id_use_issues = fields.Boolean(compute=_compute_project_use_task_issues_name)
     account_id_name = fields.Char(compute=_compute_project_use_task_issues_name)
@@ -110,6 +117,7 @@ class AccountAnalyticLine(models.Model):
 
     timesheet_color_record = fields.Boolean('Color record', compute=_compute_color_record)
     timesheet_task_assigned_to = fields.Many2one('res.users', 'Task Assigned to', compute=_compute_task_assigned_to, store=True)
+    day = fields.Char('Day', compute=_compute_day, store=True)
 
     @api.multi
     def approve(self):
@@ -178,6 +186,8 @@ class AccountAnalyticLine(models.Model):
 
     @api.one
     def write(self, vals):
+        # super(AccountAnalyticLine, self).write(vals)
+
         if self.timesheet_approved_status in ['draft', 'approved']:
             if len(vals) == 1 and 'timesheet_approved_status' in vals:
                 old_state = self.timesheet_approved_status

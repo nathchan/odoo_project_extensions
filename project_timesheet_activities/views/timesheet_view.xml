@@ -78,6 +78,7 @@
                     <filter name="approved" string="Approved" domain="[('timesheet_approved_status', '=', 'approved')]" />
                     <filter name="refused" string="Refused" domain="[('timesheet_approved_status', '=', 'refused')]" />
 
+                    <filter name="group_day" string="Day" context="{'group_by': 'day'}" domain="" />
                     <filter name="group_timesheet_start_time" string="Start time" context="{'group_by': 'timesheet_start_time'}" domain="" />
                     <filter name="group_department_id" string="Departments" context="{'group_by': 'timesheet_department_id'}" domain="" />
                     <filter name="group_timesheet_task_assigned_to" string="Task Assigned to" context="{'group_by': 'timesheet_task_assigned_to'}" domain="" />
