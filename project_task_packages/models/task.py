@@ -80,15 +80,9 @@ class ProjectTask(models.Model):
                                             (6, 'Moving sharing partner'),
                                             (7, 'Site deconstruction')], 'CW package')
 
-    def _search_A_ordered_on(self, operator, value):
+    def _search_A_B_ordered_on(self, operator, value):
         new_operator = 'in'
-        res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'a_goods'),
-                                                                                               ('ordered_date', operator, value)])]
-        return [('id', new_operator, res_ids)]
-
-    def _search_B_ordered_on(self, operator, value):
-        new_operator = 'in'
-        res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'b_goods'),
+        res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'a_b_goods'),
                                                                                                ('ordered_date', operator, value)])]
         return [('id', new_operator, res_ids)]
 
