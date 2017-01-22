@@ -41,7 +41,8 @@
                                     <field name="partner_id" domain="[('supplier', '=', True)]" context="{'default_supplier': True}"/>
                                     <field name="ordered_date" />
                                     <field name="delivery_forecast_date" />
-                                    <field name="delivery_actual_date" />
+                                    <field name="iris_inbound_date" />
+                                    <field name="iris_outbound_date" />
                                     <field name="order_number" />
                                 </tree>
                             </field>
@@ -87,17 +88,20 @@
                 <xpath expr="//filter[@name='inactive']" position="after">
                     <separator />
 
-                    <field name="filter_A_ordered_on" />
-                    <field name="filter_B_ordered_on" />
+                    <field name="filter_A_B_ordered_on" />
                     <field name="filter_C_ordered_on" />
                     <field name="filter_STEEL_ordered_on" />
                     <field name="filter_CRANE_ordered_on" />
 
-                    <field name="filter_A_actual" />
-                    <field name="filter_B_actual" />
-                    <field name="filter_C_actual" />
-                    <field name="filter_STEEL_actual" />
-                    <field name="filter_CRANE_actual" />
+                    <field name="filter_A_B_inbound" />
+                    <field name="filter_C_inbound" />
+                    <field name="filter_STEEL_inbound" />
+                    <field name="filter_CRANE_inbound" />
+
+                    <field name="filter_A_B_outbound" />
+                    <field name="filter_C_outbound" />
+                    <field name="filter_STEEL_outbound" />
+                    <field name="filter_CRANE_outbound" />
 
                     <filter string="Materials due soon" name="materials_due_soon" domain="[('alert_material_order_due_soon', '=', True)]" />
                     <filter string="Materials overdue" name="materials_overdue" domain="[('alert_material_order_overdue', '=', True)]" />

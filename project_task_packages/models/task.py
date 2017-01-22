@@ -36,11 +36,14 @@ class ProjectTask(models.Model):
             rec.filter_C_ordered_on = False
             rec.filter_STEEL_ordered_on = False
             rec.filter_CRANE_ordered_on = False
-            rec.filter_A_actual = False
-            rec.filter_B_actual = False
-            rec.filter_C_actual = False
-            rec.filter_STEEL_actual = False
-            rec.filter_CRANE_actual = False
+            rec.filter_A_B_inbound = False
+            rec.filter_C_inbound = False
+            rec.filter_STEEL_inbound = False
+            rec.filter_CRANE_inbound = False
+            rec.filter_A_B_outbound = False
+            rec.filter_C_outbound = False
+            rec.filter_STEEL_outbound = False
+            rec.filter_CRANE_outbound = False
 
     material_order_ids = fields.One2many('project.task.material.order', 'task_id', 'Material orders')
 
@@ -104,47 +107,68 @@ class ProjectTask(models.Model):
                                                                                                ('ordered_date', operator, value)])]
         return [('id', new_operator, res_ids)]
 
-    def _search_A_actual(self, operator, value):
+    def _search_A_B_inbound(self, operator, value):
         new_operator = 'in'
-        res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'a_goods'),
-                                                                                               ('delivery_actual_date', operator, value)])]
+        res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'a_b_goods'),
+                                                                                               ('iris_inbound_date', operator, value)])]
         return [('id', new_operator, res_ids)]
 
-    def _search_B_actual(self, operator, value):
-        new_operator = 'in'
-        res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'b_goods'),
-                                                                                               ('delivery_actual_date', operator, value)])]
-        return [('id', new_operator, res_ids)]
-
-    def _search_C_actual(self, operator, value):
+    def _search_C_inbound(self, operator, value):
         new_operator = 'in'
         res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'c_goods'),
-                                                                                               ('delivery_actual_date', operator, value)])]
+                                                                                               ('iris_inbound_date', operator, value)])]
         return [('id', new_operator, res_ids)]
 
-    def _search_STEEL_actual(self, operator, value):
+    def _search_STEEL_inbound(self, operator, value):
         new_operator = 'in'
         res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'steel'),
-                                                                                               ('delivery_actual_date', operator, value)])]
+                                                                                               ('iris_inbound_date', operator, value)])]
         return [('id', new_operator, res_ids)]
 
-    def _search_CRANE_actual(self, operator, value):
+    def _search_CRANE_inbound(self, operator, value):
         new_operator = 'in'
         res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'crane'),
-                                                                                               ('delivery_actual_date', operator, value)])]
+                                                                                               ('iris_inbound_date', operator, value)])]
         return [('id', new_operator, res_ids)]
 
-    filter_A_ordered_on = fields.Date(string='A Ordered on', compute=_compute_filters, search=_search_A_ordered_on)
-    filter_B_ordered_on = fields.Date(string='B Ordered on', compute=_compute_filters, search=_search_B_ordered_on)
+    def _search_A_B_outbound(self, operator, value):
+        new_operator = 'in'
+        res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'a_b_goods'),
+                                                                                               ('iris_outbound_date', operator, value)])]
+        return [('id', new_operator, res_ids)]
+
+    def _search_C_outbound(self, operator, value):
+        new_operator = 'in'
+        res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'c_goods'),
+                                                                                               ('iris_outbound_date', operator, value)])]
+        return [('id', new_operator, res_ids)]
+
+    def _search_STEEL_outbound(self, operator, value):
+        new_operator = 'in'
+        res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'steel'),
+                                                                                               ('iris_outbound_date', operator, value)])]
+        return [('id', new_operator, res_ids)]
+
+    def _search_CRANE_outbound(self, operator, value):
+        new_operator = 'in'
+        res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'crane'),
+                                                                                               ('iris_outbound_date', operator, value)])]
+        return [('id', new_operator, res_ids)]
+
+    filter_A_B_ordered_on = fields.Date(string='A+B Ordered on', compute=_compute_filters, search=_search_A_B_ordered_on)
     filter_C_ordered_on = fields.Date(string='C Ordered on', compute=_compute_filters, search=_search_C_ordered_on)
     filter_STEEL_ordered_on = fields.Date(string='STEEL Ordered on', compute=_compute_filters, search=_search_STEEL_ordered_on)
     filter_CRANE_ordered_on = fields.Date(string='CRANE Ordered on', compute=_compute_filters, search=_search_CRANE_ordered_on)
 
-    filter_A_actual = fields.Date(string='A Delivery actual', compute=_compute_filters, search=_search_A_actual)
-    filter_B_actual = fields.Date(string='B Delivery actual', compute=_compute_filters, search=_search_B_actual)
-    filter_C_actual = fields.Date(string='C Delivery actual', compute=_compute_filters, search=_search_C_actual)
-    filter_STEEL_actual = fields.Date(string='STEEL Delivery actual', compute=_compute_filters, search=_search_STEEL_actual)
-    filter_CRANE_actual = fields.Date(string='CRANE Delivery actual', compute=_compute_filters, search=_search_CRANE_actual)
+    filter_A_B_inbound = fields.Date(string='A+B IRIS inbound', compute=_compute_filters, search=_search_A_B_inbound)
+    filter_C_inbound = fields.Date(string='C IRIS inbound', compute=_compute_filters, search=_search_C_inbound)
+    filter_STEEL_inbound = fields.Date(string='STEEL IRIS inbound', compute=_compute_filters, search=_search_STEEL_inbound)
+    filter_CRANE_inbound = fields.Date(string='CRANE IRIS inbound', compute=_compute_filters, search=_search_CRANE_inbound)
+
+    filter_A_B_outbound = fields.Date(string='A+B IRIS inbound', compute=_compute_filters, search=_search_A_B_inbound)
+    filter_C_outbound = fields.Date(string='C IRIS inbound', compute=_compute_filters, search=_search_C_inbound)
+    filter_STEEL_outbound = fields.Date(string='STEEL IRIS inbound', compute=_compute_filters, search=_search_STEEL_inbound)
+    filter_CRANE_outbound = fields.Date(string='CRANE IRIS inbound', compute=_compute_filters, search=_search_CRANE_inbound)
 
     @api.model
     def create(self, vals):
@@ -155,14 +179,7 @@ class ProjectTask(models.Model):
         if len(project_lte800) > 0 and vals.get('project_id') and project_lte800[0].id == vals['project_id']:
             tmp_vals = {
                 'task_id': new.id,
-                'material': 'a_goods',
-                'partner_id': self.env.ref('project_task_packages.partner_kelog').id
-            }
-            self.env['project.task.material.order'].create(tmp_vals)
-
-            tmp_vals = {
-                'task_id': new.id,
-                'material': 'b_goods',
+                'material': 'a_b_goods',
                 'partner_id': self.env.ref('project_task_packages.partner_kelog').id
             }
             self.env['project.task.material.order'].create(tmp_vals)
