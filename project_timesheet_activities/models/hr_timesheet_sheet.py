@@ -121,8 +121,8 @@ class HrTimesheetSheet(models.Model):
 
     supervisor_must_approve = fields.Boolean('Supervisor must approve', compute=_compute_supervisor_must_approve, search=_search_supervisor_must_approve)
 
-    # date_from = fields.Date('Date from', default=datetime.datetime.now().strftime(tools.DEFAULT_SERVER_DATE_FORMAT))
-    # date_to = fields.Date('Date to', default=datetime.datetime.now().strftime(tools.DEFAULT_SERVER_DATE_FORMAT))
+    date_from = fields.Date('Date from', default=datetime.datetime.now().strftime(tools.DEFAULT_SERVER_DATE_FORMAT))
+    date_to = fields.Date('Date to', default=datetime.datetime.now().strftime(tools.DEFAULT_SERVER_DATE_FORMAT))
 
     # @api.multi
     # @api.depends('timesheet_ids.timesheet_approved_status', 'timesheet_ids.unit_amount', 'timesheet_ids.timesheet_break_amount')
