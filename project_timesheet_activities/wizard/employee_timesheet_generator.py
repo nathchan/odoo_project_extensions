@@ -169,7 +169,9 @@ class EmployeeTimesheetGenerator(models.TransientModel):
         top = Border(top=Side(color=colors.BLACK, border_style='thick'))
         bottom = Border(bottom=Side(color=colors.BLACK, border_style='thick'))
 
-        if len(this.employee_timesheet_generator_line_ids) == 0:
+        if not self.env.user._has_group(self.env.cr, self.env.user.id, 'base.group_hr_user'):
+            employees = self.env['hr.employee'].search([('user_id', '=', self.env.user.id)])
+        elif len(this.employee_timesheet_generator_line_ids) == 0:
             employees = self.env['hr.employee'].search([])
         else:
             employees = [item.employee_id for item in this.employee_timesheet_generator_line_ids]

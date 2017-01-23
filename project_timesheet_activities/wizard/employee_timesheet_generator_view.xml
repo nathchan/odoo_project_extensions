@@ -18,9 +18,9 @@
                             <label for="year" />
                             <field name="year" required="1" />
 
-                            <label for="display_sap_report" />
-                            <field name="display_sap_report" />
-                            <group attrs="{'invisible': [('display_sap_report', '=', False)]}">
+                            <label for="display_sap_report" groups="base.group_hr_user"/>
+                            <field name="display_sap_report" groups="base.group_hr_user"/>
+                            <group groups="base.group_hr_user" attrs="{'invisible': [('display_sap_report', '=', False)]}">
                                 <div class="o_row">
                                     <strong>SAP</strong> from
                                     <field name="sap_date_from" attrs="{'required': [('display_sap_report', '=', True)]}" />
@@ -32,20 +32,20 @@
 
 
                             <div>
-                                <label for="department_id" />
-                                <field name="department_id" />
-                                <button name="fill_lines" context="" string="Get employees" type="object" />
+                                <label for="department_id" groups="base.group_hr_user"/>
+                                <field name="department_id" groups="base.group_hr_user"/>
+                                <button groups="base.group_hr_user" name="fill_lines" context="" string="Get employees" type="object" />
                             </div>
 
-                            <field name="employee_timesheet_generator_line_ids">
+                            <field name="employee_timesheet_generator_line_ids" groups="base.group_hr_user">
                                 <tree editable="on_bottom">
                                     <field name="employee_id" required="1" />
                                     <field name="job_id" />
                                 </tree>
                             </field>
 
-                            <label for="lines_count"  />
-                            <field name="lines_count" class="oe_inline" />
+                            <label for="lines_count"  groups="base.group_hr_user"/>
+                            <field name="lines_count" groups="base.group_hr_user" class="oe_inline" />
                         </div>
                         <div states="get">
                             <h2>Timesheets generation completed</h2>
