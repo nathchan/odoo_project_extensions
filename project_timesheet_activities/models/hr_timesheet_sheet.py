@@ -116,13 +116,16 @@ class HrTimesheetSheet(models.Model):
             operator = 'not in'
         return [('id', operator, res_ids)]
 
+    def _default_date_from_to(self):
+        return datetime.datetime.now().strftime(tools.DEFAULT_SERVER_DATE_FORMAT)
+
     no_break_warning = fields.Boolean('No break warning', compute=_compute_no_break_working_hours_warning, search=_search_no_break_warning)
     working_hours_warning = fields.Boolean('Working hours warning', compute=_compute_no_break_working_hours_warning, search=_search_working_hours_warning)
 
     supervisor_must_approve = fields.Boolean('Supervisor must approve', compute=_compute_supervisor_must_approve, search=_search_supervisor_must_approve)
 
-    date_from = fields.Date('Date from', default=datetime.datetime.now().strftime(tools.DEFAULT_SERVER_DATE_FORMAT))
-    date_to = fields.Date('Date to', default=datetime.datetime.now().strftime(tools.DEFAULT_SERVER_DATE_FORMAT))
+    date_from = fields.Date('Date from', default=_default_date_from_to)
+    date_to = fields.Date('Date to', default=_default_date_from_to)
 
     # @api.multi
     # @api.depends('timesheet_ids.timesheet_approved_status', 'timesheet_ids.unit_amount', 'timesheet_ids.timesheet_break_amount')
