@@ -122,6 +122,18 @@ class AccountAnalyticLine(models.Model):
     day = fields.Char('Day', compute=_compute_day, store=True)
 
     @api.multi
+    def open_sheet(self):
+        if self[0].timesheet_sheet_id:
+            return {
+                'type': 'ir.actions.act_window',
+                'res_id': self[0].timesheet_sheet_id.id,
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'hr_timesheet_sheet.sheet',
+                'context': self.env.context,
+            }
+
+    @api.multi
     def approve(self):
         for rec in self:
             if (rec.timesheet_task_assigned_to.id == self.env.user.id) or self.env.user._has_group(self.env.cr, self.env.user.id, 'project_timesheet_activities.group_hr_timesheet_rollout_manager'):

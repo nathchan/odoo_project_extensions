@@ -45,6 +45,7 @@
                     <field name="timesheet_travel_end" />
                     <field name="timesheet_accommodation" />
                     <field name="timesheet_comment" />
+                    <button name="open_sheet" string="Open Timesheet" type="object" icon="fa-calendar" />
                     <field name="timesheet_approved_status" invisible="1"/>
                 </xpath>
 
