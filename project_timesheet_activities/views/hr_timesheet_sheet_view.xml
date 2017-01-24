@@ -25,10 +25,6 @@
             <field name="arch" type="xml">
                 <data>
 
-                    <xpath expr="//field[@name='timesheet_ids']" position="attributes">
-                        <attribute name="attrs"></attribute>
-                    </xpath>
-
                     <xpath expr="//button[@name='button_confirm']" position="attributes">
                         <attribute name="confirm">This timesheet will be submitted to manager. Are you sure?</attribute>
                     </xpath>
@@ -110,190 +106,89 @@
                     <xpath expr="//field[@name='period_ids']/.." position="replace">
                     </xpath>
 
+                    <xpath expr="//field[@name='timesheet_ids']" position="replace">
+                        <field context="{'employee_id': employee_id, 'user_id':user_id, 'timesheet_date_from': date_from, 'timesheet_date_to': date_to, 'default_is_timesheet' : 1}" name="timesheet_activity_ids" nolabel="1">
+                            <tree
+                                    default_order="date, timesheet_start_time"
+                                    decoration-danger="timesheet_approved_status=='refused'"
+                                    decoration-success="timesheet_approved_status=='approved'"
+                                    editable="bottom"
+                                    string="Timesheet Activities">
+                                <button name="approve" string="Approve" groups="project_timesheet_activities.group_hr_timesheet_supervisor" type="object" icon="fa-check" attrs="{'invisible': [('timesheet_approved_status', 'in', ['new', 'approved'])]}" />
+                                <button name="refuse" string="Refuse" groups="project_timesheet_activities.group_hr_timesheet_supervisor" type="object" icon="fa-times" attrs="{'invisible': [('timesheet_approved_status', 'in', ['new', 'refused'])]}" />
 
-                    <xpath expr="//field[@name='timesheet_ids']/tree//field[@name='unit_amount']" position="replace">
+                                <field name="name" invisible="1" />
+                                <field name="user_id" invisible="1" />
+                                <field name="timesheet_approved_status" invisible="1" />
+                                <field name="account_id_use_tasks" invisible="1" />
+                                <field name="account_id_use_issues" invisible="1" />
+                                <field name="account_id_name" invisible="1" />
+                                <field name="timesheet_on_site_activity" invisible="1" />
+                                <field name="timesheet_color_record" invisible="1" />
 
+                                <field name="date"
+                                       attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"/>
+                                <field name="timesheet_department_id"
+                                       attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
+                                       options="{'no_open': True, 'no_create': True}" />
+                                <field name="timesheet_start_time"
+                                       attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
+                                       widget="float_time" />
+                                <field name="timesheet_end_time"
+                                       attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
+                                       widget="float_time" />
+                                <field name="timesheet_break_amount"
+                                       attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
+                                       widget="float_time" />
+                                <field name="unit_amount"
+                                       attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
+                                       widget="float_time"
+                                       string="Hours"
+                                       sum="Hours"/>
+
+
+                                <field name="account_id"
+                                       attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
+                                       domain="[('choose_on_timesheets', '=', True)]"
+                                       options="{'no_open': True, 'no_create': True}"
+                                       string="Field of activity"/>
+                                <field name="project_activity_id"
+                                       domain="[('filter_activities', '=', account_id_name)]"
+
+                                       attrs="{'required': ['|',
+                                                            '&amp;',
+                                                            ('account_id_use_tasks', '=', True),
+                                                            ('account_id_use_issues', '=', True),
+                                                            ('account_id_name', '=', 'General')],
+                                               'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
+                                       options="{'no_open': True, 'no_create': True}" />
+
+
+                                <field name="task_id"
+                                       attrs="{'required': [('account_id_use_tasks', '=', True),
+                                                            ('account_id_use_issues', '=', True),
+                                                            ('timesheet_on_site_activity', '=', True)],
+                                               'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
+                                       options="{'no_open': True, 'no_create': True}"
+                                       domain="[('project_id.analytic_account_id', '=' , account_id)]" />
+
+
+                                <field name="timesheet_travel_start"
+                                       attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"/>
+                                <field name="timesheet_travel_end"
+                                       attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"/>
+                                <!--<field name="timesheet_is_driver" />-->
+                                <field name="timesheet_vehicle_id"
+                                       attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
+                                       options="{'no_open': True, 'no_create': True}" />
+                                <field name="timesheet_accommodation"
+                                       attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"/>
+                                <field name="timesheet_comment"
+                                       attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"/>
+
+                            </tree>
+                        </field>
                     </xpath>
-
-                    <xpath expr="//field[@name='timesheet_ids']/form//field[@name='unit_amount']" position="replace">
-
-                    </xpath>
-
-
-                    <xpath expr="//field[@name='timesheet_ids']/tree//field[@name='date']" position="after">
-                        <field name="timesheet_department_id"
-                               attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
-                               options="{'no_open': True, 'no_create': True}" />
-                        <field name="timesheet_start_time"
-                               attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
-                               widget="float_time" />
-                        <field name="timesheet_end_time"
-                               attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
-                               widget="float_time" />
-                        <field name="timesheet_break_amount"
-                               attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
-                               widget="float_time" />
-                        <field name="unit_amount"
-                               attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
-                               widget="float_time"
-                               string="Hours"
-                               sum="Hours"/>
-                    </xpath>
-                    <xpath expr="//field[@name='timesheet_ids']/tree//field[@name='date']" position="before">
-                        <button name="approve" string="Approve" groups="project_timesheet_activities.group_hr_timesheet_supervisor" type="object" icon="fa-check" attrs="{'invisible': [('timesheet_approved_status', 'in', ['new', 'approved'])]}" />
-                        <button name="refuse" string="Refuse" groups="project_timesheet_activities.group_hr_timesheet_supervisor" type="object" icon="fa-times" attrs="{'invisible': [('timesheet_approved_status', 'in', ['new', 'refused'])]}" />
-                    </xpath>
-
-                    <xpath expr="//field[@name='timesheet_ids']/form//field[@name='date']" position="after">
-                        <field name="timesheet_department_id"
-                               attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
-                               options="{'no_open': True, 'no_create': True}" />
-                        <field name="timesheet_start_time"
-                               attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
-                               widget="float_time" />
-                        <field name="timesheet_end_time"
-                               attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
-                               widget="float_time" />
-                        <field name="timesheet_break_amount"
-                               attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
-                               widget="float_time" />
-                        <field name="unit_amount"
-                               attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
-                               widget="float_time"
-                               string="Hours"
-                               sum="Hours"/>
-                    </xpath>
-
-
-
-                    <xpath expr="//field[@name='timesheet_ids']/tree//field[@name='name']" position="replace">
-                        <field name="name" invisible="1" />
-                    </xpath>
-
-                    <xpath expr="//field[@name='timesheet_ids']/form//field[@name='name']" position="replace">
-                        <field name="name" invisible="1" />
-                    </xpath>
-
-                    <xpath expr="//field[@name='timesheet_ids']/tree" position="attributes">
-                        <attribute name="default_order">date, timesheet_start_time</attribute>
-                        <attribute name="decoration-danger">timesheet_approved_status=='refused'</attribute>
-                        <attribute name="decoration-success">timesheet_approved_status=='approved'</attribute>
-                        <!--<attribute name="decoration-info">timesheet_color_record==True</attribute>-->
-                    </xpath>
-
-                    <xpath expr="//field[@name='timesheet_ids']/tree//field[@name='date']" position="attributes">
-                        <attribute name="attrs">{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}</attribute>
-                    </xpath>
-                    <xpath expr="//field[@name='timesheet_ids']/form//field[@name='date']" position="attributes">
-                        <attribute name="attrs">{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}</attribute>
-                    </xpath>
-                    <xpath expr="//field[@name='timesheet_ids']/form//field[@name='user_id']" position="attributes">
-                        <attribute name="attrs">{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}</attribute>
-                    </xpath>
-
-                    <xpath expr="//field[@name='timesheet_ids']/tree/field[@name='account_id']" position="after">
-                        <field name="timesheet_approved_status" invisible="1" />
-                        <field name="account_id_use_tasks" invisible="1" />
-                        <field name="account_id_use_issues" invisible="1" />
-                        <field name="account_id_name" invisible="1" />
-                        <field name="timesheet_on_site_activity" invisible="1" />
-                        <field name="timesheet_color_record" invisible="1" />
-
-                        <field name="project_activity_id"
-                               domain="[('filter_activities', '=', account_id_name)]"
-
-                               attrs="{'required': ['|',
-                                                    '&amp;',
-                                                    ('account_id_use_tasks', '=', True),
-                                                    ('account_id_use_issues', '=', True),
-                                                    ('account_id_name', '=', 'General')],
-                                       'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
-                               options="{'no_open': True, 'no_create': True}" />
-
-
-                        <field name="task_id"
-                               attrs="{'required': [('account_id_use_tasks', '=', True),
-                                                    ('account_id_use_issues', '=', True),
-                                                    ('timesheet_on_site_activity', '=', True)],
-                                       'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
-                               options="{'no_open': True, 'no_create': True}"
-                               domain="[('project_id.analytic_account_id', '=' , account_id)]" />
-
-
-                        <field name="timesheet_travel_start"
-                               attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"/>
-                        <field name="timesheet_travel_end"
-                               attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"/>
-                        <!--<field name="timesheet_is_driver" />-->
-                        <field name="timesheet_vehicle_id"
-                               attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
-                               options="{'no_open': True, 'no_create': True}" />
-                        <field name="timesheet_accommodation"
-                               attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"/>
-                        <field name="timesheet_comment"
-                               attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"/>
-                    </xpath>
-
-                    <xpath expr="//field[@name='timesheet_ids']/form//field[@name='account_id']" position="after">
-                        <field name="timesheet_approved_status" invisible="1" />
-                        <field name="account_id_use_tasks" invisible="1" />
-                        <field name="account_id_use_issues" invisible="1" />
-                        <field name="account_id_name" invisible="1" />
-                        <field name="timesheet_on_site_activity" invisible="1" />
-                        <field name="timesheet_color_record" invisible="1" />
-
-                        <field name="project_activity_id"
-                               domain="[('filter_activities', '=', account_id_name)]"
-
-                               attrs="{'required': ['|',
-                                                    '&amp;',
-                                                    ('account_id_use_tasks', '=', True),
-                                                    ('account_id_use_issues', '=', True),
-                                                    ('account_id_name', '=', 'General')],
-                                       'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
-                               options="{'no_open': True, 'no_create': True}" />
-
-
-                        <field name="task_id"
-                               attrs="{'required': [('account_id_use_tasks', '=', True),
-                                                    ('account_id_use_issues', '=', True),
-                                                    ('timesheet_on_site_activity', '=', True)],
-                                       'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
-                               options="{'no_open': True, 'no_create': True}"
-                               domain="[('project_id.analytic_account_id', '=' , account_id)]" />
-
-
-                        <field name="timesheet_travel_start"
-                               attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"/>
-                        <field name="timesheet_travel_end"
-                               attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"/>
-                        <!--<field name="timesheet_is_driver" />-->
-                        <field name="timesheet_vehicle_id"
-                               attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
-                               options="{'no_open': True, 'no_create': True}" />
-                        <field name="timesheet_accommodation"
-                               attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"/>
-                        <field name="timesheet_comment"
-                               attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"/>
-                    </xpath>
-
-                    <xpath expr="//field[@name='timesheet_ids']/tree/field[@name='account_id']" position="replace">
-                        <field name="account_id"
-                               attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
-                               domain="[('choose_on_timesheets', '=', True)]"
-                               options="{'no_open': True, 'no_create': True}" string="Field of activity"/>
-                    </xpath>
-
-                    <xpath expr="//field[@name='timesheet_ids']/form//field[@name='account_id']" position="replace">
-                        <field name="account_id"
-                               attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
-                               domain="[('choose_on_timesheets', '=', True)]"
-                               options="{'no_open': True, 'no_create': True}"
-                               string="Field of activity"/>
-                    </xpath>
-
-
-
 
                 </data>
             </field>

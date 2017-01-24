@@ -110,6 +110,8 @@ class AccountAnalyticLine(models.Model):
     timesheet_break_amount = fields.Float('Break')
     timesheet_comment = fields.Char('Comment', size=20)
 
+    timesheet_sheet_id = fields.Many2one('hr_timesheet_sheet.sheet', 'Timesheet', required=True)
+
     timesheet_approved_status = fields.Selection([('new', 'New'),
                                                   ('draft', 'Waiting Approval'),
                                                   ('approved', 'Approved'),
@@ -132,39 +134,82 @@ class AccountAnalyticLine(models.Model):
                 rec.timesheet_approved_status = 'refused'
 
     @api.one
+    @api.constrains('date', 'timesheet_sheet_id')
+    def _check_date_fits_into_timesheet(self):
+        if self.timesheet_sheet_id:
+            if self.date < self.timesheet_sheet_id.date_from or self.date > self.timesheet_sheet_id.date_to:
+                raise e.ValidationError('Date must be between timesheet dates.')
+
+    @api.one
     @api.constrains('timesheet_start_time', 'timesheet_end_time', 'date', 'user_id')
     def _check_activity_overlap_for_user(self):
         count_1 = self.search([('user_id', '=', self.user_id.id),
                                ('id', '!=', self.id),
                                ('date', '=', self.date),
                                ('timesheet_start_time', '<', self.timesheet_end_time),
-                               ('timesheet_start_time', '>', self.timesheet_start_time)], count=True)
-        if count_1 > 0:
-            raise e.ValidationError('You have activities that overlaps.')
+                               ('timesheet_start_time', '>', self.timesheet_start_time)])
+        if len(count_1) > 0:
+            msg = ''
+            for item in count_1:
+                msg += item.user_id.name + ', '
+                msg += item.day + ', '
+                msg += format_float_time_str(item.timesheet_start_time) + ', '
+                msg += format_float_time_str(item.timesheet_end_time) + ', '
+                msg += item.account_id.name + ', '
+                msg += item.project_activity_id.name if item.project_activity_id else ''
+                msg += '\n'
+            raise e.ValidationError('You have activities that overlaps:\n\n' + msg)
 
         count_2 = self.search([('user_id', '=', self.user_id.id),
                                ('id', '!=', self.id),
                                ('date', '=', self.date),
                                ('timesheet_end_time', '>', self.timesheet_start_time),
-                               ('timesheet_end_time', '<', self.timesheet_end_time)], count=True)
-        if count_2 > 0:
-            raise e.ValidationError('You have activities that overlaps.')
+                               ('timesheet_end_time', '<', self.timesheet_end_time)])
+        if len(count_2) > 0:
+            msg = ''
+            for item in count_2:
+                msg += item.user_id.name + ', '
+                msg += item.day + ', '
+                msg += format_float_time_str(item.timesheet_start_time) + ', '
+                msg += format_float_time_str(item.timesheet_end_time) + ', '
+                msg += item.account_id.name + ', '
+                msg += item.project_activity_id.name if item.project_activity_id else ''
+                msg += '\n'
+            raise e.ValidationError('You have activities that overlaps:\n\n' + msg)
 
         count_3 = self.search([('user_id', '=', self.user_id.id),
                                ('date', '=', self.date),
                                ('id', '!=', self.id),
                                ('timesheet_start_time', '<=', self.timesheet_start_time),
-                               ('timesheet_end_time', '>=', self.timesheet_end_time)], count=True)
-        if count_3 > 0:
-            raise e.ValidationError('You have activities that overlaps.')
+                               ('timesheet_end_time', '>=', self.timesheet_end_time)])
+        if len(count_3) > 0:
+            msg = ''
+            for item in count_3:
+                msg += item.user_id.name + ', '
+                msg += item.day + ', '
+                msg += format_float_time_str(item.timesheet_start_time) + ', '
+                msg += format_float_time_str(item.timesheet_end_time) + ', '
+                msg += item.account_id.name + ', '
+                msg += item.project_activity_id.name if item.project_activity_id else ''
+                msg += '\n'
+            raise e.ValidationError('You have activities that overlaps:\n\n' + msg)
 
         count_4 = self.search([('user_id', '=', self.user_id.id),
                                ('id', '!=', self.id),
                                ('date', '=', self.date),
                                ('timesheet_start_time', '>=', self.timesheet_start_time),
-                               ('timesheet_end_time', '<=', self.timesheet_end_time)], count=True)
-        if count_4 > 0:
-            raise e.ValidationError('You have activities that overlaps.')
+                               ('timesheet_end_time', '<=', self.timesheet_end_time)])
+        if len(count_4) > 0:
+            msg = ''
+            for item in count_4:
+                msg += item.user_id.name + ', '
+                msg += item.day + ', '
+                msg += format_float_time_str(item.timesheet_start_time) + ', '
+                msg += format_float_time_str(item.timesheet_end_time) + ', '
+                msg += item.account_id.name + ', '
+                msg += item.project_activity_id.name if item.project_activity_id else ''
+                msg += '\n'
+            raise e.ValidationError('You have activities that overlaps:\n\n' + msg)
 
 
     @api.one
@@ -191,17 +236,17 @@ class AccountAnalyticLine(models.Model):
                 old_state = self.timesheet_approved_status
                 super(AccountAnalyticLine, self).write(vals)
                 if old_state != 'approved' and vals['timesheet_approved_status'] == 'approved':
-                    self.sheet_id.message_post(self.env.user.name+' Approved: '+ ', '.join([self.date, self.account_id.name, self.project_activity_id.name or '', format_float_time_str(self.unit_amount)]))
+                    self.timesheet_sheet_id.message_post(self.env.user.name+' Approved: '+ ', '.join([self.date, self.account_id.name, self.project_activity_id.name or '', format_float_time_str(self.unit_amount)]))
                 elif old_state != 'refused' and vals['timesheet_approved_status'] == 'refused':
-                    self.sheet_id.message_post(self.env.user.name+' Refused: '+ ', '.join([self.date, self.account_id.name, self.project_activity_id.name or '', format_float_time_str(self.unit_amount)]))
+                    self.timesheet_sheet_id.message_post(self.env.user.name+' Refused: '+ ', '.join([self.date, self.account_id.name, self.project_activity_id.name or '', format_float_time_str(self.unit_amount)]))
                 if vals['timesheet_approved_status'] == 'approved':
-                    sheet = self.env['hr_timesheet_sheet.sheet'].search([('id', '=', self.sheet_id.id)], limit=1)
-                    if sheet.no_break_warning is False and sheet.working_hours_warning is False and len(sheet.timesheet_ids) == len(sheet.timesheet_ids.filtered(lambda r: r.timesheet_approved_status == 'approved')):
+                    sheet = self.env['hr_timesheet_sheet.sheet'].search([('id', '=', self.timesheet_sheet_id.id)], limit=1)
+                    if sheet.no_break_warning is False and sheet.working_hours_warning is False and len(sheet.timesheet_activity_ids) == len(sheet.timesheet_activity_ids.filtered(lambda r: r.timesheet_approved_status == 'approved')):
                         sheet.approved_status = 'approved'
                 elif vals['timesheet_approved_status'] == 'refused':
-                    sheet = self.env['hr_timesheet_sheet.sheet'].search([('id', '=', self.sheet_id.id)], limit=1)
-                    if len(sheet.timesheet_ids) == len(sheet.timesheet_ids.filtered(lambda r: r.timesheet_approved_status == 'refused')) \
-                            or len(sheet.timesheet_ids)-1 == len(sheet.timesheet_ids.filtered(lambda r: r.timesheet_approved_status == 'approved')):
+                    sheet = self.env['hr_timesheet_sheet.sheet'].search([('id', '=', self.timesheet_sheet_id.id)], limit=1)
+                    if len(sheet.timesheet_activity_ids) == len(sheet.timesheet_activity_ids.filtered(lambda r: r.timesheet_approved_status == 'refused')) \
+                            or len(sheet.timesheet_activity_ids)-1 == len(sheet.timesheet_activity_ids.filtered(lambda r: r.timesheet_approved_status == 'approved')):
                         sheet.approved_status = 'refused'
             else:
                 raise e.ValidationError('You can not edit approved timesheet line.')
@@ -210,16 +255,16 @@ class AccountAnalyticLine(models.Model):
                 old_state = self.timesheet_approved_status
                 super(AccountAnalyticLine, self).write(vals)
                 if old_state != 'approved' and vals['timesheet_approved_status'] == 'approved':
-                    self.sheet_id.message_post(self.env.user.name+' Approved: '+ ', '.join([self.date, self.account_id.name, self.project_activity_id.name or '', format_float_time_str(self.unit_amount)]))
+                    self.timesheet_sheet_id.message_post(self.env.user.name+' Approved: '+ ', '.join([self.date, self.account_id.name, self.project_activity_id.name or '', format_float_time_str(self.unit_amount)]))
                 elif old_state != 'refused' and vals['timesheet_approved_status'] == 'refused':
-                    self.sheet_id.message_post(self.env.user.name+' Refused: '+ ', '.join([self.date, self.account_id.name, self.project_activity_id.name or '', format_float_time_str(self.unit_amount)]))
+                    self.timesheet_sheet_id.message_post(self.env.user.name+' Refused: '+ ', '.join([self.date, self.account_id.name, self.project_activity_id.name or '', format_float_time_str(self.unit_amount)]))
                 if vals['timesheet_approved_status'] == 'approved':
-                    sheet = self.env['hr_timesheet_sheet.sheet'].search([('id', '=', self.sheet_id.id)], limit=1)
-                    if sheet.no_break_warning is False and sheet.working_hours_warning is False and len(sheet.timesheet_ids) == len(sheet.timesheet_ids.filtered(lambda r: r.timesheet_approved_status == 'approved')):
+                    sheet = self.env['hr_timesheet_sheet.sheet'].search([('id', '=', self.timesheet_sheet_id.id)], limit=1)
+                    if sheet.no_break_warning is False and sheet.working_hours_warning is False and len(sheet.timesheet_activity_ids) == len(sheet.timesheet_activity_ids.filtered(lambda r: r.timesheet_approved_status == 'approved')):
                         sheet.approved_status = 'approved'
                 elif vals['timesheet_approved_status'] == 'refused':
-                    sheet = self.env['hr_timesheet_sheet.sheet'].search([('id', '=', self.sheet_id.id)], limit=1)
-                    if len(sheet.timesheet_ids) == len(sheet.timesheet_ids.filtered(lambda r: r.timesheet_approved_status == 'refused')):
+                    sheet = self.env['hr_timesheet_sheet.sheet'].search([('id', '=', self.timesheet_sheet_id.id)], limit=1)
+                    if len(sheet.timesheet_activity_ids) == len(sheet.timesheet_activity_ids.filtered(lambda r: r.timesheet_approved_status == 'refused')):
                         sheet.approved_status = 'refused'
             else:
                 super(AccountAnalyticLine, self).write(vals)
