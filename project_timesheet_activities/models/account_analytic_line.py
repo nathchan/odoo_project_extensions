@@ -158,8 +158,8 @@ class AccountAnalyticLine(models.Model):
         count_1 = self.search([('user_id', '=', self.user_id.id),
                                ('id', '!=', self.id),
                                ('date', '=', self.date),
-                               ('timesheet_start_time', '<', self.timesheet_end_time),
-                               ('timesheet_start_time', '>', self.timesheet_start_time)])
+                               ('timesheet_start_time', '<', self.timesheet_end_time + 0.0000000001),
+                               ('timesheet_start_time', '>', self.timesheet_start_time + 0.0000000001)])
         if len(count_1) > 0:
             msg = ''
             for item in count_1:
@@ -175,8 +175,8 @@ class AccountAnalyticLine(models.Model):
         count_2 = self.search([('user_id', '=', self.user_id.id),
                                ('id', '!=', self.id),
                                ('date', '=', self.date),
-                               ('timesheet_end_time', '>', self.timesheet_start_time),
-                               ('timesheet_end_time', '<', self.timesheet_end_time)])
+                               ('timesheet_end_time', '>', self.timesheet_start_time + 0.0000000001),
+                               ('timesheet_end_time', '<', self.timesheet_end_time + 0.0000000001)])
         if len(count_2) > 0:
             msg = ''
             for item in count_2:
@@ -192,8 +192,8 @@ class AccountAnalyticLine(models.Model):
         count_3 = self.search([('user_id', '=', self.user_id.id),
                                ('date', '=', self.date),
                                ('id', '!=', self.id),
-                               ('timesheet_start_time', '<=', self.timesheet_start_time),
-                               ('timesheet_end_time', '>=', self.timesheet_end_time)])
+                               ('timesheet_start_time', '<=', self.timesheet_start_time + 0.0000000001),
+                               ('timesheet_end_time', '>=', self.timesheet_end_time + 0.0000000001)])
         if len(count_3) > 0:
             msg = ''
             for item in count_3:
@@ -209,8 +209,8 @@ class AccountAnalyticLine(models.Model):
         count_4 = self.search([('user_id', '=', self.user_id.id),
                                ('id', '!=', self.id),
                                ('date', '=', self.date),
-                               ('timesheet_start_time', '>=', self.timesheet_start_time),
-                               ('timesheet_end_time', '<=', self.timesheet_end_time)])
+                               ('timesheet_start_time', '>=', self.timesheet_start_time + 0.0000000001),
+                               ('timesheet_end_time', '<=', self.timesheet_end_time + 0.0000000001)])
         if len(count_4) > 0:
             msg = ''
             for item in count_4:
