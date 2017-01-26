@@ -176,6 +176,21 @@ class HrTimesheetSheet(models.Model):
 
         return res
 
+    def unlink(self, cr, uid, ids, context=None):
+        sheets = self.read(cr, uid, ids, ['approved_status'], context=context)
+        for sheet in sheets:
+            if sheet['approved_status'] in ('approved'):
+                raise e.UserError('You cannot delete a timesheet which is already confirmed.')
+
+        to_remove = []
+        analytic_timesheet = self.pool.get('account.analytic.line')
+        for sheet in self.browse(cr, uid, ids, context=context):
+            for timesheet in sheet.timesheet_activity_ids:
+                to_remove.append(timesheet.id)
+        analytic_timesheet.unlink(cr, uid, to_remove, context=context)
+
+        return super(HrTimesheetSheet, self).unlink(cr, uid, ids, context=context)
+
     def copy(self, cr, uid, id, default=None, context=None):
         if context is None:
             context = {}
