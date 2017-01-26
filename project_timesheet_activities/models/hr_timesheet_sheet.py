@@ -171,9 +171,7 @@ class HrTimesheetSheet(models.Model):
 
         res = super(HrTimesheetSheet, self).write(vals)
         if user_id:
-            for line in self.env['account.analytic.line'].search([('date', '<=', self.date_to),
-                                                                  ('date', '>=', self.date_from),
-                                                                  ('user_id', '=', old_user_id)]):
+            for line in self.env['account.analytic.line'].search([('timesheet_sheet_id', '=', self.id)]):
                 line.user_id = user_id
 
         return res
