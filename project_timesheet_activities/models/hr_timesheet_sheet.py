@@ -132,7 +132,7 @@ class HrTimesheetSheet(models.Model):
     approved_status = fields.Selection([('new', 'New'),
                                        ('draft', 'Waiting Approval'),
                                        ('approved', 'Approved'),
-                                       ('refused', 'Refused')], 'Approved State')
+                                       ('refused', 'Refused')], 'Approved State', default='new')
 
     @api.multi
     def button_submit_to_manager(self):
