@@ -257,9 +257,7 @@ class AccountAnalyticLine(models.Model):
                         sheet.approved_status = 'approved'
                 elif vals['timesheet_approved_status'] == 'refused':
                     sheet = self.env['hr_timesheet_sheet.sheet'].search([('id', '=', self.timesheet_sheet_id.id)], limit=1)
-                    if len(sheet.timesheet_activity_ids) == len(sheet.timesheet_activity_ids.filtered(lambda r: r.timesheet_approved_status == 'refused')) \
-                            or len(sheet.timesheet_activity_ids)-1 == len(sheet.timesheet_activity_ids.filtered(lambda r: r.timesheet_approved_status == 'approved')):
-                        sheet.approved_status = 'refused'
+                    sheet.approved_status = 'refused'
             else:
                 raise e.ValidationError('You can not edit approved timesheet line.')
         else:
