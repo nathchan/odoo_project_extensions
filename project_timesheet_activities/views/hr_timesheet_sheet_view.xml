@@ -107,7 +107,7 @@
                     </xpath>
 
                     <xpath expr="//field[@name='timesheet_ids']" position="replace">
-                        <field context="{'employee_id': employee_id, 'user_id':user_id, 'timesheet_date_from': date_from, 'timesheet_date_to': date_to, 'default_is_timesheet' : 1}" name="timesheet_activity_ids" nolabel="1">
+                        <field context="{'user_id':user_id, 'default_is_timesheet' : 1}" name="timesheet_activity_ids" nolabel="1">
                             <tree
                                     default_order="date, timesheet_start_time"
                                     decoration-danger="timesheet_approved_status=='refused'"
@@ -117,6 +117,7 @@
                                 <button name="approve" string="Approve" groups="project_timesheet_activities.group_hr_timesheet_supervisor" type="object" icon="fa-check" attrs="{'invisible': [('timesheet_approved_status', 'in', ['new', 'approved'])]}" />
                                 <button name="refuse" string="Refuse" groups="project_timesheet_activities.group_hr_timesheet_supervisor" type="object" icon="fa-times" attrs="{'invisible': [('timesheet_approved_status', 'in', ['new', 'refused'])]}" />
 
+                                <field name="is_timesheet" invisible="1" />
                                 <field name="name" invisible="1" />
                                 <field name="user_id" invisible="1" />
                                 <field name="timesheet_approved_status" invisible="1" />
