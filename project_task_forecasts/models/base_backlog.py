@@ -135,6 +135,7 @@ class ProjectBacklogCw(models.AbstractModel):
         where_str = """
                 a.name = '%s' and
                 f.actual_date is null and
+                t.active is true and
                 f.milestone_id in (
                     select
                         distinct mp.current_milestone_id
