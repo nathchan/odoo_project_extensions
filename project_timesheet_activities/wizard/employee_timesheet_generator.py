@@ -178,7 +178,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
 
         for employee in employees:
             analytic_acc_lines_count = sheet_lines.search([('user_id', '=', employee.user_id.id),
-                                                           ('is_timesheet', '=', True),
+                                                           ('timesheet_sheet_id', '!=', False),
                                                            ('date', '>=', start_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)),
                                                            ('date', '<=', end_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT))],
                                                           count=True)
@@ -576,7 +576,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
 
         if this.display_sap_report is True and len(employees)>0:
             lines = sheet_lines.search([('user_id', 'in', [item.user_id.id for item in employees]),
-                                        ('is_timesheet', '=', True),
+                                        ('timesheet_sheet_id', '!=', False),
                                         # ('task_id', '!=', False),
                                         ('project_activity_id.show_on_sap_report', '=', True),
                                         ('date', '>=', this.sap_date_from),
