@@ -270,6 +270,16 @@ class AccountAnalyticLine(models.Model):
             raise e.ValidationError('Break must be non negative.')
 
     @api.one
+    @api.constrains('timesheet_travel_start', 'timesheet_travel_end')
+    def _check_travel_start_end(self):
+        if self.timesheet_travel_start != False:
+            if self.timesheet_travel_start.isdigit() is False or int(self.timesheet_travel_start > 9999) or int(self.timesheet_travel_start) < 1000:
+                raise e.ValidationError('Invalid value for Start travel (Place/Postcode)')
+        if self.timesheet_travel_end != False:
+            if self.timesheet_travel_end.isdigit() is False or int(self.timesheet_travel_end) > 9999 or int(self.timesheet_travel_end) < 1000:
+                raise e.ValidationError('Invalid value for End travel (Place/Postcode)')
+
+    @api.one
     def write(self, vals):
         if self.timesheet_approved_status in ['draft', 'approved']:
             if len(vals) == 1 and 'timesheet_approved_status' in vals:
