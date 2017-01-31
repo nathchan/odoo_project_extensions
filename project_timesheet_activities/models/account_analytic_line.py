@@ -155,14 +155,20 @@ class AccountAnalyticLine(models.Model):
     @api.one
     @api.constrains('timesheet_start_time', 'timesheet_end_time', 'date', 'user_id')
     def _check_activity_overlap_for_user(self):
-        count_1 = self.search([('user_id', '=', self.user_id.id),
-                               ('id', '!=', self.id),
-                               ('date', '=', self.date),
-                               ('timesheet_start_time', '<', self.timesheet_end_time + 0.0000000001),
-                               ('timesheet_start_time', '>', self.timesheet_start_time + 0.0000000001)])
+
+        check_lines = self.search([('user_id', '=', self.user_id.id),
+                                   ('id', '!=', self.id),
+                                   ('date', '=', self.date)])
+        count_1 = []
+        for item in check_lines:
+            if format_float_time_str(item.timesheet_start_time) < format_float_time_str(self.timesheet_end_time) \
+                and format_float_time_str(item.timesheet_start_time) > format_float_time_str(self.timesheet_start_time):
+                count_1.append(item)
+
         if len(count_1) > 0:
             msg = ''
             for item in count_1:
+                msg += str(item.id) + ', '
                 msg += item.user_id.name + ', '
                 msg += item.day + ', '
                 msg += format_float_time_str(item.timesheet_start_time) + ', '
@@ -172,14 +178,16 @@ class AccountAnalyticLine(models.Model):
                 msg += '\n'
             raise e.ValidationError('You have activities that overlaps:\n\n' + msg)
 
-        count_2 = self.search([('user_id', '=', self.user_id.id),
-                               ('id', '!=', self.id),
-                               ('date', '=', self.date),
-                               ('timesheet_end_time', '>', self.timesheet_start_time + 0.0000000001),
-                               ('timesheet_end_time', '<', self.timesheet_end_time + 0.0000000001)])
+        count_2 = []
+        for item in check_lines:
+            if format_float_time_str(item.timesheet_end_time) > format_float_time_str(self.timesheet_start_time) \
+                and format_float_time_str(item.timesheet_end_time) < format_float_time_str(self.timesheet_end_time):
+                count_2.append(item)
+
         if len(count_2) > 0:
             msg = ''
             for item in count_2:
+                msg += str(item.id) + ', '
                 msg += item.user_id.name + ', '
                 msg += item.day + ', '
                 msg += format_float_time_str(item.timesheet_start_time) + ', '
@@ -189,14 +197,15 @@ class AccountAnalyticLine(models.Model):
                 msg += '\n'
             raise e.ValidationError('You have activities that overlaps:\n\n' + msg)
 
-        count_3 = self.search([('user_id', '=', self.user_id.id),
-                               ('date', '=', self.date),
-                               ('id', '!=', self.id),
-                               ('timesheet_start_time', '<=', self.timesheet_start_time + 0.0000000001),
-                               ('timesheet_end_time', '>=', self.timesheet_end_time + 0.0000000001)])
+        count_3 = []
+        for item in check_lines:
+            if format_float_time_str(item.timesheet_start_time) < format_float_time_str(self.timesheet_start_time) \
+                and format_float_time_str(item.timesheet_end_time) > format_float_time_str(self.timesheet_end_time):
+                count_3.append(item)
         if len(count_3) > 0:
             msg = ''
             for item in count_3:
+                msg += str(item.id) + ', '
                 msg += item.user_id.name + ', '
                 msg += item.day + ', '
                 msg += format_float_time_str(item.timesheet_start_time) + ', '
@@ -206,14 +215,33 @@ class AccountAnalyticLine(models.Model):
                 msg += '\n'
             raise e.ValidationError('You have activities that overlaps:\n\n' + msg)
 
-        count_4 = self.search([('user_id', '=', self.user_id.id),
-                               ('id', '!=', self.id),
-                               ('date', '=', self.date),
-                               ('timesheet_start_time', '>=', self.timesheet_start_time + 0.0000000001),
-                               ('timesheet_end_time', '<=', self.timesheet_end_time + 0.0000000001)])
+        count_4 = []
+        for item in check_lines:
+            if format_float_time_str(item.timesheet_start_time) > format_float_time_str(self.timesheet_start_time) \
+                and format_float_time_str(item.timesheet_end_time) < format_float_time_str(self.timesheet_end_time):
+                count_4.append(item)
         if len(count_4) > 0:
             msg = ''
             for item in count_4:
+                msg += str(item.id) + ', '
+                msg += item.user_id.name + ', '
+                msg += item.day + ', '
+                msg += format_float_time_str(item.timesheet_start_time) + ', '
+                msg += format_float_time_str(item.timesheet_end_time) + ', '
+                msg += item.account_id.name + ', '
+                msg += item.project_activity_id.name if item.project_activity_id else ''
+                msg += '\n'
+            raise e.ValidationError('You have activities that overlaps:\n\n' + msg)
+
+        count_5 = []
+        for item in check_lines:
+            if format_float_time_str(item.timesheet_start_time) == format_float_time_str(self.timesheet_start_time) \
+                and format_float_time_str(item.timesheet_end_time) == format_float_time_str(self.timesheet_end_time):
+                count_5.append(item)
+        if len(count_5) > 0:
+            msg = ''
+            for item in count_5:
+                msg += str(item.id) + ', '
                 msg += item.user_id.name + ', '
                 msg += item.day + ', '
                 msg += format_float_time_str(item.timesheet_start_time) + ', '

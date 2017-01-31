@@ -107,7 +107,7 @@
                     </xpath>
 
                     <xpath expr="//field[@name='timesheet_ids']" position="replace">
-                        <field context="{'user_id':user_id, 'default_is_timesheet' : 1}" name="timesheet_activity_ids" nolabel="1">
+                        <field attrs="{'readonly': [('approved_status', 'in', ['draft', 'approved'])]}" context="{'user_id':user_id, 'default_is_timesheet' : 1}" name="timesheet_activity_ids" nolabel="1">
                             <tree
                                     default_order="date, timesheet_start_time"
                                     decoration-danger="timesheet_approved_status=='refused'"
