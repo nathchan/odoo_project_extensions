@@ -536,7 +536,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
 
                 # ovdje ispitati da li je day_off ili samo nema linija
                 analytic_lines = sheet_lines.search([('user_id', '=', employee.user_id.id),
-                                                     ('is_timesheet', '=', True),
+                                                     ('timesheet_sheet_id', '!=', False),
                                                      ('date', '=', iteration_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT))],
                                                     order='timesheet_start_time ASC')
                 if len(analytic_lines) < 1:
