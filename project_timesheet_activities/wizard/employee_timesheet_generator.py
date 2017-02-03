@@ -550,6 +550,8 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                                                           fill=PatternFill(patternType='solid',
                                                                            fill_type='solid',
                                                                            fgColor=Color(color)))
+                        working_time_per_day_sum += 7.695
+                        working_time_sum += 7.695
                     else:
                         write_line(ws, n, color, iteration_date)
 
