@@ -99,8 +99,8 @@ class AccountAnalyticLine(models.Model):
 
     timesheet_department_id = fields.Many2one('hr.department', 'Department', default=_get_default_department)
 
-    timesheet_travel_start = fields.Char('Start travel (Place/Postcode)')
-    timesheet_travel_end = fields.Char('End travel (Place/Postcode)')
+    timesheet_travel_start = fields.Char('Start travel (Postcode)')
+    timesheet_travel_end = fields.Char('End travel (Postcode)')
     timesheet_is_driver = fields.Selection([('no', 'No'), ('yes', 'Yes')], 'Driver?', default='no')
     timesheet_accommodation = fields.Char('Accommodation')
     timesheet_vehicle_id = fields.Many2one('fleet.vehicle', 'Vehicle')

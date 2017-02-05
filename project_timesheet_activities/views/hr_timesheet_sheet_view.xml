@@ -25,22 +25,6 @@
             <field name="arch" type="xml">
                 <data>
 
-                    <xpath expr="//button[@name='button_confirm']" position="attributes">
-                        <attribute name="confirm">This timesheet will be submitted to manager. Are you sure?</attribute>
-                    </xpath>
-
-                    <xpath expr="//button[@name='done']" position="attributes">
-                        <attribute name="confirm">This timesheet will be confirmed. Are you sure?</attribute>
-                    </xpath>
-
-                    <xpath expr="//button[@name='action_set_to_draft']" position="attributes">
-                        <attribute name="confirm">This timesheet will be sent to draft. Are you sure?</attribute>
-                    </xpath>
-
-                    <xpath expr="//button[@name='cancel']" position="attributes">
-                        <attribute name="confirm">This timesheet will be refused. Are you sure?</attribute>
-                    </xpath>
-
 
                     <xpath expr="//div[@class='oe_button_box']" position="replace">
 
@@ -70,6 +54,11 @@
                                     class="oe_highlight"
                                     groups="project_timesheet_activities.group_hr_timesheet_rollout_manager"
                                     confirm="All lines will be refused. Are you sure?"/>
+
+                            <button name="button_duplicate"
+                                    string="Duplicate"
+                                    type="object"
+                                    confirm="You are about to create new timesheet on your name with same activities as this one. Are you sure?" />
 
                             <field name="approved_status" widget="statusbar" statusbar_visible="new,draft,approved"/>
                             <field name="state" invisible="1" />

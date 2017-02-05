@@ -158,6 +158,44 @@ class HrTimesheetSheet(models.Model):
             for line in rec.timesheet_activity_ids:
                 line.timesheet_approved_status = 'refused'
 
+    @api.multi
+    def button_duplicate(self):
+        data = {}
+        emp = self.env['hr.employee'].search([('user_id', '=', self.env.user.id)], limit=1)
+        data.update({
+            'employee_id': emp.id,
+            'user_id': emp.user_id.id,
+            'department_id': emp.department_id.id,
+            'date_from': self[0].date_from,
+            'date_to': self[0].date_to,
+        })
+        if 'timesheet_activity_ids' in self._fields:
+            tmp_data = self.read(['timesheet_activity_ids'])
+            field = self._fields['timesheet_activity_ids']
+            other = self.pool[field.comodel_name]
+            lines = [other.copy_data(self.env.cr, self.env.user.id, line_id) for line_id in sorted(tmp_data[0]['timesheet_activity_ids'])]
+            for line in lines:
+                line['timesheet_approved_status'] = 'new'
+                if 'user_id' in line:
+                    line['user_id'] = self.env.user.id
+                if 'department_id' in line:
+                    line['department_id'] = emp.department_id.id
+            data['timesheet_activity_ids'] = [(0, 0, line) for line in lines if line]
+        #
+        new_timesheet = self.create(data)
+        action = {
+            'type': 'ir.actions.act_window',
+            'res_id': new_timesheet.id,
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'hr_timesheet_sheet.sheet',
+            'context': self.env.context,
+        }
+        return action
+
+
+
+
     @api.one
     def write(self, vals):
 
@@ -192,26 +230,4 @@ class HrTimesheetSheet(models.Model):
         return super(HrTimesheetSheet, self).unlink(cr, uid, ids, context=context)
 
     def copy(self, cr, uid, id, default=None, context=None):
-        if context is None:
-            context = {}
-        context = context.copy()
-        data = self.copy_data(cr, uid, id, default, context)
-        emp = self.pool.get('hr.employee').browse(cr, uid, self.pool.get('hr.employee').search(cr, uid, [('user_id', '=', uid)], limit=1))
-        dep = emp.department_id
-        data.update({'employee_id': emp.id, 'department_id': dep.id})
-
-        if 'timesheet_activity_ids' in self._fields:
-            tmp_data = self.read(cr, uid, [id], ['timesheet_activity_ids'], context=context)
-            field = self._fields['timesheet_activity_ids']
-            other = self.pool[field.comodel_name]
-            lines = [other.copy_data(cr, uid, line_id, context=context) for line_id in sorted(tmp_data[0]['timesheet_activity_ids'])]
-            for line in lines:
-                if 'user_id' in line:
-                    line['user_id'] = uid
-                if 'department_id' in line:
-                    line['department_id'] = dep.id
-            data['timesheet_activity_ids'] = [(0, 0, line) for line in lines if line]
-
-        new_id = self.create(cr, uid, data, context)
-        self.copy_translations(cr, uid, id, new_id, context)
-        return new_id
+        raise e.UserError('For duplicate, please use Duplicate button below this one.')
