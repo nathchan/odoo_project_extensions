@@ -101,10 +101,16 @@ class EmployeeTimesheetGenerator(models.TransientModel):
         if self.employee_timesheet_generator_line_ids:
             self.lines_count = len(self.employee_timesheet_generator_line_ids)
 
+    def _get_default_month(self):
+        return datetime.now().month
+
+    def _get_default_year(self):
+        return datetime.now().year
+
     data = fields.Binary('File', readonly=True)
     name = fields.Char('File Name', readonly=True)
-    month = fields.Selection(MONTHS, 'Month')
-    year = fields.Selection(YEARS, 'Year')
+    month = fields.Selection(MONTHS, 'Month', default=_get_default_month)
+    year = fields.Selection(YEARS, 'Year', default=_get_default_year)
     department_id = fields.Many2one('hr.department', 'Department')
     employee_timesheet_generator_line_ids = fields.One2many('employee.timesheet.generator.line',
                                                             'employee_timesheet_generator_id',
