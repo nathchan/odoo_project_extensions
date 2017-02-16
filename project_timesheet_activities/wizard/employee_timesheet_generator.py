@@ -636,7 +636,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
             ws['M1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
             ws['N1'] = 'Mitarbeiter'
             ws['N1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
-            ws['O1'] = ''
+            ws['O1'] = 'Comment'
             ws['O1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
 
 
