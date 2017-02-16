@@ -509,6 +509,18 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                                    font=Font(bold=True),
                                    fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
 
+            ws['R7'] = 'Comment'
+            ws['R7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
+            ws['R7'].font = header_font
+            ws['R7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                 right=Side(style='thick', color=colors.BLACK),
+                                                 top=Side(style='thick', color=colors.BLACK),
+                                                 bottom=Side(style='thick', color=colors.BLACK)),
+                                   alignment=Alignment(wrap_text=True),
+                                   font=Font(bold=True),
+                                   fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
+
+
             ws.row_dimensions[2].height = 20
             ws.row_dimensions[3].height = 20
             ws.row_dimensions[4].height = 20
@@ -519,7 +531,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
             ws.column_dimensions['A'].width = 12
             ws.column_dimensions['H'].width = 20
             ws.column_dimensions['N'].width = 20
-
+            ws.column_dimensions['R'].width = 30
 
 
 
@@ -624,9 +636,15 @@ class EmployeeTimesheetGenerator(models.TransientModel):
             ws['M1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
             ws['N1'] = 'Mitarbeiter'
             ws['N1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+            ws['O1'] = ''
+            ws['O1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
 
 
             ws.row_dimensions[1].height = 50
+            ws.column_dimensions['M'].width = 20
+            ws.column_dimensions['N'].width = 20
+            ws.column_dimensions['O'].width = 20
+
 
             n = 1
             for line in lines:
@@ -660,6 +678,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 ws['L'+str(n)] = line.account_id.name if line.account_id else ''
                 ws['M'+str(n)] = line.project_activity_id.name if line.project_activity_id else ''
                 ws['N'+str(n)] = line.user_id.name
+                ws['O'+str(n)] = line.timesheet_comment if line.timesheet_comment else ''
 
 
         buf = cStringIO.StringIO()
@@ -876,6 +895,17 @@ def write_line(ws, n, color, current_date, line=None):
 
     ws['Q'+str(7+n[0])] = '---'
     ws['Q'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
+                                      fill=PatternFill(patternType='solid',
+                                                       fill_type='solid',
+                                                       fgColor=Color(color)),
+                                      border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                    right=Side(style='thick', color=colors.BLACK),
+                                                    top=Side(style='thin', color=colors.BLACK),
+                                                    bottom=Side(style='thin', color=colors.BLACK)),
+                                      )
+
+    ws['R'+str(7+n[0])] = line.timesheet_comment if not empty_line and line.timesheet_comment else ''
+    ws['R'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
                                       fill=PatternFill(patternType='solid',
                                                        fill_type='solid',
                                                        fgColor=Color(color)),
