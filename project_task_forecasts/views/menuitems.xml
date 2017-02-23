@@ -28,6 +28,12 @@
                   action="action_project_milestones"
                   sequence="20"/>
 
+        <menuitem name="Task priorities"
+                  id="menu_project_task_priority_config"
+                  parent="project.menu_project_config"
+                  action="project_task_priority_action"
+                  sequence="20"/>
+
         <menuitem name="Export Milestones"
                   id="menu_project_milestones_export"
                   parent="project.menu_project_management"
