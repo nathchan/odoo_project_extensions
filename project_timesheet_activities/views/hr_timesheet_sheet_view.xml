@@ -108,7 +108,7 @@
 
                                 <field name="is_timesheet" invisible="1" />
                                 <field name="name" invisible="1" />
-                                <field name="user_id" invisible="0" />
+                                <field name="user_id" invisible="1" />
                                 <field name="timesheet_approved_status" invisible="1" />
                                 <field name="account_id_use_tasks" invisible="1" />
                                 <field name="account_id_use_issues" invisible="1" />
