@@ -638,6 +638,8 @@ class EmployeeTimesheetGenerator(models.TransientModel):
             ws['N1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
             ws['O1'] = 'Comment'
             ws['O1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+            ws['O1'] = 'Create date'
+            ws['O1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
 
 
             ws.row_dimensions[1].height = 50
@@ -675,6 +677,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 ws['M'+str(n)] = line.project_activity_id.name if line.project_activity_id else ''
                 ws['N'+str(n)] = line.user_id.name
                 ws['O'+str(n)] = line.timesheet_comment if line.timesheet_comment else ''
+                ws['O'+str(n)] = line.create_date
 
 
             extra_lines = sheet_lines.search([('user_id', 'in', [item.user_id.id for item in employees]),
