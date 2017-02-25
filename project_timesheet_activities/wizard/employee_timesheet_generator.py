@@ -638,8 +638,8 @@ class EmployeeTimesheetGenerator(models.TransientModel):
             ws['N1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
             ws['O1'] = 'Comment'
             ws['O1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
-            ws['O1'] = 'Create date'
-            ws['O1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+            ws['P1'] = 'Create date'
+            ws['P1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
 
 
             ws.row_dimensions[1].height = 50
@@ -677,7 +677,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 ws['M'+str(n)] = line.project_activity_id.name if line.project_activity_id else ''
                 ws['N'+str(n)] = line.user_id.name
                 ws['O'+str(n)] = line.timesheet_comment if line.timesheet_comment else ''
-                ws['P'+str(n)] = line.create_date
+                ws['P'+str(n)] = d.datetime.strptime(line.create_date, tools.DEFAULT_SERVER_DATE_FORMAT)
                 ws['P'+str(n)].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
                                              number_format="DD.MM.YYYY")
 
@@ -749,7 +749,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 ws['O'+str(n)] = line.timesheet_comment if line.timesheet_comment else ''
                 ws['O'+str(n)].font = Font(color=Color('e80000'))
 
-                ws['P'+str(n)] = line.create_date
+                ws['P'+str(n)] = d.datetime.strptime(line.create_date, tools.DEFAULT_SERVER_DATE_FORMAT)
                 ws['P'+str(n)].style = Style(font=Font(color=Color('e80000')),
                                              alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
                                              number_format="DD.MM.YYYY")
