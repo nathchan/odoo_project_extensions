@@ -26,6 +26,7 @@ class ProjectActivity(models.Model):
     category = fields.Selection([('effective', 'Effective'), ('ineffective', 'Ineffective')], 'Category')
     on_site_activity = fields.Boolean('On site activity')
     show_on_sap_report = fields.Boolean('Show on SAP report')
+    sap_report_sufix = fields.Char('SAP sufix')
     is_general_activity = fields.Boolean('Is general activity')
     filter_activities = fields.Char(compute=_compute_filter_activities, search=_search_filter_activities)
 

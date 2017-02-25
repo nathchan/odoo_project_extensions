@@ -667,11 +667,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 ws['F'+str(n)] = activity_code
                 ws['G'+str(n)] = ''
                 ws['H'+str(n)] = ''
-                task_sufix = '--'
-                if line.account_id.sap_report_category == 'sa':
-                    task_sufix = '-4'
-                elif line.account_id.sap_report_category == 'cw':
-                    task_sufix = '-1'
+                task_sufix = line.project_activity_id.sap_report_sufix if line.project_activity_id.sap_report_sufix else ''
                 ws['I'+str(n)] = line.task_id.name + task_sufix if line.task_id else ''
                 ws['J'+str(n)] = ''
                 ws['K'+str(n)] = ''
@@ -679,6 +675,77 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 ws['M'+str(n)] = line.project_activity_id.name if line.project_activity_id else ''
                 ws['N'+str(n)] = line.user_id.name
                 ws['O'+str(n)] = line.timesheet_comment if line.timesheet_comment else ''
+
+
+            extra_lines = sheet_lines.search([('user_id', 'in', [item.user_id.id for item in employees]),
+                                              ('timesheet_sheet_id', '!=', False),
+                                              # ('task_id', '!=', False),
+                                              ('project_activity_id.show_on_sap_report', '=', True),
+                                              ('create_date', '>=', this.sap_date_from),
+                                              ('create_date', '<=', this.sap_date_to),
+                                              '|',
+                                              ('date', '<', this.sap_date_from),
+                                              ('date', '>', this.sap_date_to)],
+                                             order='user_id, date, write_date')
+            for line in extra_lines:
+                n += 1
+                emp = self.env['hr.employee'].search([('user_id', '=', line.user_id.id)], limit=1)
+                ws['A'+str(n)] = emp.other_id if emp and emp.other_id else '---'
+                ws['A'+str(n)].font = Font(color=Color('e80000'))
+
+                ws['B'+str(n)] = d.datetime.strptime(line.date, tools.DEFAULT_SERVER_DATE_FORMAT)
+                ws['B'+str(n)].style = Style(font=Font(color=Color('e80000')), alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
+                                             number_format="DD.MM.YYYY")
+
+                ws['C'+str(n)] = format_float_time(line.timesheet_start_time)
+                ws['C'+str(n)].font = Font(color=Color('e80000'))
+
+                ws['D'+str(n)] = format_float_time(line.timesheet_end_time)
+                ws['D'+str(n)].font = Font(color=Color('e80000'))
+
+                ws['E'+str(n)] = format_float_time(line.unit_amount)
+                ws['E'+str(n)].font = Font(color=Color('e80000'))
+
+                activity_code = '---'
+                if line.account_id.sap_report_category == 'sa':
+                    activity_code = '7332_AT_SA_STUNDEN_MA'
+                elif line.account_id.sap_report_category == 'cw':
+                    activity_code = '7331_AT'
+                if activity_code != '---' and line.project_activity_id.name == 'Travel':
+                    activity_code += '_R'
+                ws['F'+str(n)] = activity_code
+                ws['F'+str(n)].font = Font(color=Color('e80000'))
+
+                ws['G'+str(n)] = ''
+                ws['G'+str(n)].font = Font(color=Color('e80000'))
+
+                ws['H'+str(n)] = ''
+                ws['H'+str(n)].font = Font(color=Color('e80000'))
+
+                task_sufix = line.project_activity_id.sap_report_sufix if line.project_activity_id.sap_report_sufix else ''
+                ws['I'+str(n)] = line.task_id.name + task_sufix if line.task_id else ''
+                ws['I'+str(n)].font = Font(color=Color('e80000'))
+
+                ws['J'+str(n)] = ''
+                ws['J'+str(n)].font = Font(color=Color('e80000'))
+
+                ws['K'+str(n)] = ''
+                ws['K'+str(n)].font = Font(color=Color('e80000'))
+
+                ws['L'+str(n)] = line.account_id.name if line.account_id else ''
+                ws['L'+str(n)].font = Font(color=Color('e80000'))
+
+                ws['M'+str(n)] = line.project_activity_id.name if line.project_activity_id else ''
+                ws['M'+str(n)].font = Font(color=Color('e80000'))
+
+                ws['N'+str(n)] = line.user_id.name
+                ws['N'+str(n)].font = Font(color=Color('e80000'))
+
+                ws['O'+str(n)] = line.timesheet_comment if line.timesheet_comment else ''
+                ws['O'+str(n)].font = Font(color=Color('e80000'))
+
+                ws['P'+str(n)] = line.create_date
+                ws['P'+str(n)].font = Font(color=Color('e80000'))
 
 
         buf = cStringIO.StringIO()
