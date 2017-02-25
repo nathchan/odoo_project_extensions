@@ -677,7 +677,9 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 ws['M'+str(n)] = line.project_activity_id.name if line.project_activity_id else ''
                 ws['N'+str(n)] = line.user_id.name
                 ws['O'+str(n)] = line.timesheet_comment if line.timesheet_comment else ''
-                ws['O'+str(n)] = line.create_date
+                ws['P'+str(n)] = line.create_date
+                ws['P'+str(n)].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
+                                             number_format="DD.MM.YYYY")
 
 
             extra_lines = sheet_lines.search([('user_id', 'in', [item.user_id.id for item in employees]),
@@ -748,7 +750,9 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 ws['O'+str(n)].font = Font(color=Color('e80000'))
 
                 ws['P'+str(n)] = line.create_date
-                ws['P'+str(n)].font = Font(color=Color('e80000'))
+                ws['P'+str(n)].style = Style(font=Font(color=Color('e80000')),
+                                             alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
+                                             number_format="DD.MM.YYYY")
 
 
         buf = cStringIO.StringIO()
