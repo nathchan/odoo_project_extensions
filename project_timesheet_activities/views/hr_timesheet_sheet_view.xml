@@ -150,7 +150,6 @@
                                                          ('account_id_use_issues', '=', True)]
                                               }"
                                        options="{'no_open': True, 'no_create': True}"
-                                       required="1"
                                        string="WP"/>
 
                                 <field name="project_activity_id"
