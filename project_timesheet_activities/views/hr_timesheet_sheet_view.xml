@@ -144,7 +144,11 @@
                                        string="Field of activity"/>
 
                                 <field name="project_activity_work_package_id"
-                                       attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
+                                       attrs="{
+                                            'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])],
+                                            'required': [('account_id_use_tasks', '=', True),
+                                                         ('account_id_use_issues', '=', True)]
+                                              }"
                                        options="{'no_open': True, 'no_create': True}"
                                        required="1"
                                        string="WP"/>
