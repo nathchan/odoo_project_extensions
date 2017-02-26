@@ -84,6 +84,7 @@ class AccountAnalyticLine(models.Model):
     account_id_name = fields.Char(compute=_compute_project_use_task_issues_name)
 
     project_activity_id = fields.Many2one('project.activity', 'Activity')
+    project_activity_work_package_id = fields.Many2one('project.activity.work.package', 'Work Package')
     timesheet_activity_category = fields.Selection([('effective', 'Effective'), ('ineffective', 'Ineffective')],
                                                string='Effectiveness category',
                                                related='project_activity_id.category',

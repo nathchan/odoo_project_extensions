@@ -1,4 +1,5 @@
 import account_analytic_account
 import project_activity
+import project_activity_work_package
 import account_analytic_line
 import hr_timesheet_sheet

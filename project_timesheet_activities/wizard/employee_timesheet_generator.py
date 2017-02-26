@@ -632,14 +632,16 @@ class EmployeeTimesheetGenerator(models.TransientModel):
             ws['K1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
             ws['L1'] = 'Field of activity'
             ws['L1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
-            ws['M1'] = 'Interner Kommentar'
+            ws['M1'] = 'Work Package'
             ws['M1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
-            ws['N1'] = 'Mitarbeiter'
+            ws['N1'] = 'Interner Kommentar'
             ws['N1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
-            ws['O1'] = 'Comment'
+            ws['O1'] = 'Mitarbeiter'
             ws['O1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
-            ws['P1'] = 'Create date'
+            ws['P1'] = 'Comment'
             ws['P1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+            ws['Q1'] = 'Create date'
+            ws['Q1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
 
 
             ws.row_dimensions[1].height = 50
@@ -660,25 +662,30 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 ws['D'+str(n)] = format_float_time(line.timesheet_end_time)
                 ws['E'+str(n)] = format_float_time(line.unit_amount)
                 activity_code = '---'
-                if line.account_id.sap_report_category == 'sa':
-                    activity_code = '7332_AT_SA_STUNDEN_MA'
-                elif line.account_id.sap_report_category == 'cw':
-                    activity_code = '7331_AT'
-                if activity_code != '---' and line.project_activity_id.name == 'Travel':
+                if line.project_activity_work_package_id.sap_report_service_number:
+                    activity_code = line.project_activity_work_package_id.sap_report_service_number
+
+                # if line.account_id.sap_report_category == 'sa':
+                #     activity_code = '7332_AT_SA_STUNDEN_MA'
+                # elif line.account_id.sap_report_category == 'cw':
+                #     activity_code = '7331_AT'
+
+                if activity_code != '---' and line.project_activity_id.name and 'Travel' in line.project_activity_id.name:
                     activity_code += '_R'
                 ws['F'+str(n)] = activity_code
                 ws['G'+str(n)] = ''
                 ws['H'+str(n)] = ''
-                task_sufix = line.project_activity_id.sap_report_sufix if line.project_activity_id.sap_report_sufix else ''
+                task_sufix = line.project_activity_work_package_id.sap_report_task_sufix if line.project_activity_work_package_id.sap_report_task_sufix else ''
                 ws['I'+str(n)] = line.task_id.name + task_sufix if line.task_id else ''
                 ws['J'+str(n)] = ''
                 ws['K'+str(n)] = ''
                 ws['L'+str(n)] = line.account_id.name if line.account_id else ''
-                ws['M'+str(n)] = line.project_activity_id.name if line.project_activity_id else ''
-                ws['N'+str(n)] = line.user_id.name
-                ws['O'+str(n)] = line.timesheet_comment if line.timesheet_comment else ''
-                ws['P'+str(n)] = d.datetime.strptime(line.create_date, tools.DEFAULT_SERVER_DATETIME_FORMAT)
-                ws['P'+str(n)].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
+                ws['M'+str(n)] = line.project_activity_work_package_id.name if line.project_activity_work_package_id else ''
+                ws['N'+str(n)] = line.project_activity_id.name if line.project_activity_id else ''
+                ws['O'+str(n)] = line.user_id.name
+                ws['P'+str(n)] = line.timesheet_comment if line.timesheet_comment else ''
+                ws['Q'+str(n)] = d.datetime.strptime(line.create_date, tools.DEFAULT_SERVER_DATETIME_FORMAT)
+                ws['Q'+str(n)].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
                                              number_format="DD.MM.YYYY")
 
 
@@ -712,11 +719,15 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 ws['E'+str(n)].font = Font(color=Color('e80000'))
 
                 activity_code = '---'
-                if line.account_id.sap_report_category == 'sa':
-                    activity_code = '7332_AT_SA_STUNDEN_MA'
-                elif line.account_id.sap_report_category == 'cw':
-                    activity_code = '7331_AT'
-                if activity_code != '---' and line.project_activity_id.name == 'Travel':
+                if line.project_activity_work_package_id.sap_report_service_number:
+                    activity_code = line.project_activity_work_package_id.sap_report_service_number
+
+                # if line.account_id.sap_report_category == 'sa':
+                #     activity_code = '7332_AT_SA_STUNDEN_MA'
+                # elif line.account_id.sap_report_category == 'cw':
+                #     activity_code = '7331_AT'
+
+                if activity_code != '---' and line.project_activity_id.name and 'Travel' in line.project_activity_id.name:
                     activity_code += '_R'
                 ws['F'+str(n)] = activity_code
                 ws['F'+str(n)].font = Font(color=Color('e80000'))
@@ -727,7 +738,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 ws['H'+str(n)] = ''
                 ws['H'+str(n)].font = Font(color=Color('e80000'))
 
-                task_sufix = line.project_activity_id.sap_report_sufix if line.project_activity_id.sap_report_sufix else ''
+                task_sufix = line.project_activity_work_package_id.sap_report_task_sufix if line.project_activity_work_package_id.sap_report_task_sufix else ''
                 ws['I'+str(n)] = line.task_id.name + task_sufix if line.task_id else ''
                 ws['I'+str(n)].font = Font(color=Color('e80000'))
 
@@ -740,17 +751,20 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 ws['L'+str(n)] = line.account_id.name if line.account_id else ''
                 ws['L'+str(n)].font = Font(color=Color('e80000'))
 
-                ws['M'+str(n)] = line.project_activity_id.name if line.project_activity_id else ''
+                ws['M'+str(n)] = line.project_activity_work_package_id.name if line.project_activity_work_package_id else ''
                 ws['M'+str(n)].font = Font(color=Color('e80000'))
 
-                ws['N'+str(n)] = line.user_id.name
+                ws['N'+str(n)] = line.project_activity_id.name if line.project_activity_id else ''
                 ws['N'+str(n)].font = Font(color=Color('e80000'))
 
-                ws['O'+str(n)] = line.timesheet_comment if line.timesheet_comment else ''
+                ws['O'+str(n)] = line.user_id.name
                 ws['O'+str(n)].font = Font(color=Color('e80000'))
 
-                ws['P'+str(n)] = d.datetime.strptime(line.create_date, tools.DEFAULT_SERVER_DATETIME_FORMAT)
-                ws['P'+str(n)].style = Style(font=Font(color=Color('e80000')),
+                ws['P'+str(n)] = line.timesheet_comment if line.timesheet_comment else ''
+                ws['P'+str(n)].font = Font(color=Color('e80000'))
+
+                ws['Q'+str(n)] = d.datetime.strptime(line.create_date, tools.DEFAULT_SERVER_DATETIME_FORMAT)
+                ws['Q'+str(n)].style = Style(font=Font(color=Color('e80000')),
                                              alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
                                              number_format="DD.MM.YYYY")
 

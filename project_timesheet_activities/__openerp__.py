@@ -20,6 +20,7 @@
     'data': [
         'security/security.xml',
         'views/project_activity_view.xml',
+        'views/project_activity_work_package_view.xml',
         'views/task_view.xml',
         'views/timesheet_view.xml',
         'views/hr_timesheet_sheet_view.xml',

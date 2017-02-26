@@ -142,6 +142,13 @@
                                        domain="[('choose_on_timesheets', '=', True)]"
                                        options="{'no_open': True, 'no_create': True}"
                                        string="Field of activity"/>
+
+                                <field name="project_activity_work_package_id"
+                                       attrs="{'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])]}"
+                                       options="{'no_open': True, 'no_create': True}"
+                                       required="1"
+                                       string="WP"/>
+
                                 <field name="project_activity_id"
                                        domain="[('filter_activities', '=', account_id_name)]"
 
