@@ -19,6 +19,7 @@
     'data': [
         'views/project_dispatching_view.xml',
         'views/project_task_view.xml',
+        'views/timesheet_view.xml',
         'views/menuitem.xml',
         'security/ir.model.access.csv',
     ],
