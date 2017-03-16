@@ -2,20 +2,50 @@
 <openerp>
     <data>
 
-    <record id="view_issue_form_inherit" model="ir.ui.view">
-        <field name="name">project.issue.form.inherit</field>
-        <field name="model">project.issue</field>
-        <field name="inherit_id" ref="project_issue.project_issue_form_view"/>
-        <field name="arch" type="xml">
-            <data>
+        <record id="view_issue_form_inherit" model="ir.ui.view">
+            <field name="name">project.issue.form.inherit</field>
+            <field name="model">project.issue</field>
+            <field name="inherit_id" ref="project_issue.project_issue_form_view"/>
+            <field name="arch" type="xml">
+                <data>
 
-                <xpath expr="//field[@name='task_id']" position="after">
-                    <field name="milestone_id" required="1" options="{'no_open': True, 'no_create': True}" />
-                </xpath>
+                    <xpath expr="//field[@name='task_id']" position="after">
+                        <field name="milestone_id" required="1" options="{'no_open': True, 'no_create': True}" />
+                    </xpath>
 
-            </data>
-        </field>
-    </record>
+                </data>
+            </field>
+        </record>
+
+
+        <record id="view_issue_tree_inherit" model="ir.ui.view">
+            <field name="name">project.issue.tree.inherit</field>
+            <field name="model">project.issue</field>
+            <field name="inherit_id" ref="project_issue.project_issue_tree_view"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//field[@name='task_id']" position="after">
+                        <field name="template_milestone_id" />
+                    </xpath>
+                </data>
+            </field>
+        </record>
+
+
+        <record id="view_issue_search_inherit" model="ir.ui.view">
+            <field name="name">project.issue.search.inherit</field>
+            <field name="model">project.issue</field>
+            <field name="inherit_id" ref="project_issue.view_project_issue_filter"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//field[@name='user_id']" position="after">
+                        <filter name="group_milestone" string="Milestone" context="{'group_by': 'template_milestone_id'}"/>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+
+
 
     </data>
 </openerp>
