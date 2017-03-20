@@ -275,10 +275,10 @@ class ProjectTaskMilestoneForecast(models.Model):
                 fc_date = datetime.datetime.strptime(forecast, tools.DEFAULT_SERVER_DATE_FORMAT)
                 ac_date = datetime.datetime.strptime(vals['actual_date'], tools.DEFAULT_SERVER_DATE_FORMAT)
 
-                if ac_date > fc_date:
-                    if self.issue_count < 1:
-                        raise e.ValidationError('There is no Issues related to this milestone. \
-                                First enter at least one Issue to explain postponement, please.')
+                # if ac_date > fc_date:
+                    # if self.issue_count < 1:
+                    #     raise e.ValidationError('There is no Issues related to this milestone. \
+                    #             First enter at least one Issue to explain postponement, please.')
 
                 if fc_date != ac_date:
                     if ac_date > fc_date:
@@ -330,9 +330,9 @@ class ProjectTaskMilestoneForecast(models.Model):
                     recalculate = True
                     end_date = new_date
                     if new_date > old_date:
-                        if self.issue_count < 1:
-                            raise e.ValidationError('There is no Issues related to this milestone ['+self.milestone_id.name+']. \
-                                    First enter at least one Issue to explain postponement, please.')
+                        # if self.issue_count < 1:
+                        #     raise e.ValidationError('There is no Issues related to this milestone ['+self.milestone_id.name+']. \
+                        #             First enter at least one Issue to explain postponement, please.')
 
 
                         business_days_to_add = 0
@@ -369,15 +369,15 @@ class ProjectTaskMilestoneForecast(models.Model):
                 new_duration = vals['duration_forecast']
                 days_diff = new_duration - old_duration
 
-                if self.task_id and self.milestone_id and self.project_id:
-                    issue_count = self.env['project.issue'].search([('task_id', '=', self.task_id.id),
-                                                                    ('milestone_id', '=', self.id),
-                                                                    ('project_id', '=', self.project_id.id),
-                                                                    '|',
-                                                                    ('active', '=', True),
-                                                                    ('active', '=', False)], count=True)
-                    if days_diff > 0 and issue_count < 1:
-                        raise e.ValidationError('There is no Issues related to this milestone. First enter at least one Issue to explain postponement, please.')
+                # if self.task_id and self.milestone_id and self.project_id:
+                    # issue_count = self.env['project.issue'].search([('task_id', '=', self.task_id.id),
+                    #                                                 ('milestone_id', '=', self.id),
+                    #                                                 ('project_id', '=', self.project_id.id),
+                    #                                                 '|',
+                    #                                                 ('active', '=', True),
+                    #                                                 ('active', '=', False)], count=True)
+                    # if days_diff > 0 and issue_count < 1:
+                    #     raise e.ValidationError('There is no Issues related to this milestone. First enter at least one Issue to explain postponement, please.')
 
                 if days_diff != 0:
                     recalculate = True
