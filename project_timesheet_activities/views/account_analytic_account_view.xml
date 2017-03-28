@@ -13,6 +13,19 @@
                         <field name="choose_on_timesheets" />
                         <field name="sap_report_category" />
                     </xpath>
+
+                    <xpath expr="//notebook" position="inside">
+                        <page name="work_packages" string="Work packages">
+                            <field name="work_package_line_ids">
+                                <tree editable="bottom">
+                                    <field name="work_package_id" options="{'no_open': True, 'no_create': True}" />
+                                    <field name="sap_report_task_prefix" />
+                                    <field name="sap_report_task_sufix" />
+                                    <field name="sap_report_service_number" />
+                                </tree>
+                            </field>
+                        </page>
+                    </xpath>
                 </data>
             </field>
         </record>

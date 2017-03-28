@@ -675,8 +675,14 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 ws['F'+str(n)] = activity_code
                 ws['G'+str(n)] = ''
                 ws['H'+str(n)] = ''
+                task_prefix = ''
                 task_sufix = line.project_activity_work_package_id.sap_report_task_sufix if line.project_activity_work_package_id.sap_report_task_sufix else ''
-                ws['I'+str(n)] = line.task_id.name + task_sufix if line.task_id else ''
+                project_wp_line = self.env['project.activity.work.package.line'].search([('account_id', '=', line.account_id.id),
+                                                                                         ('work_package_id', '=', line.project_activity_work_package_id.id)])
+                if project_wp_line and len(project_wp_line) == 1:
+                    task_prefix = project_wp_line[0].sap_report_task_prefix if project_wp_line[0].sap_report_task_prefix else ''
+                    task_sufix = project_wp_line[0].sap_report_task_sufix if project_wp_line[0].sap_report_task_sufix else ''
+                ws['I'+str(n)] = task_prefix + line.task_id.name + task_sufix if line.task_id else ''
                 ws['J'+str(n)] = ''
                 ws['K'+str(n)] = ''
                 ws['L'+str(n)] = line.account_id.name if line.account_id else ''
@@ -738,8 +744,14 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 ws['H'+str(n)] = ''
                 ws['H'+str(n)].font = Font(color=Color('e80000'))
 
+                task_prefix = ''
                 task_sufix = line.project_activity_work_package_id.sap_report_task_sufix if line.project_activity_work_package_id.sap_report_task_sufix else ''
-                ws['I'+str(n)] = line.task_id.name + task_sufix if line.task_id else ''
+                project_wp_line = self.env['project.activity.work.package.line'].search([('account_id', '=', line.account_id.id),
+                                                                                         ('work_package_id', '=', line.project_activity_work_package_id.id)])
+                if project_wp_line and len(project_wp_line) == 1:
+                    task_prefix = project_wp_line[0].sap_report_task_prefix if project_wp_line[0].sap_report_task_prefix else ''
+                    task_sufix = project_wp_line[0].sap_report_task_sufix if project_wp_line[0].sap_report_task_sufix else ''
+                ws['I'+str(n)] = task_prefix + line.task_id.name + task_sufix if line.task_id else ''
                 ws['I'+str(n)].font = Font(color=Color('e80000'))
 
                 ws['J'+str(n)] = ''

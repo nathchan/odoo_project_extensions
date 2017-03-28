@@ -144,6 +144,7 @@
                                        string="Field of activity"/>
 
                                 <field name="project_activity_work_package_id"
+                                       domain="[('filter_timesheet_selection_by_account_id' , '=', account_id)]"
                                        attrs="{
                                             'readonly': [('timesheet_approved_status', 'in', ['draft', 'approved'])],
                                             'required': [('account_id_use_tasks', '=', True),

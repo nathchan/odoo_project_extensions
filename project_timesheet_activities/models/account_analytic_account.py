@@ -14,3 +14,5 @@ class AccountAnalyticAccount(models.Model):
 
     choose_on_timesheets = fields.Boolean('Display as an option in timesheets')
     sap_report_category = fields.Selection([('sa', '7332'), ('cw', '7331')], 'SAP report category')
+
+    work_package_line_ids = fields.One2many('project.activity.work.package.line', 'account_id', 'Work packages')
