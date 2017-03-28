@@ -654,6 +654,9 @@ class EmployeeTimesheetGenerator(models.TransientModel):
             for line in lines:
                 n += 1
                 emp = self.env['hr.employee'].search([('user_id', '=', line.user_id.id)], limit=1)
+                project_wp_line = self.env['project.activity.work.package.line'].search([('account_id', '=', line.account_id.id),
+                                                                                         ('work_package_id', '=', line.project_activity_work_package_id.id)])
+
                 ws['A'+str(n)] = emp.other_id if emp and emp.other_id else '---'
                 ws['B'+str(n)] = d.datetime.strptime(line.date, tools.DEFAULT_SERVER_DATE_FORMAT)
                 ws['B'+str(n)].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
@@ -664,25 +667,21 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 activity_code = '---'
                 if line.project_activity_work_package_id.sap_report_service_number:
                     activity_code = line.project_activity_work_package_id.sap_report_service_number
-
-                # if line.account_id.sap_report_category == 'sa':
-                #     activity_code = '7332_AT_SA_STUNDEN_MA'
-                # elif line.account_id.sap_report_category == 'cw':
-                #     activity_code = '7331_AT'
-
+                if project_wp_line and len(project_wp_line) == 1:
+                    activity_code = project_wp_line[0].sap_report_service_number if project_wp_line[0].sap_report_service_number else '---'
                 if activity_code != '---' and line.project_activity_id.name and 'Travel' in line.project_activity_id.name:
                     activity_code += '_R'
                 ws['F'+str(n)] = activity_code
                 ws['G'+str(n)] = ''
                 ws['H'+str(n)] = ''
+
                 task_prefix = ''
                 task_sufix = line.project_activity_work_package_id.sap_report_task_sufix if line.project_activity_work_package_id.sap_report_task_sufix else ''
-                project_wp_line = self.env['project.activity.work.package.line'].search([('account_id', '=', line.account_id.id),
-                                                                                         ('work_package_id', '=', line.project_activity_work_package_id.id)])
                 if project_wp_line and len(project_wp_line) == 1:
                     task_prefix = project_wp_line[0].sap_report_task_prefix if project_wp_line[0].sap_report_task_prefix else ''
                     task_sufix = project_wp_line[0].sap_report_task_sufix if project_wp_line[0].sap_report_task_sufix else ''
                 ws['I'+str(n)] = task_prefix + line.task_id.name + task_sufix if line.task_id else ''
+
                 ws['J'+str(n)] = ''
                 ws['K'+str(n)] = ''
                 ws['L'+str(n)] = line.account_id.name if line.account_id else ''
@@ -708,6 +707,9 @@ class EmployeeTimesheetGenerator(models.TransientModel):
             for line in extra_lines:
                 n += 1
                 emp = self.env['hr.employee'].search([('user_id', '=', line.user_id.id)], limit=1)
+                project_wp_line = self.env['project.activity.work.package.line'].search([('account_id', '=', line.account_id.id),
+                                                                                         ('work_package_id', '=', line.project_activity_work_package_id.id)])
+
                 ws['A'+str(n)] = emp.other_id if emp and emp.other_id else '---'
                 ws['A'+str(n)].font = Font(color=Color('e80000'))
 
@@ -727,12 +729,8 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 activity_code = '---'
                 if line.project_activity_work_package_id.sap_report_service_number:
                     activity_code = line.project_activity_work_package_id.sap_report_service_number
-
-                # if line.account_id.sap_report_category == 'sa':
-                #     activity_code = '7332_AT_SA_STUNDEN_MA'
-                # elif line.account_id.sap_report_category == 'cw':
-                #     activity_code = '7331_AT'
-
+                if project_wp_line and len(project_wp_line) == 1:
+                    activity_code = project_wp_line[0].sap_report_service_number if project_wp_line[0].sap_report_service_number else '---'
                 if activity_code != '---' and line.project_activity_id.name and 'Travel' in line.project_activity_id.name:
                     activity_code += '_R'
                 ws['F'+str(n)] = activity_code
@@ -746,8 +744,6 @@ class EmployeeTimesheetGenerator(models.TransientModel):
 
                 task_prefix = ''
                 task_sufix = line.project_activity_work_package_id.sap_report_task_sufix if line.project_activity_work_package_id.sap_report_task_sufix else ''
-                project_wp_line = self.env['project.activity.work.package.line'].search([('account_id', '=', line.account_id.id),
-                                                                                         ('work_package_id', '=', line.project_activity_work_package_id.id)])
                 if project_wp_line and len(project_wp_line) == 1:
                     task_prefix = project_wp_line[0].sap_report_task_prefix if project_wp_line[0].sap_report_task_prefix else ''
                     task_sufix = project_wp_line[0].sap_report_task_sufix if project_wp_line[0].sap_report_task_sufix else ''
