@@ -261,6 +261,8 @@ class AccountAnalyticLine(models.Model):
                 raise e.ValidationError('Start time must be before end time.')
             if (self.timesheet_start_time < 0) or (self.timesheet_end_time < 0):
                 raise e.ValidationError('Start and end time must be non negative.')
+            if (self.timesheet_start_time >= 24) or (self.timesheet_end_time >= 24):
+                raise e.ValidationError('Time value must be between 00:00 and 23:59')
 
     @api.one
     @api.constrains('timesheet_break_amount', 'account_id', 'unit_amount')
