@@ -50,6 +50,7 @@
                             <group>
                                 <field name="active" />
                                 <field name="sequence" />
+                                <field name="show_on_dispatching" />
                             </group>
                         </group>
 
