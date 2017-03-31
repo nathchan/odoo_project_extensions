@@ -59,7 +59,7 @@
                                 <field name="analytic_account_id"
                                        options="{'no_open': True, 'no_create': True}"/>
                                 <field name="task_id"
-                                       options="{'no_open': True, 'no_create': True}"
+                                       options="{'no_open': False, 'no_create': True}"
                                        attrs="{'required': [('analytic_account_id_use_tasks', '=', True)],
                                                               'invisible': [('analytic_account_id_use_tasks', '=', False)]}" />
 
