@@ -21,6 +21,7 @@ class ProjectBacklogCw(models.AbstractModel):
     write_uid = fields.Many2one('res.users', 'Updated by', readonly=True)
     write_date = fields.Datetime('Updated date', readonly=True)
     milestone_id = fields.Many2one('project.milestone', 'Milestone', readonly=True)
+    task_milestone_id = fields.Many2one('project.task.milestone.forecast', readonly=True)
     project_id = fields.Many2one('project.project', 'Project', readonly=True)
     task_id = fields.Many2one('project.task', 'Task', readonly=True)
     task_active = fields.Boolean('Task Active', readonly=True)
@@ -32,17 +33,24 @@ class ProjectBacklogCw(models.AbstractModel):
     sequence_order = fields.Integer('Sequence', readonly=True)
     task_blocked = fields.Boolean('Task blocked', compute=_compute_color)
     color = fields.Char('Color Index', compute=_compute_color)
+    opened_issue_count = fields.Integer('Opened issues', related='task_milestone_id.opened_issue_count')
 
+    filter_A_ordered_on = fields.Date(string='A Ordered on', related='task_id.filter_A_ordered_on')
+    filter_B_ordered_on = fields.Date(string='B Ordered on', related='task_id.filter_B_ordered_on')
     filter_A_B_ordered_on = fields.Date(string='A+B Ordered on', related='task_id.filter_A_B_ordered_on')
     filter_C_ordered_on = fields.Date(string='C Ordered on', related='task_id.filter_C_ordered_on')
     filter_STEEL_ordered_on = fields.Date(string='STEEL Ordered on', related='task_id.filter_STEEL_ordered_on')
     filter_CRANE_ordered_on = fields.Date(string='CRANE Ordered on', related='task_id.filter_CRANE_ordered_on')
 
+    filter_A_inbound = fields.Date(string='A IRIS inbound', related='task_id.filter_A_inbound')
+    filter_B_inbound = fields.Date(string='B IRIS inbound', related='task_id.filter_B_inbound')
     filter_A_B_inbound = fields.Date(string='A+B IRIS inbound', related='task_id.filter_A_B_inbound')
     filter_C_inbound = fields.Date(string='C IRIS inbound', related='task_id.filter_C_inbound')
     filter_STEEL_inbound = fields.Date(string='STEEL IRIS inbound', related='task_id.filter_STEEL_inbound')
     filter_CRANE_inbound = fields.Date(string='CRANE IRIS inbound', related='task_id.filter_CRANE_inbound')
 
+    filter_A_outbound = fields.Date(string='A IRIS outbound', related='task_id.filter_A_outbound')
+    filter_B_outbound = fields.Date(string='B IRIS outbound', related='task_id.filter_B_outbound')
     filter_A_B_outbound = fields.Date(string='A+B IRIS outbound', related='task_id.filter_A_B_outbound')
     filter_C_outbound = fields.Date(string='C IRIS outbound', related='task_id.filter_C_outbound')
     filter_STEEL_outbound = fields.Date(string='STEEL IRIS outbound', related='task_id.filter_STEEL_outbound')
@@ -110,6 +118,7 @@ class ProjectBacklogCw(models.AbstractModel):
             f.write_date,
             f.write_uid,
             f.milestone_id,
+            f.id as task_milestone_id,
             f.project_id,
             f.task_id,
             t.active as task_active,

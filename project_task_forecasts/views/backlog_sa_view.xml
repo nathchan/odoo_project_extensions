@@ -13,6 +13,7 @@
                     <field name="milestone_id"/>
                     <field name="forecast_date" />
                     <field name="forecast_week" />
+                    <field name="opened_issue_count" />
                 </tree>
             </field>
         </record>
