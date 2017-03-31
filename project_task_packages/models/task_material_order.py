@@ -7,6 +7,8 @@ class ProjectTaskMaterialOrder(models.Model):
     _name = 'project.task.material.order'
 
     material = fields.Selection([('a_b_goods', 'A+B Goods'),
+                                 ('a_goods', 'A Goods'),
+                                 ('b_goods', 'B Goods'),
                                  ('c_goods', 'C Goods'),
                                  ('steel', 'Steel'),
                                  ('crane', 'Crane')], 'Material', required=True)

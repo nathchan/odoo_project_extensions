@@ -33,13 +33,20 @@ class ProjectTask(models.Model):
         for rec in self:
             rec.filter_A_ordered_on = False
             rec.filter_B_ordered_on = False
+            rec.filter_A_B_ordered_on = False
             rec.filter_C_ordered_on = False
             rec.filter_STEEL_ordered_on = False
             rec.filter_CRANE_ordered_on = False
+
+            rec.filter_A_inbound = False
+            rec.filter_B_inbound = False
             rec.filter_A_B_inbound = False
             rec.filter_C_inbound = False
             rec.filter_STEEL_inbound = False
             rec.filter_CRANE_inbound = False
+
+            rec.filter_A_outbound = False
+            rec.filter_B_outbound = False
             rec.filter_A_B_outbound = False
             rec.filter_C_outbound = False
             rec.filter_STEEL_outbound = False
@@ -83,6 +90,18 @@ class ProjectTask(models.Model):
                                             (6, 'Moving sharing partner'),
                                             (7, 'Site deconstruction')], 'CW package')
 
+    def _search_A_ordered_on(self, operator, value):
+        new_operator = 'in'
+        res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'a_goods'),
+                                                                                               ('ordered_date', operator, value)])]
+        return [('id', new_operator, res_ids)]
+
+    def _search_B_ordered_on(self, operator, value):
+        new_operator = 'in'
+        res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'b_goods'),
+                                                                                               ('ordered_date', operator, value)])]
+        return [('id', new_operator, res_ids)]
+
     def _search_A_B_ordered_on(self, operator, value):
         new_operator = 'in'
         res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'a_b_goods'),
@@ -105,6 +124,18 @@ class ProjectTask(models.Model):
         new_operator = 'in'
         res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'crane'),
                                                                                                ('ordered_date', operator, value)])]
+        return [('id', new_operator, res_ids)]
+
+    def _search_A_inbound(self, operator, value):
+        new_operator = 'in'
+        res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'a_goods'),
+                                                                                               ('iris_inbound_date', operator, value)])]
+        return [('id', new_operator, res_ids)]
+
+    def _search_B_inbound(self, operator, value):
+        new_operator = 'in'
+        res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'b_goods'),
+                                                                                               ('iris_inbound_date', operator, value)])]
         return [('id', new_operator, res_ids)]
 
     def _search_A_B_inbound(self, operator, value):
@@ -131,6 +162,18 @@ class ProjectTask(models.Model):
                                                                                                ('iris_inbound_date', operator, value)])]
         return [('id', new_operator, res_ids)]
 
+    def _search_A_outbound(self, operator, value):
+        new_operator = 'in'
+        res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'a_goods'),
+                                                                                               ('iris_outbound_date', operator, value)])]
+        return [('id', new_operator, res_ids)]
+
+    def _search_B_outbound(self, operator, value):
+        new_operator = 'in'
+        res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'b_goods'),
+                                                                                               ('iris_outbound_date', operator, value)])]
+        return [('id', new_operator, res_ids)]
+
     def _search_A_B_outbound(self, operator, value):
         new_operator = 'in'
         res_ids = [item.task_id.id for item in self.env['project.task.material.order'].search([('material', '=', 'a_b_goods'),
@@ -155,16 +198,22 @@ class ProjectTask(models.Model):
                                                                                                ('iris_outbound_date', operator, value)])]
         return [('id', new_operator, res_ids)]
 
+    filter_A_ordered_on = fields.Date(string='A Ordered on', compute=_compute_filters, search=_search_A_ordered_on)
+    filter_B_ordered_on = fields.Date(string='B Ordered on', compute=_compute_filters, search=_search_B_ordered_on)
     filter_A_B_ordered_on = fields.Date(string='A+B Ordered on', compute=_compute_filters, search=_search_A_B_ordered_on)
     filter_C_ordered_on = fields.Date(string='C Ordered on', compute=_compute_filters, search=_search_C_ordered_on)
     filter_STEEL_ordered_on = fields.Date(string='STEEL Ordered on', compute=_compute_filters, search=_search_STEEL_ordered_on)
     filter_CRANE_ordered_on = fields.Date(string='CRANE Ordered on', compute=_compute_filters, search=_search_CRANE_ordered_on)
 
+    filter_A_inbound = fields.Date(string='A IRIS inbound', compute=_compute_filters, search=_search_A_inbound)
+    filter_B_inbound = fields.Date(string='B IRIS inbound', compute=_compute_filters, search=_search_B_inbound)
     filter_A_B_inbound = fields.Date(string='A+B IRIS inbound', compute=_compute_filters, search=_search_A_B_inbound)
     filter_C_inbound = fields.Date(string='C IRIS inbound', compute=_compute_filters, search=_search_C_inbound)
     filter_STEEL_inbound = fields.Date(string='STEEL IRIS inbound', compute=_compute_filters, search=_search_STEEL_inbound)
     filter_CRANE_inbound = fields.Date(string='CRANE IRIS inbound', compute=_compute_filters, search=_search_CRANE_inbound)
 
+    filter_A_outbound = fields.Date(string='A IRIS outbound', compute=_compute_filters, search=_search_A_outbound)
+    filter_B_outbound = fields.Date(string='B IRIS outbound', compute=_compute_filters, search=_search_B_outbound)
     filter_A_B_outbound = fields.Date(string='A+B IRIS outbound', compute=_compute_filters, search=_search_A_B_outbound)
     filter_C_outbound = fields.Date(string='C IRIS outbound', compute=_compute_filters, search=_search_C_outbound)
     filter_STEEL_outbound = fields.Date(string='STEEL IRIS outbound', compute=_compute_filters, search=_search_STEEL_outbound)

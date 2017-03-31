@@ -88,16 +88,22 @@
                 <xpath expr="//filter[@name='inactive']" position="after">
                     <separator />
 
+                    <field name="filter_A_ordered_on" />
+                    <field name="filter_B_ordered_on" />
                     <field name="filter_A_B_ordered_on" />
                     <field name="filter_C_ordered_on" />
                     <field name="filter_STEEL_ordered_on" />
                     <field name="filter_CRANE_ordered_on" />
 
+                    <field name="filter_A_inbound" />
+                    <field name="filter_B_inbound" />
                     <field name="filter_A_B_inbound" />
                     <field name="filter_C_inbound" />
                     <field name="filter_STEEL_inbound" />
                     <field name="filter_CRANE_inbound" />
 
+                    <field name="filter_A_outbound" />
+                    <field name="filter_B_outbound" />
                     <field name="filter_A_B_outbound" />
                     <field name="filter_C_outbound" />
                     <field name="filter_STEEL_outbound" />
