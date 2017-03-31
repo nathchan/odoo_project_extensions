@@ -99,6 +99,23 @@
                                 <field name="milestones_description" />
                                 <div class="oe_clear"/>
                             </page>
+                            <page name="timesheets" string="Timesheet activities">
+                                <field name="timesheet_activity_ids">
+                                    <tree>
+                                        <field name="date" />
+                                        <field name="user_id" />
+                                        <field name="timesheet_start_time" widget="float_time" />
+                                        <field name="timesheet_end_time" widget="float_time" />
+                                        <field name="timesheet_break_amount" widget="float_time" />
+                                        <field name="unit_amount" widget="float_time" />
+                                        <field name="account_id" />
+                                        <field name="project_activity_work_package_id" />
+                                        <field name="project_activity_id" />
+                                        <button name="open_sheet" string="Open Timesheet" type="object" icon="fa-calendar" />
+                                    </tree>
+                                </field>
+                                <div class="oe_clear"/>
+                            </page>
                         </notebook>
                     </sheet>
                     <div class="oe_chatter">

@@ -95,6 +95,12 @@ class ProjectDispatching(models.Model):
         out += '</div>'
         self.milestones_description = out
 
+    @api.one
+    def _compute_timesheets(self):
+        acts = self.env['account.analytic.line'].search([('task_id', '=', self.task_id.id), ('date', '>=', self.datetime_start), ('date', '<=', self.datetime_stop)])
+        if acts and len(acts) > 0:
+            self.timesheet_activity_ids = acts
+
     name = fields.Char('Name', compute=_compute_name)
     department_id = fields.Many2one('hr.department', 'Department', required=True, track_visibility='onchange')
     project_id = fields.Many2one('project.project', 'Project', compute=_get_project)
@@ -118,6 +124,7 @@ class ProjectDispatching(models.Model):
     issue_count = fields.Integer('Issue count', compute=_compute_issue_count)
     task_dispatching_count = fields.Integer('Task Dispatching Counter', readonly=True, compute=_compute_task_dispatching_count)
     milestones_description = fields.Html('Milestones', compute=_compute_milestones_description)
+    timesheet_activity_ids = fields.One2many(comodel_name='account.analytic.line', inverse_name=None, string='Timesheet activities', compute=_compute_timesheets, readonly=True)
 
     @api.constrains('department_id', 'datetime_start', 'datetime_stop')
     def _check_dates(self):
