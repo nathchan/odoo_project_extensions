@@ -81,6 +81,20 @@ class ProjectDispatching(models.Model):
         else:
             self.task_dispatching_count = None
 
+    @api.one
+    def _compute_milestones_description(self):
+        out = '<div> <hr/>'
+        if self.task_id and self.task_id.milestone_ids and len(self.task_id.milestone_ids) > 0:
+            ms_to_show = self.task_id.milestone_ids.filtered(lambda r: r.milestone_id.show_on_dispatching is True)
+            for item in ms_to_show:
+                if item.forecast_date:
+                    out += '<h3>' + str(item.milestone_id.name) + ' FC: ' + datetime.datetime.strptime(item.forecast_date, tools.DEFAULT_SERVER_DATE_FORMAT).strftime('%d.%m.%Y') + '</h3>'
+                if item.actual_date:
+                    out += '<h3>' + str(item.milestone_id.name) + ' AC: ' + datetime.datetime.strptime(item.actual_date, tools.DEFAULT_SERVER_DATE_FORMAT).strftime('%d.%m.%Y') + '</h3>'
+                out += '<hr/>'
+        out += '</div>'
+        self.milestones_description = out
+
     name = fields.Char('Name', compute=_compute_name)
     department_id = fields.Many2one('hr.department', 'Department', required=True, track_visibility='onchange')
     project_id = fields.Many2one('project.project', 'Project', compute=_get_project)
@@ -103,6 +117,7 @@ class ProjectDispatching(models.Model):
     assigned_user_id = fields.Many2one('res.users', 'Assigned to', related='task_id.user_id', readonly=True)
     issue_count = fields.Integer('Issue count', compute=_compute_issue_count)
     task_dispatching_count = fields.Integer('Task Dispatching Counter', readonly=True, compute=_compute_task_dispatching_count)
+    milestones_description = fields.Html('Milestones', compute=_compute_milestones_description)
 
     @api.constrains('department_id', 'datetime_start', 'datetime_stop')
     def _check_dates(self):

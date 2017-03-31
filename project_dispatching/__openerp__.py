@@ -14,6 +14,7 @@
         'fleet',
         'project_timesheet_activities',
         'project_task_issues',
+        'project_task_forecasts',
         'project_security',
     ],
     'data': [
