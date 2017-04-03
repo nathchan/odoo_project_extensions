@@ -100,6 +100,12 @@
                                 <div class="oe_clear"/>
                             </page>
                             <page name="timesheets" string="Timesheet activities">
+                                <hr />
+                                <h2>
+                                    Hours spent:
+                                    <field class="oe_inline" name="effective_hours" widget="float_time" />
+                                </h2>
+                                <hr />
                                 <field name="timesheet_activity_ids">
                                     <tree>
                                         <field name="date" />
@@ -107,7 +113,7 @@
                                         <field name="timesheet_start_time" widget="float_time" />
                                         <field name="timesheet_end_time" widget="float_time" />
                                         <field name="timesheet_break_amount" widget="float_time" />
-                                        <field name="unit_amount" widget="float_time" />
+                                        <field name="unit_amount" widget="float_time" sum="Total"/>
                                         <field name="account_id" />
                                         <field name="project_activity_work_package_id" />
                                         <field name="project_activity_id" />

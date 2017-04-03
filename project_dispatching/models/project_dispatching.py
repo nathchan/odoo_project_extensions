@@ -98,8 +98,10 @@ class ProjectDispatching(models.Model):
     @api.one
     def _compute_timesheets(self):
         acts = self.env['account.analytic.line'].search([('task_id', '=', self.task_id.id), ('date', '>=', self.datetime_start), ('date', '<=', self.datetime_stop)])
+        self.effective_hours = 0.0
         if acts and len(acts) > 0:
             self.timesheet_activity_ids = acts
+            self.effective_hours = sum([item.unit_amount for item in self.timesheet_activity_ids])
 
     name = fields.Char('Name', compute=_compute_name)
     department_id = fields.Many2one('hr.department', 'Department', required=True, track_visibility='onchange')
@@ -125,6 +127,7 @@ class ProjectDispatching(models.Model):
     task_dispatching_count = fields.Integer('Task Dispatching Counter', readonly=True, compute=_compute_task_dispatching_count)
     milestones_description = fields.Html('Milestones', compute=_compute_milestones_description)
     timesheet_activity_ids = fields.One2many(comodel_name='account.analytic.line', inverse_name=None, string='Timesheet activities', compute=_compute_timesheets, readonly=True)
+    effective_hours = fields.Float('Hours spent', compute=_compute_timesheets)
 
     @api.constrains('department_id', 'datetime_start', 'datetime_stop')
     def _check_dates(self):
