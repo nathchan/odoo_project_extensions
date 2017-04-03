@@ -147,6 +147,12 @@ class AccountAnalyticLine(models.Model):
                 rec.timesheet_approved_status = 'refused'
 
     @api.one
+    @api.constrains('user_id', 'timesheet_sheet_id.user_id')
+    def _check_date_fits_into_timesheet(self):
+        if self.user_id and self.timesheet_sheet_id and self.timesheet_sheet_id.user_id and self.timesheet_sheet_id.user_id.id != self.user_id.id:
+            raise e.ValidationError('User on activity must be user from timesheet.')
+
+    @api.one
     @api.constrains('date', 'timesheet_sheet_id')
     def _check_date_fits_into_timesheet(self):
         if self.timesheet_sheet_id:
