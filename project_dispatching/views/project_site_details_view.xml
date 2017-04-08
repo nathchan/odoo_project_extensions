@@ -88,6 +88,37 @@
             <field name="model">project.site.details</field>
         </record>
 
+        <record model="ir.ui.view" id="project_site_details_search">
+            <field name="name">project.site.details.search</field>
+            <field name="model">project.site.details</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="number" />
+                    <field name="code" />
+                    <field name="name" />
+                    <field name="longitude" />
+                    <field name="latitude" />
+                    <field name="district" />
+                    <field name="postcode" />
+                    <field name="city" />
+                    <field name="street" />
+                    <field name="federal_state_code" />
+                    <field name="federal_state" />
+                    <field name="owner" />
+                    <field name="construction_owner" />
+                    <field name="telecom" />
+                    <field name="pole_type" />
+                    <field name="placement" />
+                    <field name="tech_subtype_2g" />
+                    <field name="tech_subtype_3g" />
+                    <field name="tech_subtype_4g" />
+                    <field name="site_user_tma" />
+                    <field name="site_user_h3a" />
+                    <field name="arge" />
+                </search>
+            </field>
+        </record>
+
         <record id="action_project_site_details" model="ir.actions.act_window">
             <field name="name">Sites</field>
             <field name="type">ir.actions.act_window</field>
