@@ -44,9 +44,9 @@
                                         <field name="federal_state" />
                                     </group>
                                 </group>
-                                <group col="4">
-                                    <field name="geo_point" widget="geo_edit_map"/>
-                                </group>
+
+                                <field name="geo_point" widget="geo_edit_map"/>
+
 
                             </page>
                             <page name="details" string="Details">
