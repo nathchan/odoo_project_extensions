@@ -164,6 +164,9 @@
                     <field name="percent_complete" />
                     <field name="vehicle_id" />
                     <field name="info" />
+
+                    <filter domain="[('datetime_start','&gt;=', datetime.datetime.now()), ('datetime_start', '&lt;=', datetime.datetime.now() + datetime.timedelta(days=10))]" help="Next 10 days" />
+
                 </search>
             </field>
         </record>
