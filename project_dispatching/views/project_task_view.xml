@@ -36,7 +36,9 @@
             <field name="name">Tasks</field>
             <field name="arch" type="xml">
                 <geoengine>
-                    <field name="name" select="1"/>
+                    <field name="name" select="1" />
+                    <field name="project_id" select="1" />
+                    <field name="user_id" select="1" />
                 </geoengine>
             </field>
             <field name="model">project.task</field>

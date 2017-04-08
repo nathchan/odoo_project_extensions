@@ -172,7 +172,10 @@
             <field name="name">Dispatching</field>
             <field name="arch" type="xml">
                 <geoengine>
-                    <field name="name" select="1"/>
+                    <field name="department_id" select="1"/>
+                    <field name="analytic_account_id" select="1"/>
+                    <field name="task_id" select="1"/>
+                    <field name="activity_id" select="1"/>
                 </geoengine>
             </field>
             <field name="model">project.dispatching</field>
