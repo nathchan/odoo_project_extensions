@@ -165,7 +165,7 @@
                     <field name="vehicle_id" />
                     <field name="info" />
 
-                    <filter domain="[('datetime_start','&gt;=', datetime.datetime.now()), ('datetime_start', '&lt;=', datetime.datetime.now() + datetime.timedelta(days=10))]" help="Next 10 days" />
+                    <filter domain="[('datetime_start','&gt;=', datetime.datetime.now().strftime('%Y-%m-%d 00:00:00')), ('datetime_start', '&lt;=', (datetime.datetime.now()+datetime.timedelta(days=10)).strftime('%Y-%m-%d 23:23:59'))]" help="Next 10 days" />
 
                 </search>
             </field>
