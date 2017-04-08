@@ -183,7 +183,7 @@ class ProjectTaskMilestoneForecast(models.Model):
     ]
 
     @api.one
-    def calculate_forecast(self, vals):
+    def calculate_forecast(self):
         future_milestones = self.env['project.task.milestone.forecast'].search([('task_id', '=', self.task_id.id),
                                                                                 ('project_id', '=', self.project_id.id),
                                                                                 ('sequence_order', '>', self.sequence_order)],
@@ -197,7 +197,7 @@ class ProjectTaskMilestoneForecast(models.Model):
         elif self.forecast_date:
             start_date = datetime.datetime.strptime(self.forecast_date, tools.DEFAULT_SERVER_DATE_FORMAT)
         else:
-            e.ValidationError('First enter Forecast date or Actual date, please.')
+            raise e.ValidationError('Task: '+self.task_id.name+'\nMilestone: '+self.milestone_id.name+'\nFirst enter Forecast date or Actual date, please.')
 
         for milestone in future_milestones:
 
