@@ -10,8 +10,6 @@
                 <data>
 
                     <xpath expr="//button[@name='toggle_active']" position="before">
-
-
                             <button name="return_action_to_open_dispatching"
                                 type="object"
                                 class="oe_stat_button"
@@ -19,12 +17,35 @@
                                 help="show dispatching data for this task">
                                 <field name="dispatching_count" widget="statinfo" string="Dispatching"/>
                             </button>
-
-
                     </xpath>
+                    <xpath expr="//page[@name='description_page']" position="before">
+                        <page name="site_data" string="Map">
+                            <group>
+                                <field name="site_id" options="{'no_create': True}" />
+                            </group>
 
+                            <field name="site_geo_point" widget="geo_edit_map"/>
+
+                        </page>
+                    </xpath>
                 </data>
             </field>
+        </record>
+
+        <record id="project_task_geoengine_view" model="ir.ui.view">
+            <field name="name">Tasks</field>
+            <field name="arch" type="xml">
+                <geoengine>
+                    <field name="name" select="1"/>
+                </geoengine>
+            </field>
+            <field name="model">project.task</field>
+        </record>
+
+
+
+        <record id="project.act_project_project_2_project_task_all" model="ir.actions.act_window">
+            <field name="view_mode">kanban,tree,geoengine,form,calendar,pivot,graph</field>
         </record>
 
 

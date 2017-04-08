@@ -91,6 +91,9 @@
 
                         </group>
                         <notebook>
+                            <page name="site_data" string="Map">
+                                <field name="site_geo_point" widget="geo_edit_map"/>
+                            </page>
                             <page name="description" string="Description">
                                 <field name="info" type="html"/>
                                 <div class="oe_clear"/>
@@ -165,12 +168,22 @@
             </field>
         </record>
 
+        <record id="project_dispatching_geoengine_view" model="ir.ui.view">
+            <field name="name">Dispatching</field>
+            <field name="arch" type="xml">
+                <geoengine>
+                    <field name="name" select="1"/>
+                </geoengine>
+            </field>
+            <field name="model">project.dispatching</field>
+        </record>
+
         <record id="action_project_dispatching" model="ir.actions.act_window">
             <field name="name">Dispatching</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">project.dispatching</field>
             <field name="view_type">form</field>
-            <field name="view_mode">calendar,tree,form</field>
+            <field name="view_mode">calendar,tree,geoengine,form</field>
             <field name="context">{}</field>
             <field name="search_view_id" ref="project_dispatching_search"/>
         </record>

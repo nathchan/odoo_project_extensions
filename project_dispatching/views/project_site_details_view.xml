@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="project_site_details_tree">
+            <field name="name">project.site.details.tree</field>
+            <field name="model">project.site.details</field>
+            <field name="arch" type="xml">
+                <tree string="Sites">
+                    <field name="number" />
+                    <field name="code" />
+                    <field name="name" />
+                    <field name="longitude" />
+                    <field name="latitude" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="project_site_details_form">
+            <field name="name">project.site.details.form</field>
+            <field name="model">project.site.details</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="number" />
+                            <field name="code" />
+                            <field name="name" />
+                        </group>
+                        <notebook>
+                            <page name="map" string="Map">
+                                <group col="2">
+                                    <group>
+                                        <field name="longitude" />
+                                        <field name="latitude" />
+                                    </group>
+                                    <group>
+                                        <field name="district" />
+                                        <field name="postcode" />
+                                        <field name="city" />
+                                        <field name="street" />
+                                        <field name="house_number" />
+                                        <field name="federal_state_code" />
+                                        <field name="federal_state" />
+                                    </group>
+                                </group>
+                                <group col="4">
+                                    <field name="geo_point" widget="geo_edit_map"/>
+                                </group>
+
+                            </page>
+                            <page name="details" string="Details">
+                                <group>
+                                    <field name="pole_type" />
+                                    <field name="placement" />
+                                </group>
+                                <group>
+                                    <field name="owner" />
+                                    <field name="construction_owner" />
+                                    <field name="telecom" />
+                                </group>
+                                <group>
+                                    <field name="tech_subtype_2g" />
+                                    <field name="tech_subtype_3g" />
+                                    <field name="tech_subtype_4g" />
+                                </group>
+                                <group>
+                                    <field name="site_user_tma" />
+                                    <field name="site_user_h3a" />
+                                    <field name="arge" />
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="project_site_details_geoengine_view" model="ir.ui.view">
+            <field name="name">Sites</field>
+            <field name="arch" type="xml">
+                <geoengine>
+                    <field name="name" select="1"/>
+                </geoengine>
+            </field>
+            <field name="model">project.site.details</field>
+        </record>
+
+        <record id="action_project_site_details" model="ir.actions.act_window">
+            <field name="name">Sites</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">project.site.details</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,geoengine</field>
+            <field name="context">{}</field>
+            <field name="search_view_id" ref=""/>
+        </record>
+
+
+
+    </data>
+</openerp>

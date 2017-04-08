@@ -3,8 +3,11 @@
 from openerp import models, fields, api, tools, exceptions as e
 import datetime
 
+from openerp.addons.base_geoengine import geo_model
+from openerp.addons.base_geoengine import fields as geo_fields
 
-class ProjectDispatching(models.Model):
+
+class ProjectDispatching(geo_model.GeoModel):
     _name = 'project.dispatching'
     _inherit = ['mail.thread', 'ir.needaction_mixin']
 
@@ -102,6 +105,15 @@ class ProjectDispatching(models.Model):
         if acts and len(acts) > 0:
             self.timesheet_activity_ids = acts
             self.effective_hours = sum([item.unit_amount for item in self.timesheet_activity_ids])
+
+    @api.multi
+    @api.depends('task_id', 'task_id')
+    def _compute_site_details(self):
+        for rec in self:
+            if rec.task_id and rec.task_id.site_id:
+                rec.site_geo_point = rec.task_id.site_id.geo_point
+
+    site_geo_point = geo_fields.GeoPoint('Dispatching Location', compute=_compute_site_details)
 
     name = fields.Char('Name', compute=_compute_name)
     department_id = fields.Many2one('hr.department', 'Department', required=True, track_visibility='onchange')

@@ -16,11 +16,13 @@
         'project_task_issues',
         'project_task_forecasts',
         'project_security',
+        'base_geoengine',
     ],
     'data': [
         'views/project_dispatching_view.xml',
         'views/project_task_view.xml',
         'views/timesheet_view.xml',
+        'views/project_site_details_view.xml',
         'views/menuitem.xml',
         'security/ir.model.access.csv',
     ],

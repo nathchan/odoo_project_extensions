@@ -21,7 +21,12 @@
                   sequence="1"/>
 
 
-
+        <menuitem name="Sites"
+                  id="menu_project_site_details"
+                  parent="project.menu_project_config"
+                  action="action_project_site_details"
+                  sequence="5"
+                  groups="project.group_project_manager"/>
 
 
     </data>
