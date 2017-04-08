@@ -193,11 +193,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
 
 
 
-
-            # SERVER VERSION
-            ws = wb.create_sheet(0, employee.name)
-            # LOCAL VERSION
-            # ws = wb.create_sheet(employee.name, 0)
+            ws = wb.create_sheet(employee.name, 0)
 
 
             ws.merge_cells('A2:C2')
@@ -603,10 +599,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                                         ('date', '<=', this.sap_date_to)],
                                        order='user_id, date, write_date')
 
-            # SERVER VERSION
-            ws = wb.create_sheet(0, 'SAP UPLOAD')
-            # LOCAL VERSION
-            # ws = wb.create_sheet('SAP UPLOAD', 0)
+            ws = wb.create_sheet('SAP UPLOAD', 0)
 
             ws['A1'] = 'Personalnummer *'
             ws['A1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
