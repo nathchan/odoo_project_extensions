@@ -75,17 +75,10 @@ class ExportMilestonesWizard(models.TransientModel):
 
             for milestone in selected_milestones:
 
-                # SERVER VERSION
                 if is_fc is True:
-                    ws = wb.create_sheet(0, milestone.name+'-FC')
+                    ws = wb.create_sheet(milestone.name+'-FC', 0)
                 elif is_ac is True:
-                    ws = wb.create_sheet(0, milestone.name+'-AC')
-
-                # LOCAL VERSION
-                # if is_fc is True:
-                #     ws = wb.create_sheet(milestone.name+'-FC', 0)
-                # elif is_ac is True:
-                #     ws = wb.create_sheet(milestone.name+'-AC', 0)
+                    ws = wb.create_sheet(milestone.name+'-AC', 0)
 
                 ws['A1'] = 'Project ID'
                 ws['A2'] = int(this.project_id.project_code)
