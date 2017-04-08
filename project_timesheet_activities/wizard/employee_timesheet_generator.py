@@ -664,14 +664,14 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 ws['C'+str(n)] = format_float_time(line.timesheet_start_time)
                 ws['D'+str(n)] = format_float_time(line.timesheet_end_time)
                 ws['E'+str(n)] = format_float_time(line.unit_amount)
-                activity_code = '---'
+                service_number = '---'
                 if line.project_activity_work_package_id.sap_report_service_number:
-                    activity_code = line.project_activity_work_package_id.sap_report_service_number
-                if project_wp_line and len(project_wp_line) == 1:
-                    activity_code = project_wp_line[0].sap_report_service_number if project_wp_line[0].sap_report_service_number else '---'
-                if activity_code != '---' and line.project_activity_id.name and 'Travel' in line.project_activity_id.name:
-                    activity_code += '_R'
-                ws['F'+str(n)] = activity_code
+                    service_number = line.project_activity_work_package_id.sap_report_service_number
+                if project_wp_line and len(project_wp_line) == 1 and project_wp_line[0].sap_report_service_number:
+                    service_number = project_wp_line[0].sap_report_service_number
+                if service_number != '---' and line.project_activity_id.name and 'Travel' in line.project_activity_id.name:
+                    service_number += '_R'
+                ws['F'+str(n)] = service_number
                 ws['G'+str(n)] = ''
                 ws['H'+str(n)] = ''
 
