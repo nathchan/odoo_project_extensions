@@ -24,8 +24,46 @@
                                 <field name="site_id" options="{'no_create': True}" />
                             </group>
 
+                            <group col="2">
+                                <group>
+                                    <field name="site_longitude" readonly="1" />
+                                    <field name="site_latitude" readonly="1" />
+                                    <field name="site_federal_state_code" readonly="1" />
+                                    <field name="site_federal_state" readonly="1" />
+                                    <field name="site_district" readonly="1" />
+                                </group>
+                                <group>
+                                    <field name="site_postcode" readonly="1" />
+                                    <field name="site_city" readonly="1" />
+                                    <field name="site_street" readonly="1" />
+                                    <field name="site_house_number" readonly="1" />
+                                </group>
+                            </group>
                             <field name="site_geo_point" widget="geo_edit_map"/>
 
+                        </page>
+                        <page name="site_details" string="Site Details">
+                            <group col="2">
+                                <group>
+                                    <field name="site_pole_type" readonly="1" />
+                                    <field name="site_placement" readonly="1" />
+                                </group>
+                                <group>
+                                    <field name="site_owner" readonly="1" />
+                                    <field name="site_construction_owner" readonly="1" />
+                                    <field name="site_telecom" readonly="1" />
+                                </group>
+                                <group>
+                                    <field name="site_tech_subtype_2g" readonly="1" />
+                                    <field name="site_tech_subtype_3g" readonly="1" />
+                                    <field name="site_tech_subtype_4g" readonly="1" />
+                                </group>
+                                <group>
+                                    <field name="site_site_user_tma" readonly="1" />
+                                    <field name="site_site_user_h3a" readonly="1" />
+                                    <field name="site_arge" readonly="1" />
+                                </group>
+                            </group>
                         </page>
                     </xpath>
                 </data>

@@ -33,15 +33,15 @@
                                     <group>
                                         <field name="longitude" />
                                         <field name="latitude" />
+                                        <field name="federal_state_code" />
+                                        <field name="federal_state" />
+                                        <field name="district" />
                                     </group>
                                     <group>
-                                        <field name="district" />
                                         <field name="postcode" />
                                         <field name="city" />
                                         <field name="street" />
                                         <field name="house_number" />
-                                        <field name="federal_state_code" />
-                                        <field name="federal_state" />
                                     </group>
                                 </group>
 
