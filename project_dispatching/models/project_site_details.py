@@ -10,6 +10,7 @@ from geojson import Point
 
 class ProjectSiteDetails(geo_model.GeoModel):
     _name = 'project.site.details'
+    _rec_name = 'number'
     _inherit = ['mail.thread', 'ir.needaction_mixin']
 
     @api.one
