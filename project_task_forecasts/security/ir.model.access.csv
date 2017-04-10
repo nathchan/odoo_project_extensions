@@ -2,8 +2,10 @@
 "access_project_export_milestones_log_employee","project.export.milestones.log.employee","model_project_export_milestones_log","base.group_user",1,1,1,0
 "access_project_milestone_employee","project.milestone.employee","model_project_milestone","base.group_user",1,0,0,0
 "access_project_milestone_manager","project.milestone.manager","model_project_milestone","project.group_project_manager",1,1,1,0
+"access_project_task_milestone_forecast_employee","project.task.milestone.forecast.employee","model_project_task_milestone_forecast","base.group_user",1,0,0,0
 "access_project_task_milestone_forecast_user","project.task.milestone.forecast.user","model_project_task_milestone_forecast","project.group_project_user",1,0,0,0
 "access_project_task_milestone_forecast_manager","project.task.milestone.forecast.manager","model_project_task_milestone_forecast","project.group_project_manager",1,1,1,0
+"access_project_task_stage_process_employee","project.task.stage.process.employee","model_project_task_stage_process","base.group_user",1,0,0,0
 "access_project_task_stage_process_user","project.task.stage.process.user","model_project_task_stage_process","project.group_project_user",1,0,0,0
 "access_project_task_stage_process_manager","project.task.stage.process.manager","model_project_task_stage_process","project.group_project_manager",1,1,1,0
 "access_project_base_backlog_user","project.base.backlog.user","model_project_base_backlog","project.group_project_user",1,0,0,0

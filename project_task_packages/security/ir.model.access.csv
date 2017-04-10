@@ -1,3 +1,4 @@
 "id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+"access_project_task_material_order_employee","project.task.material.order.employee","model_project_task_material_order","base.group_user",1,0,0,0
 "access_project_task_material_order_user","project.task.material.order.user","model_project_task_material_order","project.group_project_user",1,1,1,1
 "access_project_task_package_user","project.task.package.user","model_project_task_package","project.group_project_user",1,1,1,1
