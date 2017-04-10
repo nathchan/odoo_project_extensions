@@ -94,6 +94,29 @@
                             <page name="site_data" string="Map">
                                 <field name="site_geo_point" widget="geo_edit_map"/>
                             </page>
+                            <page name="site_details" string="Site Details">
+                                <group col="2">
+                                    <group>
+                                        <field name="site_pole_type" readonly="1" />
+                                        <field name="site_placement" readonly="1" />
+                                    </group>
+                                    <group>
+                                        <field name="site_owner" readonly="1" />
+                                        <field name="site_construction_owner" readonly="1" />
+                                        <field name="site_telecom" readonly="1" />
+                                    </group>
+                                    <group>
+                                        <field name="site_tech_subtype_2g" readonly="1" />
+                                        <field name="site_tech_subtype_3g" readonly="1" />
+                                        <field name="site_tech_subtype_4g" readonly="1" />
+                                    </group>
+                                    <group>
+                                        <field name="site_site_user_tma" readonly="1" />
+                                        <field name="site_site_user_h3a" readonly="1" />
+                                        <field name="site_arge" readonly="1" />
+                                    </group>
+                                </group>
+                            </page>
                             <page name="description" string="Description">
                                 <field name="info" type="html"/>
                                 <div class="oe_clear"/>

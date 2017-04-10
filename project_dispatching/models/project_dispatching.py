@@ -112,8 +112,51 @@ class ProjectDispatching(geo_model.GeoModel):
         for rec in self:
             if rec.task_id and rec.task_id.site_id:
                 rec.site_geo_point = rec.task_id.site_id.geo_point
+                rec.site_name = rec.task_id.site_id.name
+                rec.site_pole_type = rec.task_id.site_id.pole_type
+                rec.site_placement = rec.task_id.site_id.placement
+                rec.site_tech_subtype_2g = rec.task_id.site_id.tech_subtype_2g
+                rec.site_tech_subtype_3g = rec.task_id.site_id.tech_subtype_3g
+                rec.site_tech_subtype_4g = rec.task_id.site_id.tech_subtype_4g
+                rec.site_owner = rec.task_id.site_id.owner
+                rec.site_construction_owner = rec.task_id.site_id.construction_owner
+                rec.site_site_user_tma = rec.task_id.site_id.site_user_tma
+                rec.site_site_user_h3a = rec.task_id.site_id.site_user_h3a
+                rec.site_arge = rec.task_id.site_id.arge
+                rec.site_longitude = rec.task_id.site_id.longitude
+                rec.site_latitude = rec.task_id.site_id.latitude
+                rec.site_district = rec.task_id.site_id.district
+                rec.site_postcode = rec.task_id.site_id.postcode
+                rec.site_city = rec.task_id.site_id.city
+                rec.site_street = rec.task_id.site_id.street
+                rec.site_house_number = rec.task_id.site_id.house_number
+                rec.site_federal_state_code = rec.task_id.site_id.federal_state_code
+                rec.site_federal_state = rec.task_id.site_id.federal_state
+                rec.site_telecom = rec.task_id.site_id.telecom
 
     site_geo_point = geo_fields.GeoPoint('Dispatching Location', compute=_compute_site_details)
+    site_name = fields.Char('Name', compute=_compute_site_details)
+    site_pole_type = fields.Char('Pole type', compute=_compute_site_details)
+    site_placement = fields.Char('Placement', compute=_compute_site_details)
+    site_tech_subtype_2g = fields.Char('2G Tech Subtype', compute=_compute_site_details)
+    site_tech_subtype_3g = fields.Char('3G Tech Subtype', compute=_compute_site_details)
+    site_tech_subtype_4g = fields.Char('4G Tech Subtype', compute=_compute_site_details)
+    site_owner = fields.Char('Owner', compute=_compute_site_details)
+    site_construction_owner = fields.Char('Construction owner', compute=_compute_site_details)
+    site_site_user_tma = fields.Boolean('StandortNutzer TMA', compute=_compute_site_details)
+    site_site_user_h3a = fields.Boolean('StandortNutzer H3A', compute=_compute_site_details)
+    site_arge = fields.Boolean('ARGE', compute=_compute_site_details)
+    site_longitude = fields.Char('Longitude', compute=_compute_site_details)
+    site_latitude = fields.Char('Latitude', compute=_compute_site_details)
+    site_district = fields.Char('District', compute=_compute_site_details)
+    site_postcode = fields.Char('Postcode', compute=_compute_site_details)
+    site_city = fields.Char('City', compute=_compute_site_details)
+    site_street = fields.Char('Street', compute=_compute_site_details)
+    site_house_number = fields.Char('House number', compute=_compute_site_details)
+    site_federal_state_code = fields.Char('Federal state code', compute=_compute_site_details)
+    site_federal_state = fields.Char('Federal state', compute=_compute_site_details)
+    site_telecom = fields.Char('Telecom', compute=_compute_site_details)
+
 
     name = fields.Char('Name', compute=_compute_name)
     department_id = fields.Many2one('hr.department', 'Department', required=True, track_visibility='onchange')
