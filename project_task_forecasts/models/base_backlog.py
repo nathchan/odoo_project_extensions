@@ -27,6 +27,27 @@ class ProjectBacklogCw(models.AbstractModel):
     task_active = fields.Boolean('Task Active', readonly=True)
     task_group_id = fields.Many2one('project.task.group', 'Rollout group', readonly=True)
     subcontractor_id = fields.Many2one('res.partner', 'Subcontractor', readonly=True)
+    site_name = fields.Char('Site name', readonly=True)
+    site_pole_type = fields.Char('Pole type', creadonly=True)
+    site_placement = fields.Char('Placement', readonly=True)
+    site_tech_subtype_2g = fields.Char('2G Tech Subtype', readonly=True)
+    site_tech_subtype_3g = fields.Char('3G Tech Subtype', readonly=True)
+    site_tech_subtype_4g = fields.Char('4G Tech Subtype', readonly=True)
+    site_owner = fields.Char('Owner', readonly=True)
+    site_construction_owner = fields.Char('Construction owner', readonly=True)
+    site_site_user_tma = fields.Boolean('StandortNutzer TMA', readonly=True)
+    site_site_user_h3a = fields.Boolean('StandortNutzer H3A', readonly=True)
+    site_arge = fields.Boolean('ARGE', readonly=True)
+    site_longitude = fields.Char('Longitude', readonly=True)
+    site_latitude = fields.Char('Latitude', readonly=True)
+    site_district = fields.Char('District', readonly=True)
+    site_postcode = fields.Char('Postcode', readonly=True)
+    site_city = fields.Char('City', readonly=True)
+    site_street = fields.Char('Street', readonly=True)
+    site_house_number = fields.Char('House number', readonly=True)
+    site_federal_state_code = fields.Char('Federal state code', readonly=True)
+    site_federal_state = fields.Char('Federal state', readonly=True)
+    site_telecom = fields.Char('Telecom', readonly=True)
     user_id = fields.Many2one('res.users', 'Assigned to', readonly=True)
     forecast_date = fields.Date('Forecast date', readonly=True)
     forecast_week = fields.Char('Forecast week', readonly=True)
@@ -125,6 +146,29 @@ class ProjectBacklogCw(models.AbstractModel):
             t.user_id,
             t.task_group_id,
             t.subcontractor_id,
+            s.number as site_number,
+            s.code as site_code,
+            s.name as site_name,
+            s.pole_type as site_pole_type,
+            s.placement as site_placement,
+            s.tech_subtype_2g as site_tech_subtype_2g,
+            s.tech_subtype_3g as site_tech_subtype_3g,
+            s.tech_subtype_4g as site_tech_subtype_4g,
+            s.owner as site_owner,
+            s.construction_owner as site_construction_owner,
+            s.site_user_tma as site_site_user_tma,
+            s.site_user_h3a as site_site_user_h3a,
+            s.arge as site_arge,
+            s.longitude as site_longitude,
+            s.latitude as site_latitude,
+            s.district as site_district,
+            s.postcode as site_postcode,
+            s.city as site_city,
+            s.street as site_street,
+            s.house_number as site_house_number,
+            s.federal_state_code as site_federal_state_code,
+            s.federal_state as site_federal_state,
+            s.telecom as site_telecom,
             f.forecast_date,
             f.forecast_week,
             f.sequence_order
@@ -137,6 +181,7 @@ class ProjectBacklogCw(models.AbstractModel):
             left join project_project p on p.id = f.project_id
             left join account_analytic_account a on a.id = p.analytic_account_id
             left join project_task t on t.id = f.task_id
+            left join project_site_details s on s.id = t.site_id
         """
         return from_str
 
