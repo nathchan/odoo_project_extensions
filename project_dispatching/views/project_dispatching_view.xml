@@ -188,8 +188,59 @@
                     <field name="vehicle_id" />
                     <field name="info" />
 
-                    <filter string="Next 10 days" domain="[('datetime_start','&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0))), ('datetime_start','&lt;=', datetime.datetime.combine(context_today()+datetime.timedelta(days=10), datetime.time(23,59,59)))]"/>
+                    <!--<filter string="Next 10 days" domain="[('datetime_start','&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0))), ('datetime_start','&lt;=', datetime.datetime.combine(context_today()+datetime.timedelta(days=10), datetime.time(23,59,59)))]"/>-->
 
+                    <filter string="Last Week" domain="['|',
+                                                        '|',
+                                                        '&amp;',
+                                                        ('datetime_start','&gt;=', datetime.datetime.combine(datetime.date.today()-datetime.timedelta(days=datetime.date.today().weekday(), weeks=1), datetime.time(0,0,0))),
+                                                        ('datetime_start','&lt;=', datetime.datetime.combine(datetime.date.today()-datetime.timedelta(days=datetime.date.today().weekday()+1), datetime.time(23,59,59))),
+                                                        '&amp;',
+                                                        ('datetime_stop','&gt;=', datetime.datetime.combine(datetime.date.today()-datetime.timedelta(days=datetime.date.today().weekday(), weeks=1), datetime.time(0,0,0))),
+                                                        ('datetime_stop','&lt;=', datetime.datetime.combine(datetime.date.today()-datetime.timedelta(days=datetime.date.today().weekday()+1), datetime.time(23,59,59))),
+                                                        '&amp;',
+                                                        ('datetime_start','&lt;=', datetime.datetime.combine(datetime.date.today()-datetime.timedelta(days=datetime.date.today().weekday(), weeks=1), datetime.time(0,0,0))),
+                                                        ('datetime_stop','&gt;=', datetime.datetime.combine(datetime.date.today()-datetime.timedelta(days=datetime.date.today().weekday()+1), datetime.time(23,59,59))),
+                                                        ]"/>
+
+                    <filter string="Current Week" domain="['|',
+                                                           '|',
+                                                           '&amp;',
+                                                           ('datetime_start','&gt;=', datetime.datetime.combine(datetime.date.today()-datetime.timedelta(days=datetime.date.today().weekday()), datetime.time(0,0,0))),
+                                                           ('datetime_start','&lt;=', datetime.datetime.combine(datetime.date.today()+datetime.timedelta(days=6-datetime.date.today().weekday()), datetime.time(23,59,59))),
+                                                           '&amp;',
+                                                           ('datetime_start','&gt;=', datetime.datetime.combine(datetime.date.today()-datetime.timedelta(days=datetime.date.today().weekday()), datetime.time(0,0,0))),
+                                                           ('datetime_start','&lt;=', datetime.datetime.combine(datetime.date.today()+datetime.timedelta(days=6-datetime.date.today().weekday()), datetime.time(23,59,59))),
+                                                           '&amp;',
+                                                           ('datetime_start','&gt;=', datetime.datetime.combine(datetime.date.today()-datetime.timedelta(days=datetime.date.today().weekday()), datetime.time(0,0,0))),
+                                                           ('datetime_start','&lt;=', datetime.datetime.combine(datetime.date.today()+datetime.timedelta(days=6-datetime.date.today().weekday()), datetime.time(23,59,59))),
+                                                           ]"/>
+
+                    <filter string="Current Week + 1" domain="['|',
+                                                              '|',
+                                                              '&amp;',
+                                                              ('datetime_start','&gt;=', datetime.datetime.combine(datetime.date.today()+datetime.timedelta(weeks=1)-datetime.timedelta(days=datetime.date.today().weekday()), datetime.time(0,0,0))),
+                                                              ('datetime_start','&lt;=', datetime.datetime.combine(datetime.date.today()+datetime.timedelta(days=6-datetime.date.today().weekday(), weeks=1), datetime.time(23,59,59))),
+                                                              '&amp;',
+                                                              ('datetime_start','&gt;=', datetime.datetime.combine(datetime.date.today()+datetime.timedelta(weeks=1)-datetime.timedelta(days=datetime.date.today().weekday()), datetime.time(0,0,0))),
+                                                              ('datetime_start','&lt;=', datetime.datetime.combine(datetime.date.today()+datetime.timedelta(days=6-datetime.date.today().weekday(), weeks=1), datetime.time(23,59,59))),
+                                                              '&amp;',
+                                                              ('datetime_start','&gt;=', datetime.datetime.combine(datetime.date.today()+datetime.timedelta(weeks=1)-datetime.timedelta(days=datetime.date.today().weekday()), datetime.time(0,0,0))),
+                                                              ('datetime_start','&lt;=', datetime.datetime.combine(datetime.date.today()+datetime.timedelta(days=6-datetime.date.today().weekday(), weeks=1), datetime.time(23,59,59))),
+                                                              ]"/>
+
+                    <filter string="Current Week + 2" domain="['|',
+                                                               '|',
+                                                               '&amp;',
+                                                               ('datetime_start','&gt;=', datetime.datetime.combine(datetime.date.today()+datetime.timedelta(weeks=2)-datetime.timedelta(days=datetime.date.today().weekday()), datetime.time(0,0,0))),
+                                                               ('datetime_start','&lt;=', datetime.datetime.combine(datetime.date.today()+datetime.timedelta(days=6-datetime.date.today().weekday(), weeks=2), datetime.time(23,59,59))),
+                                                               '&amp;',
+                                                               ('datetime_start','&gt;=', datetime.datetime.combine(datetime.date.today()+datetime.timedelta(weeks=2)-datetime.timedelta(days=datetime.date.today().weekday()), datetime.time(0,0,0))),
+                                                               ('datetime_start','&lt;=', datetime.datetime.combine(datetime.date.today()+datetime.timedelta(days=6-datetime.date.today().weekday(), weeks=2), datetime.time(23,59,59))),
+                                                               '&amp;',
+                                                               ('datetime_start','&gt;=', datetime.datetime.combine(datetime.date.today()+datetime.timedelta(weeks=2)-datetime.timedelta(days=datetime.date.today().weekday()), datetime.time(0,0,0))),
+                                                               ('datetime_start','&lt;=', datetime.datetime.combine(datetime.date.today()+datetime.timedelta(days=6-datetime.date.today().weekday(), weeks=2), datetime.time(23,59,59))),
+                                                               ]"/>
 
                 </search>
             </field>
