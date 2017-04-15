@@ -15,6 +15,16 @@
                     <xpath expr="//field[@name='date_to']" position="replace">
                         <field name="date_to" attrs="{'required':[('type', '=', 'remove')]}" class="oe_inline"/>
                     </xpath>
+
+                    <xpath expr="//field[@name='number_of_days_temp']" position="replace">
+                        <field name="number_of_days_temp" invisible="1" />
+                        <field name="number_of_days_to_display" readonly="1" class="oe_inline" /> days
+                    </xpath>
+
+                    <xpath expr="//field[@name='name']" position="replace">
+                        <field name="name" invisible="1" />
+                    </xpath>
+
                 </data>
             </field>
         </record>

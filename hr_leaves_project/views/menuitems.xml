@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="hr_holidays.menu_hr_holidays_dashboard" model="ir.ui.menu">
+            <field name="name">Leaves Calendar</field>
+        </record>
+
+    </data>
+</openerp>
