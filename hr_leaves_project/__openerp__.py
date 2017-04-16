@@ -17,6 +17,7 @@
         'views/hr_holidays_view.xml',
         'views/hr_employee_view.xml',
         'views/menuitems.xml',
+        'security/ir_rule.xml',
     ],
     'demo': [],
     'qweb': [],

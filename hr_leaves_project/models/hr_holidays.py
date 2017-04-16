@@ -1,10 +1,72 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, fields, api, tools
+from openerp import models, fields, api, tools, exceptions as e
 import datetime
 
 class HrHolidays(models.Model):
     _inherit = 'hr.holidays'
+
+    def _populate_emp_manager_list(self, employee_id, list):
+        if employee_id.parent_id and employee_id.parent_id.user_id:
+            list.append(employee_id.parent_id.user_id.id)
+            self._populate_emp_manager_list(employee_id.parent_id, list)
+
+    def _populate_child_dep_list(self, department_id, list):
+        if department_id.child_ids and len(department_id.child_ids) > 0:
+            for child in department_id.child_ids:
+                list.append(child.id)
+                self._populate_child_dep_list(child, list)
+
+    def _populate_child_emp_list(self, employee_id, list):
+        child_emps = self.env['hr.employee'].search([('parent_id', '=', employee_id.id)])
+        if child_emps and len(child_emps) > 0:
+            for child in child_emps:
+                list.append(child.id)
+                self._populate_child_emp_list(child, list)
+
+    def _search_manager(self, operator, value):
+        if operator != '=':
+            return [('id', 'in', [])]
+
+        emps = self.env['hr.employee'].search([('user_id', '=', value)])
+        emp_list = []
+        for emp in emps:
+            child_emps = self.env['hr.employee'].search([('parent_id', '=', emp.id)])
+            for ch_emp in child_emps:
+                emp_list.append(ch_emp.id)
+                self._populate_child_emp_list(ch_emp, emp_list)
+
+        return [('employee_id', 'in', emp_list)]
+
+    @api.depends('number_of_days_temp')
+    @api.multi
+    def _compute_num_of_days_to_display(self):
+        for rec in self:
+            rec.number_of_days_to_display = rec.number_of_days_temp
+
+    @api.multi
+    def _compute_manager_fields(self):
+        for rec in self:
+            rec.manager = 0
+
+    date_from = fields.Date('Start Date', readonly=True, states={'draft': [('readonly', False)], 'confirm': [('readonly', False)]}, select=True, copy=False)
+    date_to = fields.Date('End Date', readonly=True, states={'draft': [('readonly', False)], 'confirm': [('readonly', False)]}, copy=False)
+    number_of_days_to_display = fields.Integer('Duration to display', compute=_compute_num_of_days_to_display)
+    manager = fields.Integer('Manager', compute=_compute_manager_fields, search=_search_manager)
+
+    @api.one
+    def holidays_validate(self):
+        if self.type == 'remove' and self.env.user.id != tools.SUPERUSER_ID:
+            if not self.env.user.has_group('base.group_hr_user'):
+                raise e.ValidationError('You are not allowed to approve leave requests.')
+
+            emp_manager_list = []
+            self._populate_emp_manager_list(self.employee_id, emp_manager_list)
+            if not (self.env.user.id in emp_manager_list):
+                raise e.ValidationError('You are not allowed to approve leave request for '+ self.employee_id.name + '.')
+
+        super(HrHolidays, self).holidays_validate()
+
 
     @api.onchange('date_from', 'date_to')
     @api.one
@@ -27,13 +89,3 @@ class HrHolidays(models.Model):
         self.name = ''
         if self.holiday_status_id:
             self.name = self.holiday_status_id.name
-
-    @api.depends('number_of_days_temp')
-    @api.multi
-    def _compute_num_of_days_to_display(self):
-        for rec in self:
-            rec.number_of_days_to_display = rec.number_of_days_temp
-
-    date_from = fields.Date('Start Date', readonly=True, states={'draft': [('readonly', False)], 'confirm': [('readonly', False)]}, select=True, copy=False)
-    date_to = fields.Date('End Date', readonly=True, states={'draft': [('readonly', False)], 'confirm': [('readonly', False)]}, copy=False)
-    number_of_days_to_display = fields.Integer('Duration to display', compute=_compute_num_of_days_to_display)

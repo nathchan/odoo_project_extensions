@@ -17,14 +17,44 @@
                     </xpath>
 
                     <xpath expr="//field[@name='number_of_days_temp']" position="replace">
-                        <field name="number_of_days_temp" invisible="1" />
-                        <field name="number_of_days_to_display" readonly="1" class="oe_inline" /> days
+                        <field name="number_of_days_temp" attrs="{'invisible': [('type', '=', 'remove')]}" />
+                        <field name="number_of_days_to_display" attrs="{'invisible': [('type', '=', 'add')]}" readonly="1" class="oe_inline" /> days
                     </xpath>
 
                     <xpath expr="//field[@name='name']" position="replace">
                         <field name="name" invisible="1" />
                     </xpath>
 
+                    <xpath expr="//field[@name='employee_id']" position="after">
+                        <!--<field name="display_employee_field_with_domain" invisible="1" />-->
+                        <!--<field name="employee_id"-->
+                               <!--attrs="{'required':[('holiday_type','=','employee')],'invisible':[('holiday_type','=','category'), ('display_employee_field_with_domain', '=', True)]}"-->
+                               <!--domain="[('manager', '=', uid)]"-->
+                               <!--on_change="onchange_employee(employee_id)"-->
+                               <!--options="{'no_create': true, 'no_open': true}"-->
+                               <!--/>-->
+                    </xpath>
+
+                </data>
+            </field>
+        </record>
+
+        <record id="view_hr_holidays_filter" model="ir.ui.view">
+            <field name="name">hr.holidays.filter</field>
+            <field name="model">hr.holidays</field>
+            <field name="inherit_id" ref="hr_holidays.view_hr_holidays_filter" />
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//filter[@name='department']/following::filter[1]" position="replace">
+                    </xpath>
+
+                    <xpath expr="//filter[@name='department']" position="attributes">
+                        <attribute name="domain">[('manager', '=', uid)]</attribute>
+                    </xpath>
+
+                    <xpath expr="//filter[@name='group_employee']" position="after">
+                        <filter name="group_department" string="Department" context="{'group_by':'department_id'}" />
+                    </xpath>
                 </data>
             </field>
         </record>
