@@ -24,6 +24,7 @@
         'views/timesheet_view.xml',
         'views/project_site_details_view.xml',
         'views/menuitem.xml',
+        'views/backend_assets.xml',
         'security/ir.model.access.csv',
     ],
     'demo': [],
