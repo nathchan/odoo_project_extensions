@@ -13,6 +13,28 @@ class Task(geo_model.GeoModel):
         for obj in self:
             self.dispatching_count = self.env['project.dispatching'].search_count([('task_id', '=', obj.id)])
 
+    def _search_shared_site(self, operator, value):
+        if (operator == '=' and value == True) or (operator == '!=' and value == False):
+            operator = 'in'
+        elif (operator == '!=' and value == True) or (operator == '=' and value == False):
+            operator = 'not in'
+        else:
+            return [('id', 'in', [])]
+
+        query = """
+            SELECT
+                t.id
+            FROM
+                project_task t
+                LEFT JOIN project_site_details s ON s.id = t.site_id
+            WHERE
+                s.sharing_site IS TRUE
+        """
+        self.env.cr.execute(query)
+        items = self.env.cr.fetchall()
+        res_ids = [item[0] for item in items]
+        return [('id', operator, res_ids)]
+
     @api.multi
     @api.depends('site_id')
     def _compute_site_details(self):
@@ -30,6 +52,7 @@ class Task(geo_model.GeoModel):
                 rec.site_site_user_tma = rec.site_id.site_user_tma
                 rec.site_site_user_h3a = rec.site_id.site_user_h3a
                 rec.site_arge = rec.site_id.arge
+                rec.site_sharing_site = rec.site_id.sharing_site
                 rec.site_longitude = rec.site_id.longitude
                 rec.site_latitude = rec.site_id.latitude
                 rec.site_district = rec.site_id.district
@@ -54,6 +77,7 @@ class Task(geo_model.GeoModel):
     site_site_user_tma = fields.Boolean('StandortNutzer TMA', compute=_compute_site_details)
     site_site_user_h3a = fields.Boolean('StandortNutzer H3A', compute=_compute_site_details)
     site_arge = fields.Boolean('ARGE', compute=_compute_site_details)
+    site_sharing_site = fields.Boolean('Sharing site', compute=_compute_site_details, search=_search_shared_site)
     site_longitude = fields.Char('Longitude', compute=_compute_site_details)
     site_latitude = fields.Char('Latitude', compute=_compute_site_details)
     site_district = fields.Char('District', compute=_compute_site_details)

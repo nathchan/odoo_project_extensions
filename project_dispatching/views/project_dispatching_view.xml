@@ -114,6 +114,7 @@
                                         <field name="site_site_user_tma" readonly="1" />
                                         <field name="site_site_user_h3a" readonly="1" />
                                         <field name="site_arge" readonly="1" />
+                                        <field name="site_sharing_site" readonly="1" />
                                     </group>
                                 </group>
                             </page>

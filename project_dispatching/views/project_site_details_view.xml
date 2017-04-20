@@ -68,6 +68,7 @@
                                     <field name="site_user_tma" />
                                     <field name="site_user_h3a" />
                                     <field name="arge" />
+                                    <field name="sharing_site" />
                                 </group>
                             </page>
                         </notebook>

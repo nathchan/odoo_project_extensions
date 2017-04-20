@@ -106,6 +106,29 @@ class ProjectDispatching(geo_model.GeoModel):
             self.timesheet_activity_ids = acts
             self.effective_hours = sum([item.unit_amount for item in self.timesheet_activity_ids])
 
+    def _search_shared_site(self, operator, value):
+        if (operator == '=' and value == True) or (operator == '!=' and value == False):
+            operator = 'in'
+        elif (operator == '!=' and value == True) or (operator == '=' and value == False):
+            operator = 'not in'
+        else:
+            return [('id', 'in', [])]
+
+        query = """
+            SELECT
+                d.id
+            FROM
+                project_dispatching d
+                LEFT JOIN project_task t ON t.id = d.task_id
+                LEFT JOIN project_site_details s ON s.id = t.site_id
+            WHERE
+                s.sharing_site IS TRUE
+        """
+        self.env.cr.execute(query)
+        items = self.env.cr.fetchall()
+        res_ids = [item[0] for item in items]
+        return [('id', operator, res_ids)]
+
     @api.multi
     @api.depends('task_id', 'task_id')
     def _compute_site_details(self):
@@ -123,6 +146,7 @@ class ProjectDispatching(geo_model.GeoModel):
                 rec.site_site_user_tma = rec.task_id.site_id.site_user_tma
                 rec.site_site_user_h3a = rec.task_id.site_id.site_user_h3a
                 rec.site_arge = rec.task_id.site_id.arge
+                rec.site_sharing_site = rec.task_id.site_id.sharing_site
                 rec.site_longitude = rec.task_id.site_id.longitude
                 rec.site_latitude = rec.task_id.site_id.latitude
                 rec.site_district = rec.task_id.site_id.district
@@ -146,6 +170,7 @@ class ProjectDispatching(geo_model.GeoModel):
     site_site_user_tma = fields.Boolean('StandortNutzer TMA', compute=_compute_site_details)
     site_site_user_h3a = fields.Boolean('StandortNutzer H3A', compute=_compute_site_details)
     site_arge = fields.Boolean('ARGE', compute=_compute_site_details)
+    site_sharing_site = fields.Boolean('Sharing site', compute=_compute_site_details, search=_search_shared_site)
     site_longitude = fields.Char('Longitude', compute=_compute_site_details)
     site_latitude = fields.Char('Latitude', compute=_compute_site_details)
     site_district = fields.Char('District', compute=_compute_site_details)

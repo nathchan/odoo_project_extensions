@@ -79,6 +79,8 @@ class ProjectSiteDetails(geo_model.GeoModel):
     #ARGE
     arge = fields.Boolean('ARGE')
 
+    sharing_site = fields.Boolean('Sharing site')
+
     #WGS84_Longitude
     longitude = fields.Char('Longitude', required=True)
     #WGS84_Latitude
