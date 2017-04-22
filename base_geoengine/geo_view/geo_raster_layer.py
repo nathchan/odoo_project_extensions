@@ -25,6 +25,7 @@ class GeoRasterLayer(models.Model):
     raster_type = fields.Selection(
         [('osm', 'OpenStreetMap'),
          ('mapbox', 'MapBox'),
+         ('google', 'Google'),
          # FIXME ('google', 'Google'), see OCA/geospatial#63
          ('wmts', 'WMTS'),
          ('d_wms', 'Distant WMS'),
