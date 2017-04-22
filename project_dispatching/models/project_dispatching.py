@@ -130,6 +130,24 @@ class ProjectDispatching(geo_model.GeoModel):
         return [('id', operator, res_ids)]
 
     @api.multi
+    @api.depends('department_id')
+    def _compute_team_leader(self):
+        for rec in self:
+            if rec.department_id and rec.department_id.manager_id:
+                rec.team_leader_id = rec.department_id.manager_id
+
+    @api.multi
+    @api.depends('all_day', 'datetime_start', 'datetime_stop')
+    def _compute_from_to_string(self):
+        for rec in self:
+            if rec.all_day:
+                rec.calc_datetime_start = datetime.datetime.strptime(rec.datetime_start, tools.DEFAULT_SERVER_DATETIME_FORMAT).strftime('%d.%m.%Y')
+                rec.calc_datetime_stop = datetime.datetime.strptime(rec.datetime_stop, tools.DEFAULT_SERVER_DATETIME_FORMAT).strftime('%d.%m.%Y')
+            else:
+                rec.calc_datetime_start = datetime.datetime.strptime(rec.datetime_start, tools.DEFAULT_SERVER_DATETIME_FORMAT).strftime('%d.%m.%Y %H:%M:%S')
+                rec.calc_datetime_stop = datetime.datetime.strptime(rec.datetime_stop, tools.DEFAULT_SERVER_DATETIME_FORMAT).strftime('%d.%m.%Y %H:%M:%S')
+
+    @api.multi
     @api.depends('task_id', 'task_id')
     def _compute_site_details(self):
         for rec in self:
@@ -182,9 +200,9 @@ class ProjectDispatching(geo_model.GeoModel):
     site_federal_state = fields.Char('Federal state', compute=_compute_site_details)
     site_telecom = fields.Char('Telecom', compute=_compute_site_details)
 
-
     name = fields.Char('Name', compute=_compute_name)
     department_id = fields.Many2one('hr.department', 'Department', required=True, track_visibility='onchange')
+    team_leader_id = fields.Many2one('hr.employee', 'Team leader', compute=_compute_team_leader)
     project_id = fields.Many2one('project.project', 'Project', compute=_get_project)
     analytic_account_id = fields.Many2one('account.analytic.account', 'Field of activity', required=True, track_visibility='onchange')
     analytic_account_id_use_tasks = fields.Boolean(related='analytic_account_id.use_tasks')
@@ -195,6 +213,8 @@ class ProjectDispatching(geo_model.GeoModel):
     all_day = fields.Boolean('All day?', default=True)
     datetime_start = fields.Datetime('From', required=True, track_visibility='onchange')
     datetime_stop = fields.Datetime('To', required=True, track_visibility='onchange')
+    calc_datetime_start = fields.Char('From', compute=_compute_from_to_string)
+    calc_datetime_stop = fields.Char('To', compute=_compute_from_to_string)
     vehicle_id = fields.Many2one('fleet.vehicle', 'Vehicle', track_visibility='onchange')
     percent_complete = fields.Selection([(0, '0 %'),
                                         (25, '25 %'),
@@ -215,7 +235,7 @@ class ProjectDispatching(geo_model.GeoModel):
         end = datetime.datetime.strptime(self.datetime_stop, tools.DEFAULT_SERVER_DATETIME_FORMAT) if self.datetime_stop else False
         if start and end:
             if start > end:
-                raise e.ValidationError('Starting date must be lower than ending date.')
+                raise e.ValidationError('Starting date must be before ending date.')
 
         if self.all_day is True:
             self.env.cr.execute("""

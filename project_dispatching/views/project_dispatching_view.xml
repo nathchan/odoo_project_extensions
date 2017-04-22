@@ -164,13 +164,14 @@
             <field name="model">project.dispatching</field>
             <field name="arch" type="xml">
                 <tree string="Dispatching">
+                    <field name="calc_datetime_start" />
+                    <field name="calc_datetime_stop" />
                     <field name="department_id" />
+                    <field name="team_leader_id" />
                     <field name="analytic_account_id" />
                     <field name="activity_id" />
                     <field name="task_id" />
                     <field name="percent_complete" />
-                    <field name="date_start" />
-                    <field name="date_stop" />
                     <field name="vehicle_id" />
                 </tree>
             </field>
