@@ -20,7 +20,7 @@
 
                 <!--<script type="text/javascript" src="//maps.googleapis.com/maps/api/js?v=3&amp;sensor=false"></script>-->
 
-                <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&amp;v=3.20"></script>
+                <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBD7lLtGcL6by9nh25yv3NfTfkZVOuJs7k&amp;sensor=false&amp;v=3.20"></script>
 
                 <link rel="stylesheet" href="/base_geoengine/static/src/css/style.css"/>
              </xpath>
