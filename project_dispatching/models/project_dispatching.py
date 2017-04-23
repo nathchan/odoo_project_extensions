@@ -131,6 +131,32 @@ class ProjectDispatching(geo_model.GeoModel):
         res_ids = [item[0] for item in items]
         return [('id', operator, res_ids)]
 
+    def _search_site_name(self, operator, value):
+        if operator == 'like' or operator == 'ilike':
+            new_operator = 'in'
+            new_value = '%'+value+'%'
+        elif operator == 'not like' or operator == 'not ilike':
+            new_operator = 'not in'
+            new_value = '%'+value+'%'
+        else:
+            new_operator = 'in'
+            new_value = value
+
+        query = """
+            SELECT
+                d.id
+            FROM
+                project_dispatching d
+                LEFT JOIN project_task t ON t.id = d.task_id
+                LEFT JOIN project_site_details s ON s.id = t.site_id
+            WHERE
+                s.name %s '%s'
+        """ % (operator, new_value,)
+        self.env.cr.execute(query)
+        items = self.env.cr.fetchall()
+        res_ids = [item[0] for item in items]
+        return [('id', new_operator, res_ids)]
+
     @api.multi
     @api.depends('department_id')
     def _compute_team_leader(self):
@@ -179,7 +205,7 @@ class ProjectDispatching(geo_model.GeoModel):
                 rec.site_telecom = rec.task_id.site_id.telecom
 
     site_geo_point = geo_fields.GeoPoint('Dispatching Location', compute=_compute_site_details)
-    site_name = fields.Char('Name', compute=_compute_site_details)
+    site_name = fields.Char('Site Name', compute=_compute_site_details, search=_search_site_name)
     site_pole_type = fields.Char('Pole type', compute=_compute_site_details)
     site_placement = fields.Char('Placement', compute=_compute_site_details)
     site_tech_subtype_2g = fields.Char('2G Tech Subtype', compute=_compute_site_details)
