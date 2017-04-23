@@ -29,7 +29,7 @@ class HrHolidays(models.Model):
             return [('id', 'in', [])]
 
         emps = self.env['hr.employee'].search([('user_id', '=', value)])
-        emp_list = []
+        emp_list = [emp.id for emp in emps]
         for emp in emps:
             child_emps = self.env['hr.employee'].search([('parent_id', '=', emp.id)])
             for ch_emp in child_emps:
@@ -49,10 +49,31 @@ class HrHolidays(models.Model):
         for rec in self:
             rec.manager = 0
 
+    @api.one
+    def _compute_display_emp_domain_field(self):
+        if self.env.user.has_group('base.group_hr_user'):
+            self.display_employee_field_with_domain = False
+        else:
+            self.display_employee_field_with_domain = True
+
+    def _default_display_emp_domain_field(self):
+        if self.env.user.has_group('base.group_hr_user'):
+            return False
+        else:
+            return True
+
     date_from = fields.Date('Start Date', readonly=True, states={'draft': [('readonly', False)], 'confirm': [('readonly', False)]}, select=True, copy=False)
     date_to = fields.Date('End Date', readonly=True, states={'draft': [('readonly', False)], 'confirm': [('readonly', False)]}, copy=False)
     number_of_days_to_display = fields.Integer('Duration to display', compute=_compute_num_of_days_to_display)
     manager = fields.Integer('Manager', compute=_compute_manager_fields, search=_search_manager)
+    display_employee_field_with_domain = fields.Boolean('Display emp field with domain', compute=_compute_display_emp_domain_field, default=_default_display_emp_domain_field)
+    employee_with_domain = fields.Many2one('hr.employee', 'Employee with domain')
+
+    @api.onchange('employee_with_domain')
+    @api.one
+    def change_employee_with_domain(self):
+        if self.employee_with_domain:
+            self.employee_id = self.employee_with_domain
 
     @api.one
     def holidays_validate(self):

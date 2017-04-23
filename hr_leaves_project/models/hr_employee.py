@@ -22,7 +22,7 @@ class HrEmployee(models.Model):
             return [('id', 'in', [])]
 
         emps = self.search([('user_id', '=', value)])
-        emp_list = []
+        emp_list = [emp.id for emp in emps]
         for emp in emps:
             child_emps = self.search([('parent_id', '=', emp.id)])
             for ch_emp in child_emps:

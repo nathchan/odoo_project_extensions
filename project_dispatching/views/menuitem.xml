@@ -21,7 +21,7 @@
                   sequence="1"/>
 
 
-        <menuitem name="Sites"
+        <menuitem name="Sites Inventory"
                   id="menu_project_site_details"
                   parent="project.menu_project_management"
                   action="action_project_site_details"

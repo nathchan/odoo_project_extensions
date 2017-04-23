@@ -92,6 +92,21 @@
                         </group>
                         <notebook>
                             <page name="site_data" string="Map">
+                                <group col="2">
+                                    <group>
+                                        <field name="site_longitude" readonly="1" />
+                                        <field name="site_latitude" readonly="1" />
+                                        <field name="site_federal_state_code" readonly="1" />
+                                        <field name="site_federal_state" readonly="1" />
+                                        <field name="site_district" readonly="1" />
+                                    </group>
+                                    <group>
+                                        <field name="site_postcode" readonly="1" />
+                                        <field name="site_city" readonly="1" />
+                                        <field name="site_street" readonly="1" />
+                                        <field name="site_house_number" readonly="1" />
+                                    </group>
+                                </group>
                                 <field name="site_geo_point" widget="geo_edit_map"/>
                             </page>
                             <page name="site_details" string="Site Details">
