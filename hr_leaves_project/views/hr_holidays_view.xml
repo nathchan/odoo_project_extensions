@@ -26,12 +26,12 @@
                     </xpath>
 
                     <xpath expr="//field[@name='employee_id']" position="after">
-                        <field name="display_employee_field_with_domain" invisible="1" />
-                        <field name="employee_with_domain"
-                               attrs="{'required':[('holiday_type','=','employee')],'invisible':[('display_employee_field_with_domain', '=', False)]}"
-                               domain="[('manager', '=', uid)]"
-                               options="{'no_create': true, 'no_open': true}"
-                               />
+                        <!--<field name="display_employee_field_with_domain" invisible="1" />-->
+                        <!--<field name="employee_with_domain"-->
+                               <!--attrs="{'required':[('holiday_type','=','employee')],'invisible':[('display_employee_field_with_domain', '=', False)]}"-->
+                               <!--domain="[('manager', '=', uid)]"-->
+                               <!--options="{'no_create': true, 'no_open': true}"-->
+                               <!--/>-->
                     </xpath>
 
                 </data>
