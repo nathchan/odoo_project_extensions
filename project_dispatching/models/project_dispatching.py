@@ -81,8 +81,10 @@ class ProjectDispatching(geo_model.GeoModel):
     def _compute_task_dispatching_count(self):
         if self.task_id:
             self.task_dispatching_count = 1 + self.search([('task_id', '=', self.task_id.id), ('datetime_start', '<', self.datetime_start)], count=True)
+            self.total_task_dispatching_count = self.search([('task_id', '=', self.task_id.id), ('id', '!=', self.id)], count=True)
         else:
             self.task_dispatching_count = None
+            self.total_task_dispatching_count = None
 
     @api.one
     def _compute_milestones_description(self):
@@ -224,6 +226,7 @@ class ProjectDispatching(geo_model.GeoModel):
     info = fields.Html('Description')
     assigned_user_id = fields.Many2one('res.users', 'Assigned to', related='task_id.user_id', readonly=True)
     issue_count = fields.Integer('Issue count', compute=_compute_issue_count)
+    total_task_dispatching_count = fields.Integer('Total Task Dispatchings Count', readonly=True, compute=_compute_task_dispatching_count)
     task_dispatching_count = fields.Integer('Task Dispatching Counter', readonly=True, compute=_compute_task_dispatching_count)
     milestones_description = fields.Html('Milestones', compute=_compute_milestones_description)
     timesheet_activity_ids = fields.One2many(comodel_name='account.analytic.line', inverse_name=None, string='Timesheet activities', compute=_compute_timesheets, readonly=True)
@@ -312,6 +315,21 @@ class ProjectDispatching(geo_model.GeoModel):
             res['context'] = context
             res['context'].update({'default_task_id': obj.task_id.id, 'default_project_id': obj.analytic_account_id.id})
             res['domain'] = [('task_id', '=', obj.task_id.id)]
+            if 'group_by' in res['context']:
+                del res['context']['group_by']
+            return res
+        else:
+            return True
+
+    def return_action_to_open_task_dispatchings(self, cr, uid, ids, context=None):
+        if context is None:
+            context = {}
+        obj = self.pool.get('project.dispatching').browse(cr, uid, ids[0], context)
+        if obj.task_id:
+            res = self.pool.get('ir.actions.act_window').for_xml_id(cr, uid, 'project_dispatching', 'action_project_dispatching', context=context)
+            res['context'] = context
+            res['context'].update({'default_task_id': obj.task_id.id, 'default_analytic_account_id': obj.analytic_account_id.id})
+            res['domain'] = [('task_id', '=', obj.task_id.id), ('id', '!=', obj.id)]
             if 'group_by' in res['context']:
                 del res['context']['group_by']
             return res
