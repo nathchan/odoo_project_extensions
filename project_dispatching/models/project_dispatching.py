@@ -44,6 +44,7 @@ class ProjectDispatching(geo_model.GeoModel):
                 rec.project_id = self.env['project.project'].search([('analytic_account_id', '=', rec.analytic_account_id.id)])
 
     @api.onchange('analytic_account_id', 'task_id')
+    @api.one
     def _onchange_department_project_task(self):
         if not self.analytic_account_id_use_tasks:
             self.task_id = None
@@ -63,6 +64,7 @@ class ProjectDispatching(geo_model.GeoModel):
             self.department_id = last_dispatch.department_id
 
     @api.onchange('date_start', 'date_stop')
+    @api.one
     def _onchange_date_start_date_stop(self):
         if self.date_start:
             self.datetime_start = self.date_start + ' 12:00:00'
@@ -70,6 +72,7 @@ class ProjectDispatching(geo_model.GeoModel):
             self.datetime_stop = self.date_stop + ' 12:00:00'
 
     @api.onchange('all_day')
+    @api.one
     def _onchange_all_day(self):
         if self.all_day is True:
             if self.datetime_start:
@@ -78,12 +81,19 @@ class ProjectDispatching(geo_model.GeoModel):
                 self.date_stop = self.datetime_stop[:10]
 
     @api.depends('task_id', 'datetime_start')
+    @api.one
     def _compute_task_dispatching_count(self):
         if self.task_id:
             self.task_dispatching_count = 1 + self.search([('task_id', '=', self.task_id.id), ('datetime_start', '<', self.datetime_start)], count=True)
-            self.total_task_dispatching_count = self.search([('task_id', '=', self.task_id.id), ('id', '!=', self.id)], count=True)
+
         else:
             self.task_dispatching_count = None
+
+    @api.one
+    def _compute_total_task_dispatching_count(self):
+        if self.task_id:
+            self.total_task_dispatching_count = self.search([('task_id', '=', self.task_id.id), ('id', '!=', self.id)], count=True)
+        else:
             self.total_task_dispatching_count = None
 
     @api.one
@@ -176,6 +186,18 @@ class ProjectDispatching(geo_model.GeoModel):
                 rec.calc_datetime_stop = datetime.datetime.strptime(rec.datetime_stop, tools.DEFAULT_SERVER_DATETIME_FORMAT).strftime('%d.%m.%Y %H:%M:%S')
 
     @api.multi
+    def _compute_team_member_missing(self):
+        pass
+    #     for rec in self:
+    #         if rec.department_id and rec.datetime_start and rec.datetime_stop:
+    #             emps = [item.id for item in self.env['hr.employee'].search([('department_id', '=', rec.department_id.id)])]
+    #             lvs = self.env['hr.holidays'].search([('employee_id', 'in', emps), ('state', '=', 'validate'),
+    #                                                   '|'
+    #                                                   ('date_from', '<=', rec.datetime_start), ('date_to', '>=', rec.datetime_stop),
+    #                                                   ])
+
+
+    @api.multi
     @api.depends('task_id', 'task_id')
     def _compute_site_details(self):
         for rec in self:
@@ -252,11 +274,12 @@ class ProjectDispatching(geo_model.GeoModel):
     info = fields.Html('Description')
     assigned_user_id = fields.Many2one('res.users', 'Assigned to', related='task_id.user_id', readonly=True)
     issue_count = fields.Integer('Issue count', compute=_compute_issue_count)
-    total_task_dispatching_count = fields.Integer('Total Task Dispatchings Count', readonly=True, compute=_compute_task_dispatching_count)
+    total_task_dispatching_count = fields.Integer('Total Task Dispatchings Count', readonly=True, compute=_compute_total_task_dispatching_count)
     task_dispatching_count = fields.Integer('Task Dispatching Counter', readonly=True, compute=_compute_task_dispatching_count)
     milestones_description = fields.Html('Milestones', compute=_compute_milestones_description)
     timesheet_activity_ids = fields.One2many(comodel_name='account.analytic.line', inverse_name=None, string='Timesheet activities', compute=_compute_timesheets, readonly=True)
     effective_hours = fields.Float('Hours spent', compute=_compute_timesheets)
+    team_members_missing = fields.Boolean('Team member is missing', compute=_compute_team_member_missing)
 
     @api.constrains('department_id', 'datetime_start', 'datetime_stop')
     def _check_dates(self):
