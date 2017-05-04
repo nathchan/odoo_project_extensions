@@ -15,6 +15,15 @@
                         <field name="project_wp_code" />
                     </xpath>
 
+                    <xpath expr="//header" position="inside">
+                        <button string="Apply milestones template"
+                                name="apply_milestones_template"
+                                type="object"
+                                confirm="You are about to apply milestones template on all available tasks in this project. Are you sure?"
+                                groups="project.group_project_manager"
+                                />
+                    </xpath>
+
                 </data>
             </field>
         </record>
