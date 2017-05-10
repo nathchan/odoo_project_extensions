@@ -548,7 +548,8 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 if day_off:
                     color = '999a9e'
 
-                leave_request = self.env['hr.holidays'].search([('date_from', '<=', iteration_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)),
+                leave_request = self.env['hr.holidays'].search([('employee_id', '=', employee.id),
+                                                                ('date_from', '<=', iteration_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)),
                                                                 ('date_to', '>=', iteration_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)),
                                                                 ('state', '=', 'validate')],
                                                                limit=1)
