@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<openerp>
+  <data>
+
+      <record id="group_can_approve_all_holidays" model="res.groups">
+          <field name="name">Can approve all holidays</field>
+      </record>
+
+  </data>
+</openerp>

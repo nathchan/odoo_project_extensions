@@ -77,7 +77,7 @@ class HrHolidays(models.Model):
 
     @api.one
     def holidays_validate(self):
-        if self.type == 'remove' and self.env.user.id != tools.SUPERUSER_ID:
+        if self.type == 'remove' and not self.env.user.has_group('hr_leaves_project.group_can_approve_all_holidays'):
             if not self.env.user.has_group('base.group_hr_user'):
                 raise e.ValidationError('You are not allowed to approve leave requests.')
 
