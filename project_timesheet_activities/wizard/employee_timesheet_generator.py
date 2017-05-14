@@ -183,18 +183,8 @@ class EmployeeTimesheetGenerator(models.TransientModel):
             employees = [item.employee_id for item in this.employee_timesheet_generator_line_ids]
 
         for employee in employees:
-            analytic_acc_lines_count = sheet_lines.search([('user_id', '=', employee.user_id.id),
-                                                           ('timesheet_sheet_id', '!=', False),
-                                                           ('date', '>=', start_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)),
-                                                           ('date', '<=', end_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT))],
-                                                          count=True)
-            if not analytic_acc_lines_count:
-                continue
-
-
 
             ws = wb.create_sheet(employee.name, 0)
-
 
             ws.merge_cells('A2:C2')
             ws['A2'] = 'TIMESHEET'
@@ -207,7 +197,6 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                                                  bottom=Side(style='thick', color=colors.BLACK)),
                                    alignment=Alignment(horizontal='center')
                                    )
-
 
             ws.merge_cells('B3:C3')
             ws['A3'] = 'Employee:'
@@ -249,7 +238,6 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                                    alignment=Alignment(horizontal='center')
                                    )
 
-
             ws['A3'].style = Style(
                                    border=Border(left=Side(style='thick', color=colors.BLACK),
                                                  right=Side(style='thick', color=colors.BLACK),
@@ -286,7 +274,6 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                                    alignment=Alignment(horizontal='center')
                                    )
 
-
             ws.merge_cells('E4:H4')
             ws['E4'] = 'Consumed holiday days:'
             ws['I4'] = ''
@@ -303,7 +290,6 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                                                  bottom=Side(style='thick', color=colors.BLACK)),
                                    alignment=Alignment(horizontal='center')
                                    )
-
 
             ws.merge_cells('E5:H5')
             ws['E5'] = 'Rest of holiday days:'
@@ -516,21 +502,15 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                                    font=Font(bold=True),
                                    fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
 
-
             ws.row_dimensions[2].height = 20
             ws.row_dimensions[3].height = 20
             ws.row_dimensions[4].height = 20
             ws.row_dimensions[5].height = 20
-
             ws.row_dimensions[7].height = 45
-
             ws.column_dimensions['A'].width = 12
             ws.column_dimensions['H'].width = 20
             ws.column_dimensions['N'].width = 20
             ws.column_dimensions['R'].width = 30
-
-
-
 
             iteration_date = start_date
             n = [0]
@@ -538,7 +518,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
             working_time_sum = 0.0
             working_time_per_day_sum = 0.0
             ws['F8'] = ''
-            while(iteration_date <= end_date):
+            while iteration_date <= end_date:
                 days_index += 1
                 color = 'e0eaff'
                 if days_index % 2 == 0:
@@ -915,7 +895,7 @@ def write_line(ws, n, color, current_date, line=None):
                                                     right=Side(style='thick', color=colors.BLACK),
                                                     top=Side(style='thin', color=colors.BLACK),
                                                     bottom=Side(style='thin', color=colors.BLACK)),
-)
+                                      )
 
     ws['B'+str(7+n[0])] = format_float_time(line.timesheet_start_time) if not empty_line and line.timesheet_start_time else ''
     ws['B'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
@@ -1121,7 +1101,7 @@ def write_pub_holiday_line(ws, n, color, current_date):
                                                     right=Side(style='thick', color=colors.BLACK),
                                                     top=Side(style='thin', color=colors.BLACK),
                                                     bottom=Side(style='thin', color=colors.BLACK)),
-)
+                                      )
 
     ws['B'+str(7+n[0])] = format_float_time(8.0)
     ws['B'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
@@ -1301,6 +1281,17 @@ def write_pub_holiday_line(ws, n, color, current_date):
                                                     top=Side(style='thin', color=colors.BLACK),
                                                     bottom=Side(style='thin', color=colors.BLACK)),
                                       )
+    ws['R'+str(7+n[0])] = ''
+    ws['R'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
+                                      fill=PatternFill(patternType='solid',
+                                                       fill_type='solid',
+                                                       fgColor=Color(color)),
+                                      border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                    right=Side(style='thick', color=colors.BLACK),
+                                                    top=Side(style='thin', color=colors.BLACK),
+                                                    bottom=Side(style='thin', color=colors.BLACK)),
+                                      )
+
 
 def write_leave_request_line(ws, n, color, activity, current_date):
 
@@ -1487,6 +1478,17 @@ def write_leave_request_line(ws, n, color, activity, current_date):
 
     ws['Q'+str(7+n[0])] = '---'
     ws['Q'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
+                                      fill=PatternFill(patternType='solid',
+                                                       fill_type='solid',
+                                                       fgColor=Color(color)),
+                                      border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                    right=Side(style='thick', color=colors.BLACK),
+                                                    top=Side(style='thin', color=colors.BLACK),
+                                                    bottom=Side(style='thin', color=colors.BLACK)),
+                                      )
+
+    ws['R'+str(7+n[0])] = ''
+    ws['R'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
                                       fill=PatternFill(patternType='solid',
                                                        fill_type='solid',
                                                        fgColor=Color(color)),
