@@ -508,7 +508,8 @@ class EmployeeTimesheetGenerator(models.TransientModel):
             ws.row_dimensions[5].height = 20
             ws.row_dimensions[7].height = 45
             ws.column_dimensions['A'].width = 12
-            ws.column_dimensions['H'].width = 20
+            ws.column_dimensions['G'].width = 22
+            ws.column_dimensions['H'].width = 22
             ws.column_dimensions['N'].width = 20
             ws.column_dimensions['R'].width = 30
 
@@ -562,8 +563,11 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                         write_line(ws, n, color, iteration_date)
 
                     elif leave_request:
-                        write_leave_request_line(ws, n, color, leave_request.holiday_status_id.name, iteration_date)
-                        ws['F'+str(7+n[0])] = format_float_time_str(7.695)
+                        start_time = leave_request.holiday_status_id.timesheet_start_time if leave_request.holiday_status_id else 8.0
+                        end_time = leave_request.holiday_status_id.timesheet_end_time if leave_request.holiday_status_id else 15.695
+                        sum_time = abs(end_time - start_time) if start_time and end_time else 0.0
+                        write_leave_request_line(ws, n, color, leave_request.holiday_status_id.name, start_time, end_time, sum_time, iteration_date)
+                        ws['F'+str(7+n[0])] = format_float_time_str(sum_time)
                         ws['F'+str(7+n[0])].style = Style(number_format="HH:MM:SS",
                                                           fill=PatternFill(patternType='solid',
                                                                            fill_type='solid',
@@ -572,8 +576,8 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                                                                         right=Side(style='thick', color=colors.BLACK),
                                                                         top=Side(style='thin', color=colors.BLACK),
                                                                         bottom=Side(style='thin', color=colors.BLACK)))
-                        working_time_per_day_sum += 7.695
-                        working_time_sum += 7.695
+                        working_time_per_day_sum += sum_time
+                        working_time_sum += sum_time
 
                     else:
                         write_line(ws, n, color, iteration_date)
@@ -1293,7 +1297,7 @@ def write_pub_holiday_line(ws, n, color, current_date):
                                       )
 
 
-def write_leave_request_line(ws, n, color, activity, current_date):
+def write_leave_request_line(ws, n, color, activity, start_time, end_time, sum_time, current_date):
 
     ws['A'+str(7+n[0])] = print_date(current_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT))
     ws['A'+str(7+n[0])].style = Style(font=Font(bold=True),
@@ -1308,7 +1312,7 @@ def write_leave_request_line(ws, n, color, activity, current_date):
                                                     bottom=Side(style='thin', color=colors.BLACK)),
                                       )
 
-    ws['B'+str(7+n[0])] = format_float_time(8.0)
+    ws['B'+str(7+n[0])] = format_float_time(start_time)
     ws['B'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
                                       fill=PatternFill(patternType='solid',
                                                        fill_type='solid',
@@ -1320,7 +1324,7 @@ def write_leave_request_line(ws, n, color, activity, current_date):
                                       number_format="HH:MM:SS"
                                       )
 
-    ws['C'+str(7+n[0])] = format_float_time(15.695)
+    ws['C'+str(7+n[0])] = format_float_time(end_time)
     ws['C'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
                                       fill=PatternFill(patternType='solid',
                                                        fill_type='solid',
@@ -1344,7 +1348,7 @@ def write_leave_request_line(ws, n, color, activity, current_date):
                                       number_format="HH:MM:SS"
                                       )
 
-    ws['E'+str(7+n[0])] = format_float_time(7.695)
+    ws['E'+str(7+n[0])] = format_float_time(sum_time)
     ws['E'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
                                       fill=PatternFill(patternType='solid',
                                                        fill_type='solid',
