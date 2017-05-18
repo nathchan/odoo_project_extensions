@@ -532,7 +532,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                                                                 ('type', '=', 'remove'),
                                                                 ('date_from', '<=', iteration_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)),
                                                                 ('date_to', '>=', iteration_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)),
-                                                                ('state', '=', 'validate')],
+                                                                ('state', 'in', ['validate', 'validate1', 'confirm'])],
                                                                limit=1)
 
                 # ovdje ispitati da li je day_off ili samo nema linija
