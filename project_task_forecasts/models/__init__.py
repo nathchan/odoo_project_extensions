@@ -5,6 +5,7 @@ import task_type
 import task_priority
 import issue
 import milestone
+import milestone_template
 import project
 import export_milestones_log
 import task_milestone_update_log
