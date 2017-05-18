@@ -2,6 +2,32 @@
 <openerp>
     <data>
 
+        <record model="ir.ui.view" id="view_holidaye_inherit">
+            <field name="name">hr.holidays.report_tree.inherit</field>
+            <field name="model">hr.holidays</field>
+            <field name="inherit_id" ref="hr_holidays.view_holiday" />
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//field[@name='name']" position="replace">
+                        <field name="name" invisible="1" />
+                    </xpath>
+                </data>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_holiday_simple_inherit">
+            <field name="name">Leave Request</field>
+            <field name="model">hr.holidays</field>
+            <field name="inherit_id" ref="hr_holidays.view_holiday_simple" />
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//field[@name='name']" position="replace">
+                        <field name="name" invisible="1" />
+                    </xpath>
+                </data>
+            </field>
+        </record>
+
         <record model="ir.ui.view" id="edit_holiday_new_inherit">
             <field name="name">Leave Request</field>
             <field name="model">hr.holidays</field>
@@ -24,6 +50,7 @@
                     <xpath expr="//field[@name='name']" position="replace">
                         <field name="name" invisible="1" />
                     </xpath>
+
 
                     <xpath expr="//field[@name='employee_id']" position="after">
                         <!--<field name="display_employee_field_with_domain" invisible="1" />-->
