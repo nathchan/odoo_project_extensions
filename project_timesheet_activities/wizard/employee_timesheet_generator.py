@@ -118,8 +118,8 @@ class EmployeeTimesheetGenerator(models.TransientModel):
     state = fields.Selection([('choose', 'Choose'), ('get', 'Get')], 'State', default='choose')
     lines_count = fields.Integer(compute=_get_lines_count, string='Employees count')
     display_sap_report = fields.Boolean('Display SAP report?', default=False)
-    sap_date_from = fields.Date('SAP Date from')
-    sap_date_to = fields.Date('SAP Date to')
+    sap_date_from = fields.Date('SAP Date from', default=datetime.now()+relativedelta.relativedelta(weekday=0, days=-6))
+    sap_date_to = fields.Date('SAP Date to', default=datetime.now()+relativedelta.relativedelta(weekday=6))
 
     @api.constrains('sap_date_from', 'sap_date_to')
     def sap_dates_constrains(self):
