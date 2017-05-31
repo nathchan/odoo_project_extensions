@@ -5,7 +5,7 @@ import math
 from openpyxl.styles import PatternFill, Border, Side, Alignment, Protection, Font, Color, colors, Style
 import base64
 import cStringIO
-from openerp import models, fields, api, tools
+from openerp import models, fields, api, tools, exceptions as e
 from datetime import datetime
 from calendar import monthrange
 import datetime as d
@@ -121,19 +121,10 @@ class EmployeeTimesheetGenerator(models.TransientModel):
     sap_date_from = fields.Date('SAP Date from')
     sap_date_to = fields.Date('SAP Date to')
 
-    @api.onchange('sap_date_from')
-    def onchange_sap_date_from(self):
-        if self.sap_date_from:
-            sap_date = datetime.strptime(self.sap_date_from, tools.DEFAULT_SERVER_DATE_FORMAT)
-            self.sap_date_from = (sap_date + relativedelta.relativedelta(weekday=0, days=-6)).strftime(tools.DEFAULT_SERVER_DATE_FORMAT)
-            self.sap_date_to = (sap_date + relativedelta.relativedelta(weekday=6)).strftime(tools.DEFAULT_SERVER_DATE_FORMAT)
-
-    @api.onchange('sap_date_to')
-    def onchange_sap_date_to(self):
-        if self.sap_date_from:
-            sap_date = datetime.strptime(self.sap_date_to, tools.DEFAULT_SERVER_DATE_FORMAT)
-            self.sap_date_from = (sap_date + relativedelta.relativedelta(weekday=0, days=-6)).strftime(tools.DEFAULT_SERVER_DATE_FORMAT)
-            self.sap_date_to = (sap_date + relativedelta.relativedelta(weekday=6)).strftime(tools.DEFAULT_SERVER_DATE_FORMAT)
+    @api.constrains('sap_date_from', 'sap_date_to')
+    def sap_dates_constrains(self):
+        if self.sap_date_from and self.sap_date_to and self.sap_date_to < self.sap_date_from:
+            raise e.ValidationError('SAP REPORT: Date from must be before date to.')
 
     @api.multi
     def fill_lines(self):
