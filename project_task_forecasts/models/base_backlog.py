@@ -14,7 +14,6 @@ class ProjectBacklogCw(models.AbstractModel):
     def _compute_color(self):
         for rec in self:
             rec.color = rec.task_id.color
-            rec.task_blocked = True if rec.task_id.kanban_state == 'blocked' else False
 
     create_uid = fields.Many2one('res.users', 'Created by', readonly=True)
     create_date = fields.Datetime('Created date', readonly=True)
@@ -52,9 +51,11 @@ class ProjectBacklogCw(models.AbstractModel):
     forecast_date = fields.Date('Forecast date', readonly=True)
     forecast_week = fields.Char('Forecast week', readonly=True)
     sequence_order = fields.Integer('Sequence', readonly=True)
-    task_blocked = fields.Boolean('Task blocked', compute=_compute_color)
+    task_blocked = fields.Boolean('Task blocked', readonly=True)
     color = fields.Char('Color Index', compute=_compute_color)
     opened_issue_count = fields.Integer('Opened issues', related='task_milestone_id.opened_issue_count')
+    priority = fields.Selection([('0', 'Normal'), ('1', 'High')], 'Priority', readonly=True)
+    blocked_until = fields.Date('Blocked until', readonly=True)
 
     filter_A_ordered_on = fields.Date(string='A Ordered on', related='task_id.filter_A_ordered_on')
     filter_B_ordered_on = fields.Date(string='B Ordered on', related='task_id.filter_B_ordered_on')
@@ -146,6 +147,12 @@ class ProjectBacklogCw(models.AbstractModel):
             t.user_id,
             t.task_group_id,
             t.subcontractor_id,
+            t.priority,
+            case
+             when t.kanban_state = 'blocked' then true
+             else false
+            end as task_blocked,
+            t.blocked_until,
             s.number as site_number,
             s.code as site_code,
             s.name as site_name,

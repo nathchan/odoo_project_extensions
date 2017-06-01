@@ -8,6 +8,7 @@
             <field name="arch" type="xml">
                 <tree string="Backlog SA" create="false" edit="false">
                     <button type="object" string="Open Task" name="action_show_task_from_milestone" />
+                    <field name="priority" />
                     <field name="project_id"/>
                     <field name="task_id"/>
                     <field name="user_id"/>
@@ -15,6 +16,8 @@
                     <field name="forecast_date" />
                     <field name="forecast_week" />
                     <field name="opened_issue_count" />
+                    <field name="task_blocked" />
+                    <field name="blocked_until" />
                 </tree>
             </field>
         </record>
