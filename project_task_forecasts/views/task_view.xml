@@ -74,6 +74,8 @@
                         <field name="stage_progress" string="% Complete" widget="progressbar" />
                         <field name="priority_id" />
                         <field name="quality_finish" />
+                        <field name="kanban_state" widget="kanban_state_selection"/>
+                        <field name="blocked_until" />
                     </xpath>
 
                     <xpath expr="//field[@name='tag_ids']/.." position="after">
@@ -87,6 +89,9 @@
                                     />
                         </group>
                     </xpath>
+
+                    <xpath expr="//field[@name='kanban_state']" position="replace"></xpath>
+
 
 
 

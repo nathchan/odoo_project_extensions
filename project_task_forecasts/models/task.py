@@ -74,6 +74,8 @@ class ProjectTask(models.Model):
     has_processes = fields.Boolean('Has processes', compute=_compute_has_processes)
     stage_process_id = fields.Many2one('project.task.stage.process', 'Process')
 
+    blocked_until = fields.Date('Blocked until')
+
     @api.multi
     def write(self, vals):
         if 'stage_id' in vals:
