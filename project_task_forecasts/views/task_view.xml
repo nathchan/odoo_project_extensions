@@ -24,7 +24,7 @@
                 <data>
 
                     <xpath expr="//field[@name='stage_id']" position="after">
-                        <field name="quality_finish" />
+                        <field name="priority" />
                         <field name="stage_progress" string="% Complete" widget="progressbar" />
                     </xpath>
 
@@ -99,6 +99,7 @@
                 </data>
             </field>
         </record>
+
 
     </data>
 </openerp>
