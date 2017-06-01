@@ -238,6 +238,7 @@ class ProjectBacklogCw(models.AbstractModel):
 
     def _order_by(self):
         order_str = """
+            t.priority desc,
             f.sequence_order
         """
         return order_str

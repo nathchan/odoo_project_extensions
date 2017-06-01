@@ -36,6 +36,7 @@
                     <field name="forecast_week" />
                     <field name="user_id" />
                     <field name="color"/>
+                    <field name="priority"/>
 
                     <templates>
                     <t t-name="kanban-box">
@@ -50,6 +51,7 @@
                                 </div>
                                 <div>
 
+                                    <span attrs="{'invisible': [('priority', '=', '0')]}" style="color:yellow;" class="fa fa-star"></span>
                                     <span attrs="{'invisible': [('task_blocked', '=', False)]}" style="color:red;" class="fa fa-exclamation-triangle"></span>
 
                                     <a name="action_show_task_from_milestone" type="object">
