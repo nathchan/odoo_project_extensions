@@ -73,7 +73,6 @@
                     <xpath expr="//field[@name='tag_ids']" position="after">
                         <field name="stage_progress" string="% Complete" widget="progressbar" />
                         <field name="priority_id" />
-                        <field name="quality_finish" />
                     </xpath>
 
                     <xpath expr="//field[@name='tag_ids']/.." position="after">
