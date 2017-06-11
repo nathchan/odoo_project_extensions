@@ -751,7 +751,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                         ws['N'+str(n)] = ''
                         ws['N'+str(n)].font = Font(color=Color(lv_line_color))
 
-                        ws['O'+str(n)] = emp.name
+                        ws['O'+str(n)] = emp.user_id.name if emp.user_id else 'No related user for: ' + emp.name
                         ws['O'+str(n)].font = Font(color=Color(lv_line_color))
 
                         ws['P'+str(n)] = ''
