@@ -2,6 +2,7 @@
 
 from openerp import models, fields, api, tools, exceptions as e
 import datetime
+from dateutil import relativedelta
 
 class HrTimesheetSheet(models.Model):
     _inherit = 'hr_timesheet_sheet.sheet'
@@ -193,12 +194,24 @@ class HrTimesheetSheet(models.Model):
         }
         return action
 
+    @api.constrains('date_from', 'date_to')
+    def sap_dates_constrains(self):
+        if self.date_from and self.date_to and self.date_to < self.date_from:
+            raise e.ValidationError('Date from must be before date to.')
 
+    @api.model
+    def create(self, vals):
+        if 'date_from' in vals and self.env.user.id != tools.SUPERUSER_ID:
+            first_day_of_week = datetime.datetime.now()+relativedelta.relativedelta(weekday=0, days=-6)
+            date_from = datetime.datetime.strptime(vals['date_from'], tools.DEFAULT_SERVER_DATE_FORMAT)
+            if date_from < first_day_of_week:
+                raise e.ValidationError('Creation of timesheet for last week is forbidden. Please enter dates from current week.')
 
+        res = super(HrTimesheetSheet, self).create(vals)
+        return res
 
     @api.one
     def write(self, vals):
-
         user_id = None
         old_user_id = self.employee_id.user_id.id
         if 'employee_id' in vals:
