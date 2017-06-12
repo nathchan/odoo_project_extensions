@@ -203,8 +203,8 @@ class HrTimesheetSheet(models.Model):
     def create(self, vals):
         if 'date_from' in vals and self.env.user.id != tools.SUPERUSER_ID:
             first_day_of_week = datetime.datetime.now()+relativedelta.relativedelta(weekday=0, days=-6)
-            date_from = datetime.datetime.strptime(vals['date_from'], tools.DEFAULT_SERVER_DATE_FORMAT)
-            if date_from < first_day_of_week:
+            date_from = vals['date_from']
+            if date_from < first_day_of_week.strftime(tools.DEFAULT_SERVER_DATE_FORMAT):
                 raise e.ValidationError('Creation of timesheet for last week is forbidden. Please enter dates from current week.')
 
         res = super(HrTimesheetSheet, self).create(vals)
