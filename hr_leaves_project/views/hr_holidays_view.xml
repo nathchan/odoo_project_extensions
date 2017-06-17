@@ -2,6 +2,19 @@
 <openerp>
     <data>
 
+        <record model="ir.ui.view" id="view_holiday_new_calendar_inherit">
+            <field name="name">hr.holidays.calendar.inherit</field>
+            <field name="model">hr.holidays</field>
+            <field name="inherit_id" ref="hr_holidays.view_holiday_new_calendar" />
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//field[@name='employee_id']" position="after">
+                        <field name="department_id" />
+                    </xpath>
+                </data>
+            </field>
+        </record>
+
         <record model="ir.ui.view" id="view_holidaye_inherit">
             <field name="name">hr.holidays.report_tree.inherit</field>
             <field name="model">hr.holidays</field>
