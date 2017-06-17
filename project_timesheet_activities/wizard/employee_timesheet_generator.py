@@ -191,7 +191,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
 
             ws.merge_cells('B3:C3')
             ws['A3'] = 'Employee:'
-            ws['B3'] = employee.name
+            ws['B3'] = employee.user_id.name if employee.user_id else 'No related user for: ' + employee.name
             ws['C3'].style = Style(border=Border(right=Side(style='thick',
                                                             color=colors.BLACK)))
             ws['B3'].style = Style(
