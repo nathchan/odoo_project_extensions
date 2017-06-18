@@ -12,10 +12,12 @@ class ProjectActivity(models.Model):
             rec.filter_activities = '---'
 
     def _search_filter_activities(self, operator, value):
-        res_ids = []
         if operator == '=' and value == 'General':
             operator = 'in'
             res_ids = [item.id for item in self.search([('is_general_activity', '=', True)])]
+        elif operator == '=' and self.env['project.project'].search([('name', '=', value)], count=True) > 0:
+            operator = 'in'
+            res_ids = [item.id for item in self.search([('is_on_project_activity', '=', True)])]
         else:
             operator = 'in'
             res_ids = [item.id for item in self.search([])]
@@ -28,6 +30,7 @@ class ProjectActivity(models.Model):
     show_on_sap_report = fields.Boolean('Show on SAP report')
     sap_report_sufix = fields.Char('SAP sufix')
     is_general_activity = fields.Boolean('Is general activity')
+    is_on_project_activity = fields.Boolean('Is on project activity')
     filter_activities = fields.Char(compute=_compute_filter_activities, search=_search_filter_activities)
 
 
