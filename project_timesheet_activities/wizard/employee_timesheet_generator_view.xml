@@ -27,6 +27,11 @@
                                     to
                                     <field class="oe_inline" name="sap_date_to" attrs="{'required': [('display_sap_report', '=', True)]}" />
                                 </div>
+                                <br/>
+                                <div class="o_row">
+                                    <label for="sap_colors_split_datetime"/>
+                                    <field name="sap_colors_split_datetime" />
+                                </div>
                             </group>
 
 

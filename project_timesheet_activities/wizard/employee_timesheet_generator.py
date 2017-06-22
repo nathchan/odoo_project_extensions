@@ -120,6 +120,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
     display_sap_report = fields.Boolean('Display SAP report?', default=False)
     sap_date_from = fields.Date('SAP Date from', default=datetime.now()+relativedelta.relativedelta(weekday=0, days=-6))
     sap_date_to = fields.Date('SAP Date to', default=datetime.now()+relativedelta.relativedelta(weekday=6))
+    sap_colors_split_datetime = fields.Datetime('SAP split color datetime')
 
     @api.constrains('sap_date_from', 'sap_date_to')
     def sap_dates_constrains(self):
@@ -703,7 +704,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                                                            ('date_to', '>=', lv_current_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)),
                                                            ('state', '=', 'validate')])
                 if lv_lines and len(lv_lines)>0:
-                    lv_line_color = '0004fc'
+                    lv_line_color = 'ff8d02'
                     for line in lv_lines:
                         n += 1
                         emp = line.employee_id
@@ -777,25 +778,30 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                                              order='user_id, date, write_date')
             for line in extra_lines:
                 n += 1
+                extra_line_color = 'e80000'
+                if this.sap_colors_split_datetime and line.create_date <= this.sap_colors_split_datetime:
+                    extra_line_color = '0000a0'
+
+
                 emp = self.env['hr.employee'].search([('user_id', '=', line.user_id.id)], limit=1)
                 project_wp_line = self.env['project.activity.work.package.line'].search([('account_id', '=', line.account_id.id),
                                                                                          ('work_package_id', '=', line.project_activity_work_package_id.id)])
 
                 ws['A'+str(n)] = emp.other_id if emp and emp.other_id else '---'
-                ws['A'+str(n)].font = Font(color=Color('e80000'))
+                ws['A'+str(n)].font = Font(color=Color(extra_line_color))
 
                 ws['B'+str(n)] = d.datetime.strptime(line.date, tools.DEFAULT_SERVER_DATE_FORMAT)
-                ws['B'+str(n)].style = Style(font=Font(color=Color('e80000')), alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
+                ws['B'+str(n)].style = Style(font=Font(color=Color(extra_line_color)), alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
                                              number_format="DD.MM.YYYY")
 
                 ws['C'+str(n)] = format_float_time(line.timesheet_start_time)
-                ws['C'+str(n)].font = Font(color=Color('e80000'))
+                ws['C'+str(n)].font = Font(color=Color(extra_line_color))
 
                 ws['D'+str(n)] = format_float_time(line.timesheet_end_time)
-                ws['D'+str(n)].font = Font(color=Color('e80000'))
+                ws['D'+str(n)].font = Font(color=Color(extra_line_color))
 
                 ws['E'+str(n)] = format_float_time(line.unit_amount)
-                ws['E'+str(n)].font = Font(color=Color('e80000'))
+                ws['E'+str(n)].font = Font(color=Color(extra_line_color))
 
                 service_number = '---'
                 if line.project_activity_work_package_id.sap_report_service_number:
@@ -806,13 +812,13 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                     service_number += '_R'
 
                 ws['F'+str(n)] = service_number
-                ws['F'+str(n)].font = Font(color=Color('e80000'))
+                ws['F'+str(n)].font = Font(color=Color(extra_line_color))
 
                 ws['G'+str(n)] = ''
-                ws['G'+str(n)].font = Font(color=Color('e80000'))
+                ws['G'+str(n)].font = Font(color=Color(extra_line_color))
 
                 ws['H'+str(n)] = ''
-                ws['H'+str(n)].font = Font(color=Color('e80000'))
+                ws['H'+str(n)].font = Font(color=Color(extra_line_color))
 
                 task_prefix = ''
                 task_sufix = line.project_activity_work_package_id.sap_report_task_sufix if line.project_activity_work_package_id.sap_report_task_sufix else ''
@@ -820,31 +826,31 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                     task_prefix = project_wp_line[0].sap_report_task_prefix if project_wp_line[0].sap_report_task_prefix else ''
                     task_sufix = project_wp_line[0].sap_report_task_sufix if project_wp_line[0].sap_report_task_sufix else ''
                 ws['I'+str(n)] = task_prefix + line.task_id.name + task_sufix if line.task_id else ''
-                ws['I'+str(n)].font = Font(color=Color('e80000'))
+                ws['I'+str(n)].font = Font(color=Color(extra_line_color))
 
                 ws['J'+str(n)] = ''
-                ws['J'+str(n)].font = Font(color=Color('e80000'))
+                ws['J'+str(n)].font = Font(color=Color(extra_line_color))
 
                 ws['K'+str(n)] = ''
-                ws['K'+str(n)].font = Font(color=Color('e80000'))
+                ws['K'+str(n)].font = Font(color=Color(extra_line_color))
 
                 ws['L'+str(n)] = line.account_id.name if line.account_id else ''
-                ws['L'+str(n)].font = Font(color=Color('e80000'))
+                ws['L'+str(n)].font = Font(color=Color(extra_line_color))
 
                 ws['M'+str(n)] = line.project_activity_work_package_id.name if line.project_activity_work_package_id else ''
-                ws['M'+str(n)].font = Font(color=Color('e80000'))
+                ws['M'+str(n)].font = Font(color=Color(extra_line_color))
 
                 ws['N'+str(n)] = line.project_activity_id.name if line.project_activity_id else ''
-                ws['N'+str(n)].font = Font(color=Color('e80000'))
+                ws['N'+str(n)].font = Font(color=Color(extra_line_color))
 
                 ws['O'+str(n)] = line.user_id.name
-                ws['O'+str(n)].font = Font(color=Color('e80000'))
+                ws['O'+str(n)].font = Font(color=Color(extra_line_color))
 
                 ws['P'+str(n)] = line.timesheet_comment if line.timesheet_comment else ''
-                ws['P'+str(n)].font = Font(color=Color('e80000'))
+                ws['P'+str(n)].font = Font(color=Color(extra_line_color))
 
                 ws['Q'+str(n)] = d.datetime.strptime(line.create_date, tools.DEFAULT_SERVER_DATETIME_FORMAT)
-                ws['Q'+str(n)].style = Style(font=Font(color=Color('e80000')),
+                ws['Q'+str(n)].style = Style(font=Font(color=Color(extra_line_color)),
                                              alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
                                              number_format="DD.MM.YYYY")
 
