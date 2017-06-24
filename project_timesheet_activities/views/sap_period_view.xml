@@ -8,9 +8,9 @@
             <field name="arch" type="xml">
                 <tree string="Sap periods" editable="top">
                     <field name="is_locked" />
-                    <field name="period_from" />
-                    <field name="period_to" />
-                    <field name="last_post" />
+                    <field name="period_from" attrs="{'readonly':[('is_locked', '=', True)]}"/>
+                    <field name="period_to" attrs="{'readonly':[('is_locked', '=', True)]}"/>
+                    <field name="last_post" attrs="{'readonly':[('is_locked', '=', True)]}"/>
                     <field name="remarks" />
                 </tree>
             </field>
