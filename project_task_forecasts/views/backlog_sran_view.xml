@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="project_backlog_sran_tree">
+            <field name="name">project.backlog.sran.tree</field>
+            <field name="model">project.backlog.sran</field>
+            <field name="arch" type="xml">
+                <tree string="Backlog SRAN" create="false" edit="false">
+                    <button type="object" string="Open Task" name="action_show_task_from_milestone" />
+                    <field name="priority" />
+                    <field name="project_id"/>
+                    <field name="task_id"/>
+                    <field name="user_id"/>
+                    <field name="milestone_id"/>
+                    <field name="forecast_date" />
+                    <field name="forecast_week" />
+                    <field name="opened_issue_count" />
+                    <field name="task_blocked" />
+                    <field name="blocked_until" />
+                </tree>
+            </field>
+        </record>
+
+        <!-- Project Task Kanban View -->
+        <record model="ir.ui.view" id="project_backlog_sran_kanban">
+            <field name="name">project.backlog.sran.kanban</field>
+            <field name="model">project.backlog.sran</field>
+            <field name="arch" type="xml">
+                <kanban default_group_by="milestone_id" class="o_kanban_small_column">
+                    <field name="project_id"/>
+                    <field name="task_id"/>
+                    <field name="task_blocked" />
+                    <field name="milestone_id"/>
+                    <field name="forecast_date" />
+                    <field name="forecast_week" />
+                    <field name="user_id" />
+                    <field name="color"/>
+                    <field name="priority"/>
+
+                    <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_color_#{kanban_getcolor(record.color.raw_value)} oe_kanban_card oe_kanban_global_click">
+
+                            <div class="oe_kanban_content">
+                                <div class="pull-right">
+                                    <button name="set_actual"
+                                            type="object"
+                                            class="btn btn-xs btn-default">Set actual</button>
+                                </div>
+                                <div>
+
+                                    <span attrs="{'invisible': [('priority', '=', '0')]}" style="color:#f6ff00;" class="fa fa-star"></span>
+                                    <span attrs="{'invisible': [('task_blocked', '=', False)]}" style="color:red;" class="fa fa-exclamation-triangle"></span>
+
+                                    <a name="action_show_task_from_milestone" type="object">
+                                        <strong><field name="task_id"/></strong>
+                                    </a>
+                                </div>
+
+                                <div class="oe_kanban_bottom_right">
+                                    <img t-att-src="kanban_image('res.users', 'image_small', record.user_id.raw_value)"
+                                         t-att-title="record.user_id.value"
+                                         width="24"
+                                         height="24"
+                                         class="oe_kanban_avatar pull-right" />
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                    </templates>
+                </kanban>
+            </field>
+         </record>
+
+        <record model="ir.ui.view" id="project_backlog_sran_search">
+            <field name="name">project.backlog.sran.search</field>
+            <field name="model">project.backlog.sran</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="task_id"/>
+                    <field name="user_id"/>
+                    <field name="project_id"/>
+                    <field name="milestone_id"/>
+
+                    <filter name="filter_my_tasks" string="My Tasks" domain="[('user_id', '=', uid)]" />
+                    <filter name="filter_archived" string="Archived" domain="[('task_active', '=', False)]" />
+
+                    <filter string="Assigned to" name="group_user" context="{'group_by':'user_id'}"/>
+                    <filter string="Subcontractor" name="group_subcontractor" context="{'group_by':'subcontractor_id'}"/>
+                    <filter string="Task Group" name="group_task_group" context="{'group_by':'task_group_id'}"/>
+                    <filter string="Milestone" name="group_milestone" context="{'group_by':'milestone_id'}"/>
+
+                </search>
+            </field>
+        </record>
+
+        <record id="action_project_backlog_sran" model="ir.actions.act_window">
+            <field name="name">Backlog SRAN</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">project.backlog.sran</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban</field>
+            <field name="context">{'search_default_group_milestone':1}</field>
+            <field name="search_view_id" ref="project_backlog_sran_search"/>
+        </record>
+
+
+    </data>
+</openerp>

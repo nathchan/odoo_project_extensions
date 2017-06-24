@@ -16,6 +16,13 @@
                   action="action_project_backlog_cw"
                   sequence="2"/>
 
+        <menuitem name="Kanban SRAN"
+                  id="menu_project_backlog_sran"
+                  groups="project.group_project_user"
+                  parent="project.menu_project_management"
+                  action="action_project_backlog_sran"
+                  sequence="3"/>
+
         <menuitem name="Milestones"
                   id="menu_project_milestones_tracking"
                   parent="project.menu_project_management"
