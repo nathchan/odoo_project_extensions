@@ -29,8 +29,8 @@
                                 </div>
                                 <br/>
                                 <div class="o_row">
-                                    <label for="sap_colors_split_datetime"/>
-                                    <field name="sap_colors_split_datetime" />
+                                    <label for="last_post_on_sap"/>
+                                    <field name="last_post_on_sap" />
                                 </div>
                             </group>
 

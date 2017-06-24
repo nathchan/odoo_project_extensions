@@ -120,7 +120,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
     display_sap_report = fields.Boolean('Display SAP report?', default=False)
     sap_date_from = fields.Date('SAP Date from', default=datetime.now()+relativedelta.relativedelta(weekday=0, days=-6))
     sap_date_to = fields.Date('SAP Date to', default=datetime.now()+relativedelta.relativedelta(weekday=6))
-    sap_colors_split_datetime = fields.Datetime('SAP split color datetime')
+    last_post_on_sap = fields.Datetime('Last post on SAP')
 
     @api.constrains('sap_date_from', 'sap_date_to')
     def sap_dates_constrains(self):
@@ -640,7 +640,8 @@ class EmployeeTimesheetGenerator(models.TransientModel):
             ws['P1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
             ws['Q1'] = 'Create date'
             ws['Q1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
-
+            ws['R1'] = 'Posted on SAP'
+            ws['R1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
 
             ws.row_dimensions[1].height = 50
             ws.column_dimensions['M'].width = 20
@@ -690,6 +691,13 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 ws['Q'+str(n)] = d.datetime.strptime(line.create_date, tools.DEFAULT_SERVER_DATETIME_FORMAT)
                 ws['Q'+str(n)].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
                                              number_format="DD.MM.YYYY")
+                line_posted_on_sap = '---'
+                if this.last_post_on_sap:
+                    if line.create_date <= this.last_post_on_sap:
+                        line_posted_on_sap = 'Yes'
+                    else:
+                        line_posted_on_sap = 'No'
+                ws['R'+str(n)] = line_posted_on_sap
 
             # hr leaves records
             lv_current_date = d.datetime.strptime(this.sap_date_from, tools.DEFAULT_SERVER_DATE_FORMAT)
@@ -762,6 +770,13 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                         ws['Q'+str(n)].style = Style(font=Font(color=Color(lv_line_color)),
                                                      alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
                                                      number_format="DD.MM.YYYY")
+                        line_posted_on_sap = '---'
+                        # if this.last_post_on_sap:
+                        #     if line.create_date <= this.last_post_on_sap:
+                        #         line_posted_on_sap = 'Yes'
+                        #     else:
+                        #         line_posted_on_sap = 'No'
+                        ws['R'+str(n)] = line_posted_on_sap
                 lv_current_date += d.timedelta(days=1)
 
 
@@ -853,7 +868,13 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 ws['Q'+str(n)].style = Style(font=Font(color=Color(extra_line_color)),
                                              alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
                                              number_format="DD.MM.YYYY")
-
+                line_posted_on_sap = '---'
+                if this.last_post_on_sap:
+                    if line.create_date <= this.last_post_on_sap:
+                        line_posted_on_sap = 'Yes'
+                    else:
+                        line_posted_on_sap = 'No'
+                ws['R'+str(n)] = line_posted_on_sap
 
         buf = cStringIO.StringIO()
         wb.save(buf)
