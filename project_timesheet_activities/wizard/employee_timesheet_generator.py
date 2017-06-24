@@ -117,6 +117,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                                                             string='Employees')
     state = fields.Selection([('choose', 'Choose'), ('get', 'Get')], 'State', default='choose')
     lines_count = fields.Integer(compute=_get_lines_count, string='Employees count')
+    display_timesheets = fields.Boolean('Display timesheets?', default=False)
     display_sap_report = fields.Boolean('Display SAP report?', default=False)
     sap_date_from = fields.Date('SAP Date from', default=datetime.now()+relativedelta.relativedelta(weekday=0, days=-6))
     sap_date_to = fields.Date('SAP Date to', default=datetime.now()+relativedelta.relativedelta(weekday=6))
@@ -167,6 +168,8 @@ class EmployeeTimesheetGenerator(models.TransientModel):
         top = Border(top=Side(color=colors.BLACK, border_style='thick'))
         bottom = Border(bottom=Side(color=colors.BLACK, border_style='thick'))
 
+
+
         if not self.env.user._has_group(self.env.cr, self.env.user.id, 'base.group_hr_user'):
             employees = self.env['hr.employee'].search([('user_id', '=', self.env.user.id)])
         elif len(this.employee_timesheet_generator_line_ids) == 0:
@@ -174,428 +177,430 @@ class EmployeeTimesheetGenerator(models.TransientModel):
         else:
             employees = [item.employee_id for item in this.employee_timesheet_generator_line_ids]
 
-        for employee in employees:
+        if this.display_timesheets is True and len(employees) > 0:
 
-            ws = wb.create_sheet(employee.name, 0)
+            for employee in employees:
 
-            ws.merge_cells('A2:C2')
-            ws['A2'] = 'TIMESHEET'
-            ws['C2'].style = Style(border=Border(right=Side(style='thick',
-                                                            color=colors.BLACK)))
-            ws['A2'].style = Style(font_bold,
-                                   border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   alignment=Alignment(horizontal='center')
-                                   )
+                ws = wb.create_sheet(employee.name, 0)
 
-            ws.merge_cells('B3:C3')
-            ws['A3'] = 'Employee:'
-            ws['B3'] = employee.user_id.name if employee.user_id else 'No related user for: ' + employee.name
-            ws['C3'].style = Style(border=Border(right=Side(style='thick',
-                                                            color=colors.BLACK)))
-            ws['B3'].style = Style(
-                                   border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   alignment=Alignment(horizontal='center')
-                                   )
+                ws.merge_cells('A2:C2')
+                ws['A2'] = 'TIMESHEET'
+                ws['C2'].style = Style(border=Border(right=Side(style='thick',
+                                                                color=colors.BLACK)))
+                ws['A2'].style = Style(font_bold,
+                                       border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       alignment=Alignment(horizontal='center')
+                                       )
 
-            ws.merge_cells('B4:C4')
-            ws['A4'] = 'ID number:'
-            ws['B4'] = employee.other_id
-            ws['C4'].style = Style(border=Border(right=Side(style='thick',
-                                                            color=colors.BLACK)))
-            ws['B4'].style = Style(
-                                   border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   alignment=Alignment(horizontal='center')
-                                   )
+                ws.merge_cells('B3:C3')
+                ws['A3'] = 'Employee:'
+                ws['B3'] = employee.user_id.name if employee.user_id else 'No related user for: ' + employee.name
+                ws['C3'].style = Style(border=Border(right=Side(style='thick',
+                                                                color=colors.BLACK)))
+                ws['B3'].style = Style(
+                                       border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       alignment=Alignment(horizontal='center')
+                                       )
 
-            ws.merge_cells('B5:C5')
-            ws['A5'] = 'Month/Year:'
-            ws['B5'] = dict(MONTHS).get(month)+' '+dict(YEARS).get(year)
-            ws['B5'].font = font_bold
-            ws['C5'].style = Style(border=Border(right=Side(style='thick',
-                                                            color=colors.BLACK)))
-            ws['B5'].style = Style(font_bold,
-                                   border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   alignment=Alignment(horizontal='center')
-                                   )
+                ws.merge_cells('B4:C4')
+                ws['A4'] = 'ID number:'
+                ws['B4'] = employee.other_id
+                ws['C4'].style = Style(border=Border(right=Side(style='thick',
+                                                                color=colors.BLACK)))
+                ws['B4'].style = Style(
+                                       border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       alignment=Alignment(horizontal='center')
+                                       )
 
-            ws['A3'].style = Style(
-                                   border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   )
-            ws['A4'].style = Style(
-                                   border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   )
-            ws['A5'].style = Style(
-                                   border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   )
+                ws.merge_cells('B5:C5')
+                ws['A5'] = 'Month/Year:'
+                ws['B5'] = dict(MONTHS).get(month)+' '+dict(YEARS).get(year)
+                ws['B5'].font = font_bold
+                ws['C5'].style = Style(border=Border(right=Side(style='thick',
+                                                                color=colors.BLACK)))
+                ws['B5'].style = Style(font_bold,
+                                       border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       alignment=Alignment(horizontal='center')
+                                       )
 
-            ws.merge_cells('E3:H3')
-            ws['E3'] = 'Entitlement of holiday days on 31.12.:'
-            ws['I3'] = ''
-            ws['E3'].style = Style(
-                                   border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   )
-            ws['I3'].style = Style(
-                                   border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   alignment=Alignment(horizontal='center')
-                                   )
+                ws['A3'].style = Style(
+                                       border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       )
+                ws['A4'].style = Style(
+                                       border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       )
+                ws['A5'].style = Style(
+                                       border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       )
 
-            ws.merge_cells('E4:H4')
-            ws['E4'] = 'Consumed holiday days:'
-            ws['I4'] = ''
-            ws['E4'].style = Style(
-                                   border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   )
-            ws['I4'].style = Style(
-                                   border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   alignment=Alignment(horizontal='center')
-                                   )
+                ws.merge_cells('E3:H3')
+                ws['E3'] = 'Entitlement of holiday days on 31.12.:'
+                ws['I3'] = ''
+                ws['E3'].style = Style(
+                                       border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       )
+                ws['I3'].style = Style(
+                                       border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       alignment=Alignment(horizontal='center')
+                                       )
 
-            ws.merge_cells('E5:H5')
-            ws['E5'] = 'Rest of holiday days:'
-            ws['I5'] = ''
-            ws['E5'].style = Style(
-                                   border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   )
-            ws['I5'].style = Style(
-                                   border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   alignment=Alignment(horizontal='center')
-                                   )
+                ws.merge_cells('E4:H4')
+                ws['E4'] = 'Consumed holiday days:'
+                ws['I4'] = ''
+                ws['E4'].style = Style(
+                                       border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       )
+                ws['I4'].style = Style(
+                                       border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       alignment=Alignment(horizontal='center')
+                                       )
 
-            header_font = Font(bold=True)
+                ws.merge_cells('E5:H5')
+                ws['E5'] = 'Rest of holiday days:'
+                ws['I5'] = ''
+                ws['E5'].style = Style(
+                                       border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       )
+                ws['I5'].style = Style(
+                                       border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       alignment=Alignment(horizontal='center')
+                                       )
 
-            ws['A7'] = 'Date'
-            ws['A7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   alignment=Alignment(wrap_text=True),
-                                   font=Font(bold=True),
-                                   fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
+                header_font = Font(bold=True)
 
-            ws['B7'] = 'Start'
-            ws['B7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   alignment=Alignment(wrap_text=True),
-                                   font=Font(bold=True),
-                                   fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
+                ws['A7'] = 'Date'
+                ws['A7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       alignment=Alignment(wrap_text=True),
+                                       font=Font(bold=True),
+                                       fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
 
-            ws['C7'] = 'End'
-            ws['C7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   alignment=Alignment(wrap_text=True),
-                                   font=Font(bold=True),
-                                   fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
+                ws['B7'] = 'Start'
+                ws['B7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       alignment=Alignment(wrap_text=True),
+                                       font=Font(bold=True),
+                                       fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
 
-            ws['D7'] = 'Break'
-            ws['D7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
-            ws['D7'].font = header_font
-            ws['D7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   alignment=Alignment(wrap_text=True),
-                                   font=Font(bold=True),
-                                   fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
+                ws['C7'] = 'End'
+                ws['C7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       alignment=Alignment(wrap_text=True),
+                                       font=Font(bold=True),
+                                       fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
 
-            ws['E7'] = 'Sum'
-            ws['E7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
-            ws['E7'].font = header_font
-            ws['E7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   alignment=Alignment(wrap_text=True),
-                                   font=Font(bold=True),
-                                   fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
+                ws['D7'] = 'Break'
+                ws['D7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
+                ws['D7'].font = header_font
+                ws['D7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       alignment=Alignment(wrap_text=True),
+                                       font=Font(bold=True),
+                                       fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
 
-            ws['F7'] = 'Working time per day'
-            ws['F7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
-            ws['F7'].font = header_font
-            ws['F7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   alignment=Alignment(wrap_text=True),
-                                   font=Font(bold=True),
-                                   fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
+                ws['E7'] = 'Sum'
+                ws['E7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
+                ws['E7'].font = header_font
+                ws['E7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       alignment=Alignment(wrap_text=True),
+                                       font=Font(bold=True),
+                                       fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
 
-            ws['G7'] = 'Project'
-            ws['G7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
-            ws['G7'].font = header_font
-            ws['G7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   alignment=Alignment(wrap_text=True),
-                                   font=Font(bold=True),
-                                   fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
+                ws['F7'] = 'Working time per day'
+                ws['F7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
+                ws['F7'].font = header_font
+                ws['F7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       alignment=Alignment(wrap_text=True),
+                                       font=Font(bold=True),
+                                       fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
 
-            ws['H7'] = 'Activity'
-            ws['H7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
-            ws['H7'].font = header_font
-            ws['H7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   alignment=Alignment(wrap_text=True),
-                                   font=Font(bold=True),
-                                   fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
+                ws['G7'] = 'Project'
+                ws['G7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
+                ws['G7'].font = header_font
+                ws['G7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       alignment=Alignment(wrap_text=True),
+                                       font=Font(bold=True),
+                                       fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
 
-            ws['I7'] = 'Site number'
-            ws['I7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
-            ws['I7'].font = header_font
-            ws['I7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   alignment=Alignment(wrap_text=True),
-                                   font=Font(bold=True),
-                                   fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
+                ws['H7'] = 'Activity'
+                ws['H7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
+                ws['H7'].font = header_font
+                ws['H7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       alignment=Alignment(wrap_text=True),
+                                       font=Font(bold=True),
+                                       fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
 
-            ws['J7'] = 'Start travel'
-            ws['J7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
-            ws['J7'].font = header_font
-            ws['J7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   alignment=Alignment(wrap_text=True),
-                                   font=Font(bold=True),
-                                   fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
+                ws['I7'] = 'Site number'
+                ws['I7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
+                ws['I7'].font = header_font
+                ws['I7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       alignment=Alignment(wrap_text=True),
+                                       font=Font(bold=True),
+                                       fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
 
-            ws['K7'] = 'End travel'
-            ws['K7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
-            ws['K7'].font = header_font
-            ws['K7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   alignment=Alignment(wrap_text=True),
-                                   font=Font(bold=True),
-                                   fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
+                ws['J7'] = 'Start travel'
+                ws['J7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
+                ws['J7'].font = header_font
+                ws['J7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       alignment=Alignment(wrap_text=True),
+                                       font=Font(bold=True),
+                                       fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
 
-            ws['L7'] = 'Driver'
-            ws['L7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
-            ws['L7'].font = header_font
-            ws['L7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   alignment=Alignment(wrap_text=True),
-                                   font=Font(bold=True),
-                                   fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
+                ws['K7'] = 'End travel'
+                ws['K7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
+                ws['K7'].font = header_font
+                ws['K7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       alignment=Alignment(wrap_text=True),
+                                       font=Font(bold=True),
+                                       fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
 
-            ws['M7'] = 'Vehicle'
-            ws['M7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
-            ws['M7'].font = header_font
-            ws['M7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   alignment=Alignment(wrap_text=True),
-                                   font=Font(bold=True),
-                                   fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
+                ws['L7'] = 'Driver'
+                ws['L7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
+                ws['L7'].font = header_font
+                ws['L7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       alignment=Alignment(wrap_text=True),
+                                       font=Font(bold=True),
+                                       fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
 
-            ws['N7'] = 'Accommodation'
-            ws['N7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
-            ws['N7'].font = header_font
-            ws['N7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   alignment=Alignment(wrap_text=True),
-                                   font=Font(bold=True),
-                                   fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
+                ws['M7'] = 'Vehicle'
+                ws['M7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
+                ws['M7'].font = header_font
+                ws['M7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       alignment=Alignment(wrap_text=True),
+                                       font=Font(bold=True),
+                                       fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
 
-            ws['O7'] = 'Travel expense small'
-            ws['O7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
-            ws['O7'].font = header_font
-            ws['O7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   alignment=Alignment(wrap_text=True),
-                                   font=Font(bold=True),
-                                   fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
+                ws['N7'] = 'Accommodation'
+                ws['N7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
+                ws['N7'].font = header_font
+                ws['N7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       alignment=Alignment(wrap_text=True),
+                                       font=Font(bold=True),
+                                       fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
 
-            ws['P7'] = 'Travel expense middle'
-            ws['P7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
-            ws['P7'].font = header_font
-            ws['P7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   alignment=Alignment(wrap_text=True),
-                                   font=Font(bold=True),
-                                   fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
+                ws['O7'] = 'Travel expense small'
+                ws['O7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
+                ws['O7'].font = header_font
+                ws['O7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       alignment=Alignment(wrap_text=True),
+                                       font=Font(bold=True),
+                                       fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
 
-            ws['Q7'] = 'Travel expense large'
-            ws['Q7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
-            ws['Q7'].font = header_font
-            ws['Q7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   alignment=Alignment(wrap_text=True),
-                                   font=Font(bold=True),
-                                   fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
+                ws['P7'] = 'Travel expense middle'
+                ws['P7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
+                ws['P7'].font = header_font
+                ws['P7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       alignment=Alignment(wrap_text=True),
+                                       font=Font(bold=True),
+                                       fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
 
-            ws['R7'] = 'Comment'
-            ws['R7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
-            ws['R7'].font = header_font
-            ws['R7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                 right=Side(style='thick', color=colors.BLACK),
-                                                 top=Side(style='thick', color=colors.BLACK),
-                                                 bottom=Side(style='thick', color=colors.BLACK)),
-                                   alignment=Alignment(wrap_text=True),
-                                   font=Font(bold=True),
-                                   fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
+                ws['Q7'] = 'Travel expense large'
+                ws['Q7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
+                ws['Q7'].font = header_font
+                ws['Q7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       alignment=Alignment(wrap_text=True),
+                                       font=Font(bold=True),
+                                       fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
 
-            ws.row_dimensions[2].height = 20
-            ws.row_dimensions[3].height = 20
-            ws.row_dimensions[4].height = 20
-            ws.row_dimensions[5].height = 20
-            ws.row_dimensions[7].height = 45
-            ws.column_dimensions['A'].width = 12
-            ws.column_dimensions['G'].width = 22
-            ws.column_dimensions['H'].width = 22
-            ws.column_dimensions['N'].width = 20
-            ws.column_dimensions['R'].width = 30
+                ws['R7'] = 'Comment'
+                ws['R7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
+                ws['R7'].font = header_font
+                ws['R7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                     right=Side(style='thick', color=colors.BLACK),
+                                                     top=Side(style='thick', color=colors.BLACK),
+                                                     bottom=Side(style='thick', color=colors.BLACK)),
+                                       alignment=Alignment(wrap_text=True),
+                                       font=Font(bold=True),
+                                       fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
 
-            iteration_date = start_date
-            n = [0]
-            days_index = 0
-            working_time_sum = 0.0
-            working_time_per_day_sum = 0.0
-            ws['F8'] = ''
-            while iteration_date <= end_date:
-                days_index += 1
-                color = 'e0eaff'
-                if days_index % 2 == 0:
-                    color = '9bbcff'
+                ws.row_dimensions[2].height = 20
+                ws.row_dimensions[3].height = 20
+                ws.row_dimensions[4].height = 20
+                ws.row_dimensions[5].height = 20
+                ws.row_dimensions[7].height = 45
+                ws.column_dimensions['A'].width = 12
+                ws.column_dimensions['G'].width = 22
+                ws.column_dimensions['H'].width = 22
+                ws.column_dimensions['N'].width = 20
+                ws.column_dimensions['R'].width = 30
 
-                day_off = self.env['hr.day.off'].search([('date', '=', iteration_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT))], limit=1)
-                if day_off:
-                    color = '999a9e'
+                iteration_date = start_date
+                n = [0]
+                days_index = 0
+                working_time_sum = 0.0
+                working_time_per_day_sum = 0.0
+                ws['F8'] = ''
+                while iteration_date <= end_date:
+                    days_index += 1
+                    color = 'e0eaff'
+                    if days_index % 2 == 0:
+                        color = '9bbcff'
 
-                leave_request = self.env['hr.holidays'].search([('employee_id', '=', employee.id),
-                                                                ('type', '=', 'remove'),
-                                                                ('date_from', '<=', iteration_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)),
-                                                                ('date_to', '>=', iteration_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)),
-                                                                ('state', 'in', ['validate', 'validate1', 'confirm'])],
-                                                               limit=1)
+                    day_off = self.env['hr.day.off'].search([('date', '=', iteration_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT))], limit=1)
+                    if day_off:
+                        color = '999a9e'
 
-                # ovdje ispitati da li je day_off ili samo nema linija
-                analytic_lines = sheet_lines.search([('user_id', '=', employee.user_id.id),
-                                                     ('timesheet_sheet_id', '!=', False),
-                                                     ('date', '=', iteration_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT))],
-                                                    order='timesheet_start_time ASC')
-                if len(analytic_lines) < 1:
-                    # nema zapisa da je radio, pa treba napraviti jedan prazan red
-                    n[0] += 1
+                    leave_request = self.env['hr.holidays'].search([('employee_id', '=', employee.id),
+                                                                    ('type', '=', 'remove'),
+                                                                    ('date_from', '<=', iteration_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)),
+                                                                    ('date_to', '>=', iteration_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)),
+                                                                    ('state', 'in', ['validate', 'validate1', 'confirm'])],
+                                                                   limit=1)
 
-                    if day_off and day_off.category_id.name == 'Public Holiday':
-                        write_pub_holiday_line(ws, n, color, iteration_date)
-                        ws['F'+str(7+n[0])] = format_float_time_str(7.695)
-                        ws['F'+str(7+n[0])].style = Style(number_format="HH:MM:SS",
-                                                          fill=PatternFill(patternType='solid',
-                                                                           fill_type='solid',
-                                                                           fgColor=Color(color)),
-                                                          border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                                        right=Side(style='thick', color=colors.BLACK),
-                                                                        top=Side(style='thin', color=colors.BLACK),
-                                                                        bottom=Side(style='thin', color=colors.BLACK)))
-                        working_time_per_day_sum += 7.695
-                        working_time_sum += 7.695
-
-                    elif day_off and day_off.category_id.name == 'Weekend':
-                        write_line(ws, n, color, iteration_date)
-
-                    elif leave_request:
-                        start_time = leave_request.holiday_status_id.timesheet_start_time if leave_request.holiday_status_id else 8.0
-                        end_time = leave_request.holiday_status_id.timesheet_end_time if leave_request.holiday_status_id else 15.695
-                        sum_time = abs(end_time - start_time) if start_time and end_time else 0.0
-                        write_leave_request_line(ws, n, color, leave_request.holiday_status_id.name, start_time, end_time, sum_time, iteration_date)
-                        ws['F'+str(7+n[0])] = format_float_time_str(sum_time)
-                        ws['F'+str(7+n[0])].style = Style(number_format="HH:MM:SS",
-                                                          fill=PatternFill(patternType='solid',
-                                                                           fill_type='solid',
-                                                                           fgColor=Color(color)),
-                                                          border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                                        right=Side(style='thick', color=colors.BLACK),
-                                                                        top=Side(style='thin', color=colors.BLACK),
-                                                                        bottom=Side(style='thin', color=colors.BLACK)))
-                        working_time_per_day_sum += sum_time
-                        working_time_sum += sum_time
-
-                    else:
-                        write_line(ws, n, color, iteration_date)
-
-                    iteration_date += d.timedelta(days=1)
-                    continue
-                else:
-                    working_time_per_day = 0.0
-                    for index, line in enumerate(analytic_lines):
-                        working_time_sum += line.unit_amount
-                        working_time_per_day += line.unit_amount
+                    # ovdje ispitati da li je day_off ili samo nema linija
+                    analytic_lines = sheet_lines.search([('user_id', '=', employee.user_id.id),
+                                                         ('timesheet_sheet_id', '!=', False),
+                                                         ('date', '=', iteration_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT))],
+                                                        order='timesheet_start_time ASC')
+                    if len(analytic_lines) < 1:
+                        # nema zapisa da je radio, pa treba napraviti jedan prazan red
                         n[0] += 1
-                        if index == len(analytic_lines)-1:
-                            if working_time_per_day != 0:
-                                ws['F'+str(7+n[0])] = format_float_time_str(working_time_per_day)
-                                ws['F'+str(7+n[0])].style = Style(number_format="HH:MM:SS")
-                            working_time_per_day_sum += working_time_per_day
 
-                        write_line(ws, n, color, iteration_date, line)
-                    iteration_date += d.timedelta(days=1)
+                        if day_off and day_off.category_id.name == 'Public Holiday':
+                            write_pub_holiday_line(ws, n, color, iteration_date)
+                            ws['F'+str(7+n[0])] = format_float_time_str(7.695)
+                            ws['F'+str(7+n[0])].style = Style(number_format="HH:MM:SS",
+                                                              fill=PatternFill(patternType='solid',
+                                                                               fill_type='solid',
+                                                                               fgColor=Color(color)),
+                                                              border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                                            right=Side(style='thick', color=colors.BLACK),
+                                                                            top=Side(style='thin', color=colors.BLACK),
+                                                                            bottom=Side(style='thin', color=colors.BLACK)))
+                            working_time_per_day_sum += 7.695
+                            working_time_sum += 7.695
+
+                        elif day_off and day_off.category_id.name == 'Weekend':
+                            write_line(ws, n, color, iteration_date)
+
+                        elif leave_request:
+                            start_time = leave_request.holiday_status_id.timesheet_start_time if leave_request.holiday_status_id else 8.0
+                            end_time = leave_request.holiday_status_id.timesheet_end_time if leave_request.holiday_status_id else 15.695
+                            sum_time = abs(end_time - start_time) if start_time and end_time else 0.0
+                            write_leave_request_line(ws, n, color, leave_request.holiday_status_id.name, start_time, end_time, sum_time, iteration_date)
+                            ws['F'+str(7+n[0])] = format_float_time_str(sum_time)
+                            ws['F'+str(7+n[0])].style = Style(number_format="HH:MM:SS",
+                                                              fill=PatternFill(patternType='solid',
+                                                                               fill_type='solid',
+                                                                               fgColor=Color(color)),
+                                                              border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                                            right=Side(style='thick', color=colors.BLACK),
+                                                                            top=Side(style='thin', color=colors.BLACK),
+                                                                            bottom=Side(style='thin', color=colors.BLACK)))
+                            working_time_per_day_sum += sum_time
+                            working_time_sum += sum_time
+
+                        else:
+                            write_line(ws, n, color, iteration_date)
+
+                        iteration_date += d.timedelta(days=1)
+                        continue
+                    else:
+                        working_time_per_day = 0.0
+                        for index, line in enumerate(analytic_lines):
+                            working_time_sum += line.unit_amount
+                            working_time_per_day += line.unit_amount
+                            n[0] += 1
+                            if index == len(analytic_lines)-1:
+                                if working_time_per_day != 0:
+                                    ws['F'+str(7+n[0])] = format_float_time_str(working_time_per_day)
+                                    ws['F'+str(7+n[0])].style = Style(number_format="HH:MM:SS")
+                                working_time_per_day_sum += working_time_per_day
+
+                            write_line(ws, n, color, iteration_date, line)
+                        iteration_date += d.timedelta(days=1)
 
 
 
-            write_footer(ws, n, working_time_sum, working_time_per_day_sum)
+                write_footer(ws, n, working_time_sum, working_time_per_day_sum)
 
-        if this.display_sap_report is True and len(employees)>0:
+        if this.display_sap_report is True and len(employees) > 0:
             lines = sheet_lines.search([('user_id', 'in', [item.user_id.id for item in employees]),
                                         ('timesheet_sheet_id', '!=', False),
                                         # ('task_id', '!=', False),
@@ -819,7 +824,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 n += 1
                 extra_line_color = 'e80000'
                 if this.last_post_on_sap and line.create_date <= this.last_post_on_sap:
-                    extra_line_color = '0000a0'
+                    extra_line_color = '00d1f2'
 
 
                 emp = self.env['hr.employee'].search([('user_id', '=', line.user_id.id)], limit=1)

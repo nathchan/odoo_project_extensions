@@ -13,11 +13,6 @@
         			<sheet>
 
                         <div states="choose">
-                            <label for="month" />
-                            <field name="month" required="1" />
-                            <label for="year" />
-                            <field name="year" required="1" />
-
                             <label for="display_sap_report" groups="base.group_hr_user"/>
                             <field name="display_sap_report" groups="base.group_hr_user"/>
                             <group groups="base.group_hr_user" attrs="{'invisible': [('display_sap_report', '=', False)]}">
@@ -34,23 +29,38 @@
                                 </div>
                             </group>
 
+                            <br/>
+                            <br/>
 
+                            <label for="display_timesheets" groups="base.group_hr_user"/>
+                            <field name="display_timesheets" groups="base.group_hr_user"/>
+                            <group groups="base.group_hr_user" attrs="{'invisible': [('display_timesheets', '=', False)]}">
+                                <div class="o_row">
+                                    <label for="month" />
+                                    <field name="month" required="1" />
+                                    <label for="year" />
+                                    <field name="year" required="1" />
+                                </div>
+                            </group>
 
-                            <div>
-                                <label for="department_id" groups="base.group_hr_user"/>
-                                <field name="department_id" groups="base.group_hr_user"/>
-                                <button groups="base.group_hr_user" name="fill_lines" context="" string="Get employees" type="object" />
+                            <div attrs="{'invisible': [('display_timesheets', '=', False)]}">
+                                <div>
+                                    <label for="department_id" groups="base.group_hr_user"/>
+                                    <field name="department_id" groups="base.group_hr_user"/>
+                                    <button groups="base.group_hr_user" name="fill_lines" context="" string="Get employees" type="object" />
+                                </div>
+
+                                <field name="employee_timesheet_generator_line_ids" groups="base.group_hr_user">
+                                    <tree editable="on_bottom">
+                                        <field name="employee_id" required="1" />
+                                        <field name="job_id" />
+                                    </tree>
+                                </field>
+
+                                <label for="lines_count"  groups="base.group_hr_user"/>
+                                <field name="lines_count" groups="base.group_hr_user" class="oe_inline" />
                             </div>
 
-                            <field name="employee_timesheet_generator_line_ids" groups="base.group_hr_user">
-                                <tree editable="on_bottom">
-                                    <field name="employee_id" required="1" />
-                                    <field name="job_id" />
-                                </tree>
-                            </field>
-
-                            <label for="lines_count"  groups="base.group_hr_user"/>
-                            <field name="lines_count" groups="base.group_hr_user" class="oe_inline" />
                         </div>
                         <div states="get">
                             <h2>Timesheets generation completed</h2>
