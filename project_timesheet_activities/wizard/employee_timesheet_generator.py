@@ -117,8 +117,8 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                                                             string='Employees')
     state = fields.Selection([('choose', 'Choose'), ('get', 'Get')], 'State', default='choose')
     lines_count = fields.Integer(compute=_get_lines_count, string='Employees count')
-    display_timesheets = fields.Boolean('Display timesheets?', default=False)
-    display_sap_report = fields.Boolean('Display SAP report?', default=False)
+    display_timesheets = fields.Boolean('Timesheets', default=False)
+    display_sap_report = fields.Boolean('SAP report', default=False)
     use_period = fields.Boolean('Use period', default=True)
     period_id = fields.Many2one('hr.timesheet.sap.period', string='Period')
     sap_date_from = fields.Date('SAP Date from', default=datetime.now()+relativedelta.relativedelta(weekday=0, days=-6))
@@ -611,7 +611,9 @@ class EmployeeTimesheetGenerator(models.TransientModel):
         if this.display_sap_report is True and len(employees) > 0:
 
             if this.use_period:
-                unlocked_periods = self.env['hr.timesheet.sap.period'].search([('is_locked', '=', False)], order='period_from')
+                unlocked_periods = self.env['hr.timesheet.sap.period'].search([('is_locked', '=', False),
+                                                                               ('period_from', '<=', this.period_id.period_from)],
+                                                                              order='period_from')
                 for current_period in unlocked_periods:
                     lines = sheet_lines.search([('user_id', 'in', [item.user_id.id for item in employees]),
                                                 ('timesheet_sheet_id', '!=', False),
