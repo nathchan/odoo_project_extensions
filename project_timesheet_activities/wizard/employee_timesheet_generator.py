@@ -794,7 +794,7 @@ class EmployeeTimesheetGenerator(models.TransientModel):
             for line in extra_lines:
                 n += 1
                 extra_line_color = 'e80000'
-                if this.sap_colors_split_datetime and line.create_date <= this.sap_colors_split_datetime:
+                if this.last_post_on_sap and line.create_date <= this.last_post_on_sap:
                     extra_line_color = '0000a0'
 
 
