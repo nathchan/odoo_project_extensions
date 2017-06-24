@@ -728,8 +728,8 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                                                      number_format="DD.MM.YYYY")
                         ws['Q'+str(n)].font = Font(color=Color(line_color))
                         line_posted_on_sap = '---'
-                        if this.period_id.last_post:
-                            if line.create_date <= this.period_id.last_post:
+                        if current_period.last_post:
+                            if line.create_date <= current_period.last_post:
                                 line_posted_on_sap = 'Yes'
                             else:
                                 line_posted_on_sap = 'No'
