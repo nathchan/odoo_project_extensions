@@ -25,7 +25,7 @@
                   id="menu_project_site_details"
                   parent="project.menu_project_management"
                   action="action_project_site_details"
-                  sequence="3"
+                  sequence="4"
                   groups="project.group_project_manager"/>
 
 
