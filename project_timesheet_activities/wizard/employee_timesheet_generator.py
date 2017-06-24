@@ -670,16 +670,6 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                     for line in lines:
                         n += 1
                         line_color = '000000'  # black color
-                        line_posted_on_sap = '---'
-                        if this.period_id.last_post:
-                            if line.create_date <= this.period_id.last_post:
-                                line_posted_on_sap = 'Yes'
-                            else:
-                                line_posted_on_sap = 'No'
-                                line_color = 'e80000'  # red color
-                        else:
-                            line_posted_on_sap = 'No'
-                            line_color = 'e80000'  # red color
 
                         emp = self.env['hr.employee'].search([('user_id', '=', line.user_id.id)], limit=1)
                         project_wp_line = self.env['project.activity.work.package.line'].search([('account_id', '=', line.account_id.id),
@@ -737,6 +727,16 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                         ws['Q'+str(n)].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
                                                      number_format="DD.MM.YYYY")
                         ws['Q'+str(n)].font = Font(color=Color(line_color))
+                        line_posted_on_sap = '---'
+                        if this.period_id.last_post:
+                            if line.create_date <= this.period_id.last_post:
+                                line_posted_on_sap = 'Yes'
+                            else:
+                                line_posted_on_sap = 'No'
+                                line_color = 'e80000'  # red color
+                        else:
+                            line_posted_on_sap = 'No'
+                            line_color = 'e80000'  # red color
                         ws['R'+str(n)] = line_posted_on_sap
                         ws['R'+str(n)].font = Font(color=Color(line_color))
 

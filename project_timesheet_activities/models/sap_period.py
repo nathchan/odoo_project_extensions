@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, fields, api, tools
+from openerp import models, fields, api, tools, exceptions as e
 import datetime
 
 class SapPeriod(models.Model):
@@ -21,3 +21,8 @@ class SapPeriod(models.Model):
     period_to = fields.Date('Period to', required=True)
     last_post = fields.Datetime('Last post')
     remarks = fields.Text('Remarks')
+
+    @api.constrains('period_from', 'period_to')
+    def sap_dates_constrains(self):
+        if self.period_from and self.period_to and self.period_to < self.period_from:
+            raise e.ValidationError('Period from must be before period to.')
