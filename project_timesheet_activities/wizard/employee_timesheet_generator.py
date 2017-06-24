@@ -119,9 +119,10 @@ class EmployeeTimesheetGenerator(models.TransientModel):
     lines_count = fields.Integer(compute=_get_lines_count, string='Employees count')
     display_timesheets = fields.Boolean('Display timesheets?', default=False)
     display_sap_report = fields.Boolean('Display SAP report?', default=False)
+    use_period = fields.Boolean('Use period', default=True)
+    period_id = fields.Many2one('hr.timesheet.sap.period', string='Period')
     sap_date_from = fields.Date('SAP Date from', default=datetime.now()+relativedelta.relativedelta(weekday=0, days=-6))
     sap_date_to = fields.Date('SAP Date to', default=datetime.now()+relativedelta.relativedelta(weekday=6))
-    last_post_on_sap = fields.Datetime('Last post on SAP', required=True, default=datetime.now())
 
     @api.constrains('sap_date_from', 'sap_date_to')
     def sap_dates_constrains(self):
@@ -155,6 +156,13 @@ class EmployeeTimesheetGenerator(models.TransientModel):
         this = self[0]
         month = this.month
         year = this.year
+
+        if this.use_period:
+            sap_from = this.period_id.period_from
+            sap_to = this.period_id.period_to
+        else:
+            sap_from = this.sap_date_from
+            sap_to = this.sap_date_to
 
         start_date = datetime(year, month, 1)
         end_date = datetime(year, month, monthrange(year, month)[1])
@@ -601,309 +609,410 @@ class EmployeeTimesheetGenerator(models.TransientModel):
                 write_footer(ws, n, working_time_sum, working_time_per_day_sum)
 
         if this.display_sap_report is True and len(employees) > 0:
-            lines = sheet_lines.search([('user_id', 'in', [item.user_id.id for item in employees]),
-                                        ('timesheet_sheet_id', '!=', False),
-                                        # ('task_id', '!=', False),
-                                        ('project_activity_id.show_on_sap_report', '=', True),
-                                        ('date', '>=', this.sap_date_from),
-                                        ('date', '<=', this.sap_date_to)],
-                                       order='user_id, date, write_date')
 
-            ws = wb.create_sheet('SAP UPLOAD', 0)
+            if this.use_period:
+                unlocked_periods = self.env['hr.timesheet.sap.period'].search([('is_locked', '=', False)], order='period_from')
+                for current_period in unlocked_periods:
+                    lines = sheet_lines.search([('user_id', 'in', [item.user_id.id for item in employees]),
+                                                ('timesheet_sheet_id', '!=', False),
+                                                # ('task_id', '!=', False),
+                                                ('project_activity_id.show_on_sap_report', '=', True),
+                                                ('date', '>=', current_period.period_from),
+                                                ('date', '<=', current_period.period_to)],
+                                               order='user_id, date, write_date')
 
-            ws['A1'] = 'Personalnummer *'
-            ws['A1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
-            ws['B1'] = 'Datum *'
-            # ws['B1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
-            ws['C1'] = 'Beginn (HH:MM)'
-            ws['C1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
-            ws['D1'] = 'Ende (HH:MM)'
-            ws['D1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
-            ws['E1'] = 'Dauer (HH:MM) *'
-            ws['E1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
-            ws['F1'] = 'Servicenummer *'
-            ws['F1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
-            ws['G1'] = 'Zeitart'
-            ws['G1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
-            ws['H1'] = 'Zuschlag'
-            ws['H1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
-            ws['I1'] = 'Aufgabennummer *'
-            ws['I1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
-            ws['J1'] = 'Abweichende abrechenbare Dauer (HH:MM)'
-            ws['J1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
-            ws['K1'] = 'Arbeitsbeschreibung'
-            ws['K1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
-            ws['L1'] = 'Field of activity'
-            ws['L1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
-            ws['M1'] = 'Work Package'
-            ws['M1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
-            ws['N1'] = 'Interner Kommentar'
-            ws['N1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
-            ws['O1'] = 'Mitarbeiter'
-            ws['O1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
-            ws['P1'] = 'Comment'
-            ws['P1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
-            ws['Q1'] = 'Create date'
-            ws['Q1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
-            ws['R1'] = 'Posted on SAP'
-            ws['R1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                    ws = wb.create_sheet(current_period.period_name, 0)
 
-            ws.row_dimensions[1].height = 50
-            ws.column_dimensions['M'].width = 20
-            ws.column_dimensions['N'].width = 20
-            ws.column_dimensions['O'].width = 20
+                    ws['A1'] = 'Personalnummer *'
+                    ws['A1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                    ws['B1'] = 'Datum *'
+                    # ws['B1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                    ws['C1'] = 'Beginn (HH:MM)'
+                    ws['C1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                    ws['D1'] = 'Ende (HH:MM)'
+                    ws['D1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                    ws['E1'] = 'Dauer (HH:MM) *'
+                    ws['E1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                    ws['F1'] = 'Servicenummer *'
+                    ws['F1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                    ws['G1'] = 'Zeitart'
+                    ws['G1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                    ws['H1'] = 'Zuschlag'
+                    ws['H1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                    ws['I1'] = 'Aufgabennummer *'
+                    ws['I1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                    ws['J1'] = 'Abweichende abrechenbare Dauer (HH:MM)'
+                    ws['J1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                    ws['K1'] = 'Arbeitsbeschreibung'
+                    ws['K1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                    ws['L1'] = 'Field of activity'
+                    ws['L1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                    ws['M1'] = 'Work Package'
+                    ws['M1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                    ws['N1'] = 'Interner Kommentar'
+                    ws['N1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                    ws['O1'] = 'Mitarbeiter'
+                    ws['O1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                    ws['P1'] = 'Comment'
+                    ws['P1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                    ws['Q1'] = 'Create date'
+                    ws['Q1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                    ws['R1'] = 'Posted on SAP'
+                    ws['R1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+
+                    ws.row_dimensions[1].height = 50
+                    ws.column_dimensions['M'].width = 20
+                    ws.column_dimensions['N'].width = 20
+                    ws.column_dimensions['O'].width = 20
 
 
-            n = 1
-            for line in lines:
-                n += 1
-                line_color = '000000'
-                if line.create_date > this.last_post_on_sap:
-                    line_color = 'e80000'
-                elif line.create_date > this.sap_date_to and line.create_date <= this.last_post_on_sap:
-                    line_color = '000063'
-
-                emp = self.env['hr.employee'].search([('user_id', '=', line.user_id.id)], limit=1)
-                project_wp_line = self.env['project.activity.work.package.line'].search([('account_id', '=', line.account_id.id),
-                                                                                         ('work_package_id', '=', line.project_activity_work_package_id.id)])
-
-                ws['A'+str(n)] = emp.other_id if emp and emp.other_id else '---'
-                ws['A'+str(n)].font = Font(color=Color(line_color))
-                ws['B'+str(n)] = d.datetime.strptime(line.date, tools.DEFAULT_SERVER_DATE_FORMAT)
-                ws['B'+str(n)].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
-                                             number_format="DD.MM.YYYY")
-                ws['B'+str(n)].font = Font(color=Color(line_color))
-                ws['C'+str(n)] = format_float_time(line.timesheet_start_time)
-                ws['C'+str(n)].font = Font(color=Color(line_color))
-                ws['D'+str(n)] = format_float_time(line.timesheet_end_time)
-                ws['D'+str(n)].font = Font(color=Color(line_color))
-                ws['E'+str(n)] = format_float_time(line.unit_amount)
-                ws['E'+str(n)].font = Font(color=Color(line_color))
-                service_number = '---'
-                if line.project_activity_work_package_id.sap_report_service_number:
-                    service_number = line.project_activity_work_package_id.sap_report_service_number
-                if project_wp_line and len(project_wp_line) == 1 and project_wp_line[0].sap_report_service_number:
-                    service_number = project_wp_line[0].sap_report_service_number
-                if service_number != '---' and line.project_activity_id.name and 'Travel' in line.project_activity_id.name:
-                    service_number += '_R'
-                ws['F'+str(n)] = service_number
-                ws['F'+str(n)].font = Font(color=Color(line_color))
-                ws['G'+str(n)] = ''
-                ws['G'+str(n)].font = Font(color=Color(line_color))
-                ws['H'+str(n)] = ''
-                ws['H'+str(n)].font = Font(color=Color(line_color))
-
-                task_prefix = ''
-                task_sufix = line.project_activity_work_package_id.sap_report_task_sufix if line.project_activity_work_package_id.sap_report_task_sufix else ''
-                if project_wp_line and len(project_wp_line) == 1:
-                    task_prefix = project_wp_line[0].sap_report_task_prefix if project_wp_line[0].sap_report_task_prefix else ''
-                    task_sufix = project_wp_line[0].sap_report_task_sufix if project_wp_line[0].sap_report_task_sufix else ''
-                ws['I'+str(n)] = task_prefix + line.task_id.name + task_sufix if line.task_id else ''
-                ws['I'+str(n)].font = Font(color=Color(line_color))
-
-                ws['J'+str(n)] = ''
-                ws['J'+str(n)].font = Font(color=Color(line_color))
-                ws['K'+str(n)] = ''
-                ws['K'+str(n)].font = Font(color=Color(line_color))
-                ws['L'+str(n)] = line.account_id.name if line.account_id else ''
-                ws['L'+str(n)].font = Font(color=Color(line_color))
-                ws['M'+str(n)] = line.project_activity_work_package_id.name if line.project_activity_work_package_id else ''
-                ws['M'+str(n)].font = Font(color=Color(line_color))
-                ws['N'+str(n)] = line.project_activity_id.name if line.project_activity_id else ''
-                ws['N'+str(n)].font = Font(color=Color(line_color))
-                ws['O'+str(n)] = line.user_id.name
-                ws['O'+str(n)].font = Font(color=Color(line_color))
-                ws['P'+str(n)] = line.timesheet_comment if line.timesheet_comment else ''
-                ws['P'+str(n)].font = Font(color=Color(line_color))
-                ws['Q'+str(n)] = d.datetime.strptime(line.create_date, tools.DEFAULT_SERVER_DATETIME_FORMAT)
-                ws['Q'+str(n)].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
-                                             number_format="DD.MM.YYYY")
-                ws['Q'+str(n)].font = Font(color=Color(line_color))
-                line_posted_on_sap = '---'
-                if this.last_post_on_sap:
-                    if line.create_date <= this.last_post_on_sap:
-                        line_posted_on_sap = 'Yes'
-                    else:
-                        line_posted_on_sap = 'No'
-                ws['R'+str(n)] = line_posted_on_sap
-                ws['R'+str(n)].font = Font(color=Color(line_color))
-
-            # hr leaves records
-            lv_current_date = d.datetime.strptime(this.sap_date_from, tools.DEFAULT_SERVER_DATE_FORMAT)
-            lv_end_date = d.datetime.strptime(this.sap_date_to, tools.DEFAULT_SERVER_DATE_FORMAT)
-            while lv_current_date <= lv_end_date:
-                lv_is_holiday = self.env['hr.day.off'].search([('date', '=', lv_current_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT))], limit=1)
-                if lv_is_holiday:
-                    lv_current_date += d.timedelta(days=1)
-                    continue
-
-                lv_lines = self.env['hr.holidays'].search([('date_from', '<=', lv_current_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)),
-                                                           ('date_to', '>=', lv_current_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)),
-                                                           ('state', '=', 'validate')])
-                if lv_lines and len(lv_lines)>0:
-                    lv_line_color = 'ff8d02'
-                    for line in lv_lines:
+                    n = 1
+                    for line in lines:
                         n += 1
-                        emp = line.employee_id
+                        line_color = '000000'  # black color
+
+                        emp = self.env['hr.employee'].search([('user_id', '=', line.user_id.id)], limit=1)
+                        project_wp_line = self.env['project.activity.work.package.line'].search([('account_id', '=', line.account_id.id),
+                                                                                                 ('work_package_id', '=', line.project_activity_work_package_id.id)])
 
                         ws['A'+str(n)] = emp.other_id if emp and emp.other_id else '---'
-                        ws['A'+str(n)].font = Font(color=Color(lv_line_color))
-
-                        ws['B'+str(n)] = lv_current_date
-                        ws['B'+str(n)].style = Style(font=Font(color=Color(lv_line_color)), alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
+                        ws['A'+str(n)].font = Font(color=Color(line_color))
+                        ws['B'+str(n)] = d.datetime.strptime(line.date, tools.DEFAULT_SERVER_DATE_FORMAT)
+                        ws['B'+str(n)].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
                                                      number_format="DD.MM.YYYY")
-
-                        ws['C'+str(n)] = format_float_time(8.0)
-                        ws['C'+str(n)].font = Font(color=Color(lv_line_color))
-
-                        ws['D'+str(n)] = format_float_time(15.695)
-                        ws['D'+str(n)].font = Font(color=Color(lv_line_color))
-
-                        ws['E'+str(n)] = format_float_time(7.695)
-                        ws['E'+str(n)].font = Font(color=Color(lv_line_color))
-
-                        ws['F'+str(n)] = '---'
-                        ws['F'+str(n)].font = Font(color=Color(lv_line_color))
-
+                        ws['B'+str(n)].font = Font(color=Color(line_color))
+                        ws['C'+str(n)] = format_float_time(line.timesheet_start_time)
+                        ws['C'+str(n)].font = Font(color=Color(line_color))
+                        ws['D'+str(n)] = format_float_time(line.timesheet_end_time)
+                        ws['D'+str(n)].font = Font(color=Color(line_color))
+                        ws['E'+str(n)] = format_float_time(line.unit_amount)
+                        ws['E'+str(n)].font = Font(color=Color(line_color))
+                        service_number = '---'
+                        if line.project_activity_work_package_id.sap_report_service_number:
+                            service_number = line.project_activity_work_package_id.sap_report_service_number
+                        if project_wp_line and len(project_wp_line) == 1 and project_wp_line[0].sap_report_service_number:
+                            service_number = project_wp_line[0].sap_report_service_number
+                        if service_number != '---' and line.project_activity_id.name and 'Travel' in line.project_activity_id.name:
+                            service_number += '_R'
+                        ws['F'+str(n)] = service_number
+                        ws['F'+str(n)].font = Font(color=Color(line_color))
                         ws['G'+str(n)] = ''
-                        ws['G'+str(n)].font = Font(color=Color(lv_line_color))
-
+                        ws['G'+str(n)].font = Font(color=Color(line_color))
                         ws['H'+str(n)] = ''
-                        ws['H'+str(n)].font = Font(color=Color(lv_line_color))
+                        ws['H'+str(n)].font = Font(color=Color(line_color))
 
-                        ws['I'+str(n)] = ''
-                        ws['I'+str(n)].font = Font(color=Color(lv_line_color))
+                        task_prefix = ''
+                        task_sufix = line.project_activity_work_package_id.sap_report_task_sufix if line.project_activity_work_package_id.sap_report_task_sufix else ''
+                        if project_wp_line and len(project_wp_line) == 1:
+                            task_prefix = project_wp_line[0].sap_report_task_prefix if project_wp_line[0].sap_report_task_prefix else ''
+                            task_sufix = project_wp_line[0].sap_report_task_sufix if project_wp_line[0].sap_report_task_sufix else ''
+                        ws['I'+str(n)] = task_prefix + line.task_id.name + task_sufix if line.task_id else ''
+                        ws['I'+str(n)].font = Font(color=Color(line_color))
 
                         ws['J'+str(n)] = ''
-                        ws['J'+str(n)].font = Font(color=Color(lv_line_color))
-
+                        ws['J'+str(n)].font = Font(color=Color(line_color))
                         ws['K'+str(n)] = ''
-                        ws['K'+str(n)].font = Font(color=Color(lv_line_color))
-
-                        ws['L'+str(n)] = line.holiday_status_id.name
-                        ws['L'+str(n)].font = Font(color=Color(lv_line_color))
-
-                        ws['M'+str(n)] = ''
-                        ws['M'+str(n)].font = Font(color=Color(lv_line_color))
-
-                        ws['N'+str(n)] = ''
-                        ws['N'+str(n)].font = Font(color=Color(lv_line_color))
-
-                        ws['O'+str(n)] = emp.user_id.name if emp.user_id else 'No related user for: ' + emp.name
-                        ws['O'+str(n)].font = Font(color=Color(lv_line_color))
-
-                        ws['P'+str(n)] = ''
-                        ws['P'+str(n)].font = Font(color=Color(lv_line_color))
-
+                        ws['K'+str(n)].font = Font(color=Color(line_color))
+                        ws['L'+str(n)] = line.account_id.name if line.account_id else ''
+                        ws['L'+str(n)].font = Font(color=Color(line_color))
+                        ws['M'+str(n)] = line.project_activity_work_package_id.name if line.project_activity_work_package_id else ''
+                        ws['M'+str(n)].font = Font(color=Color(line_color))
+                        ws['N'+str(n)] = line.project_activity_id.name if line.project_activity_id else ''
+                        ws['N'+str(n)].font = Font(color=Color(line_color))
+                        ws['O'+str(n)] = line.user_id.name
+                        ws['O'+str(n)].font = Font(color=Color(line_color))
+                        ws['P'+str(n)] = line.timesheet_comment if line.timesheet_comment else ''
+                        ws['P'+str(n)].font = Font(color=Color(line_color))
                         ws['Q'+str(n)] = d.datetime.strptime(line.create_date, tools.DEFAULT_SERVER_DATETIME_FORMAT)
-                        ws['Q'+str(n)].style = Style(font=Font(color=Color(lv_line_color)),
-                                                     alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
+                        ws['Q'+str(n)].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
                                                      number_format="DD.MM.YYYY")
+                        ws['Q'+str(n)].font = Font(color=Color(line_color))
                         line_posted_on_sap = '---'
-                        # if this.last_post_on_sap:
-                        #     if line.create_date <= this.last_post_on_sap:
-                        #         line_posted_on_sap = 'Yes'
-                        #     else:
-                        #         line_posted_on_sap = 'No'
+                        if this.period_id.last_post:
+                            if line.create_date <= this.period_id.last_post:
+                                line_posted_on_sap = 'Yes'
+                            else:
+                                line_posted_on_sap = 'No'
+                                line_color = 'e80000'  # red color
+                        else:
+                            line_posted_on_sap = 'No'
+                            line_color = 'e80000'  # red color
+
                         ws['R'+str(n)] = line_posted_on_sap
-                lv_current_date += d.timedelta(days=1)
+                        ws['R'+str(n)].font = Font(color=Color(line_color))
+
+                    # hr leaves records
+                    lv_current_date = d.datetime.strptime(sap_from, tools.DEFAULT_SERVER_DATE_FORMAT)
+                    lv_end_date = d.datetime.strptime(sap_to, tools.DEFAULT_SERVER_DATE_FORMAT)
+                    while lv_current_date <= lv_end_date:
+                        lv_is_holiday = self.env['hr.day.off'].search([('date', '=', lv_current_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT))], limit=1)
+                        if lv_is_holiday:
+                            lv_current_date += d.timedelta(days=1)
+                            continue
+
+                        lv_lines = self.env['hr.holidays'].search([('date_from', '<=', lv_current_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)),
+                                                                   ('date_to', '>=', lv_current_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)),
+                                                                   ('state', '=', 'validate')])
+                        if lv_lines and len(lv_lines)>0:
+                            lv_line_color = 'ff8d02'
+                            for line in lv_lines:
+                                n += 1
+                                emp = line.employee_id
+
+                                ws['A'+str(n)] = emp.other_id if emp and emp.other_id else '---'
+                                ws['A'+str(n)].font = Font(color=Color(lv_line_color))
+
+                                ws['B'+str(n)] = lv_current_date
+                                ws['B'+str(n)].style = Style(font=Font(color=Color(lv_line_color)), alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
+                                                             number_format="DD.MM.YYYY")
+
+                                ws['C'+str(n)] = format_float_time(8.0)
+                                ws['C'+str(n)].font = Font(color=Color(lv_line_color))
+
+                                ws['D'+str(n)] = format_float_time(15.695)
+                                ws['D'+str(n)].font = Font(color=Color(lv_line_color))
+
+                                ws['E'+str(n)] = format_float_time(7.695)
+                                ws['E'+str(n)].font = Font(color=Color(lv_line_color))
+
+                                ws['F'+str(n)] = '---'
+                                ws['F'+str(n)].font = Font(color=Color(lv_line_color))
+
+                                ws['G'+str(n)] = ''
+                                ws['G'+str(n)].font = Font(color=Color(lv_line_color))
+
+                                ws['H'+str(n)] = ''
+                                ws['H'+str(n)].font = Font(color=Color(lv_line_color))
+
+                                ws['I'+str(n)] = ''
+                                ws['I'+str(n)].font = Font(color=Color(lv_line_color))
+
+                                ws['J'+str(n)] = ''
+                                ws['J'+str(n)].font = Font(color=Color(lv_line_color))
+
+                                ws['K'+str(n)] = ''
+                                ws['K'+str(n)].font = Font(color=Color(lv_line_color))
+
+                                ws['L'+str(n)] = line.holiday_status_id.name
+                                ws['L'+str(n)].font = Font(color=Color(lv_line_color))
+
+                                ws['M'+str(n)] = ''
+                                ws['M'+str(n)].font = Font(color=Color(lv_line_color))
+
+                                ws['N'+str(n)] = ''
+                                ws['N'+str(n)].font = Font(color=Color(lv_line_color))
+
+                                ws['O'+str(n)] = emp.user_id.name if emp.user_id else 'No related user for: ' + emp.name
+                                ws['O'+str(n)].font = Font(color=Color(lv_line_color))
+
+                                ws['P'+str(n)] = ''
+                                ws['P'+str(n)].font = Font(color=Color(lv_line_color))
+
+                                ws['Q'+str(n)] = d.datetime.strptime(line.create_date, tools.DEFAULT_SERVER_DATETIME_FORMAT)
+                                ws['Q'+str(n)].style = Style(font=Font(color=Color(lv_line_color)),
+                                                             alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
+                                                             number_format="DD.MM.YYYY")
+                                line_posted_on_sap = '---'
+                                ws['R'+str(n)] = line_posted_on_sap
+                        lv_current_date += d.timedelta(days=1)
+
+            else:
+                lines = sheet_lines.search([('user_id', 'in', [item.user_id.id for item in employees]),
+                                            ('timesheet_sheet_id', '!=', False),
+                                            # ('task_id', '!=', False),
+                                            ('project_activity_id.show_on_sap_report', '=', True),
+                                            ('date', '>=', sap_from),
+                                            ('date', '<=', sap_to)],
+                                           order='user_id, date, write_date')
+
+                ws = wb.create_sheet('SAP REPORT', 0)
+
+                ws['A1'] = 'Personalnummer *'
+                ws['A1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                ws['B1'] = 'Datum *'
+                # ws['B1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                ws['C1'] = 'Beginn (HH:MM)'
+                ws['C1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                ws['D1'] = 'Ende (HH:MM)'
+                ws['D1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                ws['E1'] = 'Dauer (HH:MM) *'
+                ws['E1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                ws['F1'] = 'Servicenummer *'
+                ws['F1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                ws['G1'] = 'Zeitart'
+                ws['G1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                ws['H1'] = 'Zuschlag'
+                ws['H1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                ws['I1'] = 'Aufgabennummer *'
+                ws['I1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                ws['J1'] = 'Abweichende abrechenbare Dauer (HH:MM)'
+                ws['J1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                ws['K1'] = 'Arbeitsbeschreibung'
+                ws['K1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                ws['L1'] = 'Field of activity'
+                ws['L1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                ws['M1'] = 'Work Package'
+                ws['M1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                ws['N1'] = 'Interner Kommentar'
+                ws['N1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                ws['O1'] = 'Mitarbeiter'
+                ws['O1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                ws['P1'] = 'Comment'
+                ws['P1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                ws['Q1'] = 'Create date'
+                ws['Q1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+                ws['R1'] = 'Posted on SAP'
+                ws['R1'].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'))
+
+                ws.row_dimensions[1].height = 50
+                ws.column_dimensions['M'].width = 20
+                ws.column_dimensions['N'].width = 20
+                ws.column_dimensions['O'].width = 20
+
+
+                n = 1
+                for line in lines:
+                    n += 1
+                    line_color = '000000'  # black color
+
+                    emp = self.env['hr.employee'].search([('user_id', '=', line.user_id.id)], limit=1)
+                    project_wp_line = self.env['project.activity.work.package.line'].search([('account_id', '=', line.account_id.id),
+                                                                                             ('work_package_id', '=', line.project_activity_work_package_id.id)])
+
+                    ws['A'+str(n)] = emp.other_id if emp and emp.other_id else '---'
+                    ws['A'+str(n)].font = Font(color=Color(line_color))
+                    ws['B'+str(n)] = d.datetime.strptime(line.date, tools.DEFAULT_SERVER_DATE_FORMAT)
+                    ws['B'+str(n)].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
+                                                 number_format="DD.MM.YYYY")
+                    ws['B'+str(n)].font = Font(color=Color(line_color))
+                    ws['C'+str(n)] = format_float_time(line.timesheet_start_time)
+                    ws['C'+str(n)].font = Font(color=Color(line_color))
+                    ws['D'+str(n)] = format_float_time(line.timesheet_end_time)
+                    ws['D'+str(n)].font = Font(color=Color(line_color))
+                    ws['E'+str(n)] = format_float_time(line.unit_amount)
+                    ws['E'+str(n)].font = Font(color=Color(line_color))
+                    service_number = '---'
+                    if line.project_activity_work_package_id.sap_report_service_number:
+                        service_number = line.project_activity_work_package_id.sap_report_service_number
+                    if project_wp_line and len(project_wp_line) == 1 and project_wp_line[0].sap_report_service_number:
+                        service_number = project_wp_line[0].sap_report_service_number
+                    if service_number != '---' and line.project_activity_id.name and 'Travel' in line.project_activity_id.name:
+                        service_number += '_R'
+                    ws['F'+str(n)] = service_number
+                    ws['F'+str(n)].font = Font(color=Color(line_color))
+                    ws['G'+str(n)] = ''
+                    ws['G'+str(n)].font = Font(color=Color(line_color))
+                    ws['H'+str(n)] = ''
+                    ws['H'+str(n)].font = Font(color=Color(line_color))
+
+                    task_prefix = ''
+                    task_sufix = line.project_activity_work_package_id.sap_report_task_sufix if line.project_activity_work_package_id.sap_report_task_sufix else ''
+                    if project_wp_line and len(project_wp_line) == 1:
+                        task_prefix = project_wp_line[0].sap_report_task_prefix if project_wp_line[0].sap_report_task_prefix else ''
+                        task_sufix = project_wp_line[0].sap_report_task_sufix if project_wp_line[0].sap_report_task_sufix else ''
+                    ws['I'+str(n)] = task_prefix + line.task_id.name + task_sufix if line.task_id else ''
+                    ws['I'+str(n)].font = Font(color=Color(line_color))
+
+                    ws['J'+str(n)] = ''
+                    ws['J'+str(n)].font = Font(color=Color(line_color))
+                    ws['K'+str(n)] = ''
+                    ws['K'+str(n)].font = Font(color=Color(line_color))
+                    ws['L'+str(n)] = line.account_id.name if line.account_id else ''
+                    ws['L'+str(n)].font = Font(color=Color(line_color))
+                    ws['M'+str(n)] = line.project_activity_work_package_id.name if line.project_activity_work_package_id else ''
+                    ws['M'+str(n)].font = Font(color=Color(line_color))
+                    ws['N'+str(n)] = line.project_activity_id.name if line.project_activity_id else ''
+                    ws['N'+str(n)].font = Font(color=Color(line_color))
+                    ws['O'+str(n)] = line.user_id.name
+                    ws['O'+str(n)].font = Font(color=Color(line_color))
+                    ws['P'+str(n)] = line.timesheet_comment if line.timesheet_comment else ''
+                    ws['P'+str(n)].font = Font(color=Color(line_color))
+                    ws['Q'+str(n)] = d.datetime.strptime(line.create_date, tools.DEFAULT_SERVER_DATETIME_FORMAT)
+                    ws['Q'+str(n)].style = Style(alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
+                                                 number_format="DD.MM.YYYY")
+                    ws['Q'+str(n)].font = Font(color=Color(line_color))
+                    line_posted_on_sap = '---'
+                    ws['R'+str(n)] = line_posted_on_sap
+                    ws['R'+str(n)].font = Font(color=Color(line_color))
+
+                # hr leaves records
+                lv_current_date = d.datetime.strptime(sap_from, tools.DEFAULT_SERVER_DATE_FORMAT)
+                lv_end_date = d.datetime.strptime(sap_to, tools.DEFAULT_SERVER_DATE_FORMAT)
+                while lv_current_date <= lv_end_date:
+                    lv_is_holiday = self.env['hr.day.off'].search([('date', '=', lv_current_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT))], limit=1)
+                    if lv_is_holiday:
+                        lv_current_date += d.timedelta(days=1)
+                        continue
+
+                    lv_lines = self.env['hr.holidays'].search([('date_from', '<=', lv_current_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)),
+                                                               ('date_to', '>=', lv_current_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)),
+                                                               ('state', '=', 'validate')])
+                    if lv_lines and len(lv_lines)>0:
+                        lv_line_color = 'ff8d02'
+                        for line in lv_lines:
+                            n += 1
+                            emp = line.employee_id
+
+                            ws['A'+str(n)] = emp.other_id if emp and emp.other_id else '---'
+                            ws['A'+str(n)].font = Font(color=Color(lv_line_color))
+
+                            ws['B'+str(n)] = lv_current_date
+                            ws['B'+str(n)].style = Style(font=Font(color=Color(lv_line_color)), alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
+                                                         number_format="DD.MM.YYYY")
+
+                            ws['C'+str(n)] = format_float_time(8.0)
+                            ws['C'+str(n)].font = Font(color=Color(lv_line_color))
+
+                            ws['D'+str(n)] = format_float_time(15.695)
+                            ws['D'+str(n)].font = Font(color=Color(lv_line_color))
+
+                            ws['E'+str(n)] = format_float_time(7.695)
+                            ws['E'+str(n)].font = Font(color=Color(lv_line_color))
+
+                            ws['F'+str(n)] = '---'
+                            ws['F'+str(n)].font = Font(color=Color(lv_line_color))
+
+                            ws['G'+str(n)] = ''
+                            ws['G'+str(n)].font = Font(color=Color(lv_line_color))
+
+                            ws['H'+str(n)] = ''
+                            ws['H'+str(n)].font = Font(color=Color(lv_line_color))
+
+                            ws['I'+str(n)] = ''
+                            ws['I'+str(n)].font = Font(color=Color(lv_line_color))
+
+                            ws['J'+str(n)] = ''
+                            ws['J'+str(n)].font = Font(color=Color(lv_line_color))
+
+                            ws['K'+str(n)] = ''
+                            ws['K'+str(n)].font = Font(color=Color(lv_line_color))
+
+                            ws['L'+str(n)] = line.holiday_status_id.name
+                            ws['L'+str(n)].font = Font(color=Color(lv_line_color))
+
+                            ws['M'+str(n)] = ''
+                            ws['M'+str(n)].font = Font(color=Color(lv_line_color))
+
+                            ws['N'+str(n)] = ''
+                            ws['N'+str(n)].font = Font(color=Color(lv_line_color))
+
+                            ws['O'+str(n)] = emp.user_id.name if emp.user_id else 'No related user for: ' + emp.name
+                            ws['O'+str(n)].font = Font(color=Color(lv_line_color))
+
+                            ws['P'+str(n)] = ''
+                            ws['P'+str(n)].font = Font(color=Color(lv_line_color))
+
+                            ws['Q'+str(n)] = d.datetime.strptime(line.create_date, tools.DEFAULT_SERVER_DATETIME_FORMAT)
+                            ws['Q'+str(n)].style = Style(font=Font(color=Color(lv_line_color)),
+                                                         alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
+                                                         number_format="DD.MM.YYYY")
+                            line_posted_on_sap = '---'
+                            ws['R'+str(n)] = line_posted_on_sap
+                    lv_current_date += d.timedelta(days=1)
 
 
 
-            extra_lines = sheet_lines.search([('user_id', 'in', [item.user_id.id for item in employees]),
-                                              ('timesheet_sheet_id', '!=', False),
-                                              # ('task_id', '!=', False),
-                                              ('project_activity_id.show_on_sap_report', '=', True),
-                                              ('create_date', '>=', this.sap_date_from),
-                                              ('create_date', '<=', this.sap_date_to),
-                                              '|',
-                                              ('date', '<', this.sap_date_from),
-                                              ('date', '>', this.sap_date_to)],
-                                             order='user_id, date, write_date')
-            for line in extra_lines:
-                n += 1
-                extra_line_color = 'e80000'
-                if this.last_post_on_sap and line.create_date <= this.last_post_on_sap:
-                    extra_line_color = '00d1f2'
 
-
-                emp = self.env['hr.employee'].search([('user_id', '=', line.user_id.id)], limit=1)
-                project_wp_line = self.env['project.activity.work.package.line'].search([('account_id', '=', line.account_id.id),
-                                                                                         ('work_package_id', '=', line.project_activity_work_package_id.id)])
-
-                ws['A'+str(n)] = emp.other_id if emp and emp.other_id else '---'
-                ws['A'+str(n)].font = Font(color=Color(extra_line_color))
-
-                ws['B'+str(n)] = d.datetime.strptime(line.date, tools.DEFAULT_SERVER_DATE_FORMAT)
-                ws['B'+str(n)].style = Style(font=Font(color=Color(extra_line_color)), alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
-                                             number_format="DD.MM.YYYY")
-
-                ws['C'+str(n)] = format_float_time(line.timesheet_start_time)
-                ws['C'+str(n)].font = Font(color=Color(extra_line_color))
-
-                ws['D'+str(n)] = format_float_time(line.timesheet_end_time)
-                ws['D'+str(n)].font = Font(color=Color(extra_line_color))
-
-                ws['E'+str(n)] = format_float_time(line.unit_amount)
-                ws['E'+str(n)].font = Font(color=Color(extra_line_color))
-
-                service_number = '---'
-                if line.project_activity_work_package_id.sap_report_service_number:
-                    service_number = line.project_activity_work_package_id.sap_report_service_number
-                if project_wp_line and len(project_wp_line) == 1 and project_wp_line[0].sap_report_service_number:
-                    service_number = project_wp_line[0].sap_report_service_number
-                if service_number != '---' and line.project_activity_id.name and 'Travel' in line.project_activity_id.name:
-                    service_number += '_R'
-
-                ws['F'+str(n)] = service_number
-                ws['F'+str(n)].font = Font(color=Color(extra_line_color))
-
-                ws['G'+str(n)] = ''
-                ws['G'+str(n)].font = Font(color=Color(extra_line_color))
-
-                ws['H'+str(n)] = ''
-                ws['H'+str(n)].font = Font(color=Color(extra_line_color))
-
-                task_prefix = ''
-                task_sufix = line.project_activity_work_package_id.sap_report_task_sufix if line.project_activity_work_package_id.sap_report_task_sufix else ''
-                if project_wp_line and len(project_wp_line) == 1:
-                    task_prefix = project_wp_line[0].sap_report_task_prefix if project_wp_line[0].sap_report_task_prefix else ''
-                    task_sufix = project_wp_line[0].sap_report_task_sufix if project_wp_line[0].sap_report_task_sufix else ''
-                ws['I'+str(n)] = task_prefix + line.task_id.name + task_sufix if line.task_id else ''
-                ws['I'+str(n)].font = Font(color=Color(extra_line_color))
-
-                ws['J'+str(n)] = ''
-                ws['J'+str(n)].font = Font(color=Color(extra_line_color))
-
-                ws['K'+str(n)] = ''
-                ws['K'+str(n)].font = Font(color=Color(extra_line_color))
-
-                ws['L'+str(n)] = line.account_id.name if line.account_id else ''
-                ws['L'+str(n)].font = Font(color=Color(extra_line_color))
-
-                ws['M'+str(n)] = line.project_activity_work_package_id.name if line.project_activity_work_package_id else ''
-                ws['M'+str(n)].font = Font(color=Color(extra_line_color))
-
-                ws['N'+str(n)] = line.project_activity_id.name if line.project_activity_id else ''
-                ws['N'+str(n)].font = Font(color=Color(extra_line_color))
-
-                ws['O'+str(n)] = line.user_id.name
-                ws['O'+str(n)].font = Font(color=Color(extra_line_color))
-
-                ws['P'+str(n)] = line.timesheet_comment if line.timesheet_comment else ''
-                ws['P'+str(n)].font = Font(color=Color(extra_line_color))
-
-                ws['Q'+str(n)] = d.datetime.strptime(line.create_date, tools.DEFAULT_SERVER_DATETIME_FORMAT)
-                ws['Q'+str(n)].style = Style(font=Font(color=Color(extra_line_color)),
-                                             alignment=Alignment(wrap_text=True, horizontal='center', vertical='center'),
-                                             number_format="DD.MM.YYYY")
-                line_posted_on_sap = '---'
-                if this.last_post_on_sap:
-                    if line.create_date <= this.last_post_on_sap:
-                        line_posted_on_sap = 'Yes'
-                    else:
-                        line_posted_on_sap = 'No'
-                ws['R'+str(n)] = line_posted_on_sap
 
         buf = cStringIO.StringIO()
         wb.save(buf)

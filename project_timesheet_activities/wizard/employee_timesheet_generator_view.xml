@@ -15,19 +15,28 @@
                         <div states="choose">
                             <label for="display_sap_report" groups="base.group_hr_user"/>
                             <field name="display_sap_report" groups="base.group_hr_user"/>
-                            <group groups="base.group_hr_user" attrs="{'invisible': [('display_sap_report', '=', False)]}">
+                            <div attrs="{'invisible': [('display_sap_report', '=', False)]}">
                                 <div class="o_row">
-                                    <strong>SAP</strong> from
-                                    <field name="sap_date_from" attrs="{'required': [('display_sap_report', '=', True)]}" />
-                                    to
-                                    <field class="oe_inline" name="sap_date_to" attrs="{'required': [('display_sap_report', '=', True)]}" />
+                                    <label for="use_period" />
+                                    <field name="use_period" />
                                 </div>
-                                <br/>
                                 <div class="o_row">
-                                    <label for="last_post_on_sap"/>
-                                    <field name="last_post_on_sap" />
+                                    <div attrs="{'invisible': [('use_period', '=', True)]}">
+                                        <strong>SAP</strong> from
+                                        <field name="sap_date_from" attrs="{'required': [('display_sap_report', '=', True)]}" />
+                                        <span class="oe_inline">to</span>
+                                        <field class="oe_inline" name="sap_date_to" attrs="{'required': [('display_sap_report', '=', True)]}" />
+
+                                    </div>
+
+                                    <div attrs="{'invisible': [('use_period', '=', False)]}">
+                                        <label for="period_id" />
+                                        <field name="period_id" attrs="{'required': [('use_period', '=', True)]}" options="{'no_open': True, 'no_create': True}" />
+                                    </div>
+
                                 </div>
-                            </group>
+
+                            </div>
 
                             <br/>
                             <br/>
