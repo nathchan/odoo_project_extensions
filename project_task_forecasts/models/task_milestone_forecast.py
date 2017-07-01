@@ -160,7 +160,7 @@ class ProjectTaskMilestoneForecast(models.Model):
     force_update = fields.Boolean('Force update', default=False)
     forecast_date_type = fields.Selection([('blocked_until', 'Blocked until'),
                                            ('must_start_on', 'Must start on')],
-                                          'FC type',
+                                          'Constrain type',
                                           track_visibility='onchange')
     blocked_until_date = fields.Date('Blocked until')
     forecast_date = fields.Date('Forecast date', track_visibility='onchange')
