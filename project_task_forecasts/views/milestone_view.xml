@@ -8,11 +8,11 @@
             <field name="model">project.milestone</field>
             <field name="arch" type="xml">
                 <tree string="Milestones">
-                    <field name="name"/>
-                    <field name="duration"/>
-                    <field name="project_id"/>
+                    <field name="name" />
+                    <field name="duration" />
+                    <field name="project_id" />
                     <field name="str_predecessor_milestone_ids" />
-                    <field name="sequence" />
+                    <field name="sequence_order" />
                 </tree>
             </field>
         </record>
@@ -23,12 +23,12 @@
             <field name="arch" type="xml">
                 <form>
                     <header>
-                        <button string="Add in tasks"
-                                name="add_in_tasks"
-                                type="object"
-                                confirm="Are you sure?"
-                                groups="base.group_no_one"
-                                />
+                        <!--<button string="Add in tasks"-->
+                                <!--name="add_in_tasks"-->
+                                <!--type="object"-->
+                                <!--confirm="Are you sure?"-->
+                                <!--groups="base.group_no_one"-->
+                                <!--/>-->
                     </header>
                     <sheet>
                         <div class="oe_title">
@@ -38,10 +38,10 @@
                         </div>
                         <group col="2">
                             <group>
-                                <field name="project_id"/>
-                                <label for="duration"/>
+                                <field name="project_id" />
+                                <label for="duration" />
                                 <div class="o_row">
-                                    <field name="duration"/>
+                                    <field name="duration" />
                                     <div>Days</div>
                                 </div>
                                 <field name="predecessor_milestone_ids" widget="many2many_tags" />
@@ -49,7 +49,7 @@
                             </group>
                             <group>
                                 <field name="active" />
-                                <field name="sequence" />
+                                <field name="sequence_order" />
                                 <field name="show_on_dispatching" />
                             </group>
                         </group>

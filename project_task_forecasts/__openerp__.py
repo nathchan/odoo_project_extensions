@@ -23,6 +23,7 @@
         'views/stage_process_view.xml',
         'views/issue_view.xml',
         'views/milestone_view.xml',
+        'views/milestone_template_view.xml',
         'views/project_view.xml',
         'views/task_priority_view.xml',
         'views/backlog_cw_view.xml',

@@ -32,7 +32,7 @@
         <menuitem name="Milestones template"
                   id="menu_project_milestones_config"
                   parent="project.menu_project_config"
-                  action="action_project_milestones"
+                  action="action_project_milestone_templates"
                   sequence="20"/>
 
         <menuitem name="Task priorities"

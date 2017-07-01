@@ -63,6 +63,8 @@ class ProjectTask(models.Model):
     forecast_start_date = fields.Date('Forecast start date')
     forecast_project_id = fields.Many2one('project.project')
 
+    milestone_template_id = fields.Many2one('project.milestone.template', 'Milestones template')
+
     milestone_ids = fields.One2many('project.task.milestone.forecast', 'task_id', 'Milestones forecast')
     milestone_count = fields.Integer('Milestone count', compute=_compute_milestone_count)
     stage_progress = fields.Float('Percent complete', compute=_compute_stage_progress, store=True, group_operator="avg")
