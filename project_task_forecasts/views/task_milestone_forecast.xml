@@ -101,9 +101,13 @@
                                     <field name="forecast_is_holiday" invisible="1" />
                                     <field name="actual_is_holiday" invisible="1" />
 
+                                    <field name="forecast_date_type" />
+                                    <field name="blocked_until_date" attrs="{'invisible': [('forecast_date_type', '!=', 'blocked_until')],
+                                                                             'required': [('forecast_date_type', '=', 'blocked_until')]}" />
+
                                     <label for="forecast_date"/>
                                     <div class="o_row">
-                                        <field name="forecast_date"/>
+                                        <field name="forecast_date" attrs="{'required': [('forecast_date_type', '!=', False)]}"/>
                                         <span attrs="{'invisible': [('forecast_is_holiday', '=', False)]}"
                                               class="label label-danger">FC weekend/holiday</span>
                                     </div>

@@ -158,6 +158,11 @@ class ProjectTaskMilestoneForecast(models.Model):
     milestone_id = fields.Many2one('project.milestone', 'Milestone', required=True, ondelete='restrict', track_visibility='onchange')
 
     force_update = fields.Boolean('Force update', default=False)
+    forecast_date_type = fields.Selection([('blocked_until', 'Blocked until'),
+                                           ('must_start_on', 'Must start on')],
+                                          'FC type',
+                                          track_visibility='onchange')
+    blocked_until_date = fields.Date('Blocked until')
     forecast_date = fields.Date('Forecast date', track_visibility='onchange')
     forecast_week = fields.Char('Forecast week', track_visibility='onchange', compute=_compute_weeks, store=True)
     forecast_is_holiday = fields.Boolean('FC is holiday', compute=_fc_ac_holiday)
@@ -205,6 +210,10 @@ class ProjectTaskMilestoneForecast(models.Model):
                 start_date = datetime.datetime.strptime(milestone.actual_date, tools.DEFAULT_SERVER_DATE_FORMAT)
                 continue
 
+            if milestone.forecast_date_type == 'must_start_on' and milestone.forecast_date:
+                start_date = datetime.datetime.strptime(milestone.forecast_date, tools.DEFAULT_SERVER_DATE_FORMAT)
+                continue
+
             if milestone.milestone_id.predecessor_milestone_ids and len(milestone.milestone_id.predecessor_milestone_ids) > 0:
                 dates = []
                 all_milestones = self.env['project.task.milestone.forecast'].search([('task_id', '=', self.task_id.id),
@@ -231,6 +240,11 @@ class ProjectTaskMilestoneForecast(models.Model):
                 if self._skip_date(current_date):
                     continue
                 business_days_to_add -= 1
+
+            if milestone.forecast_date_type == 'blocked_until' and milestone.forecast_date and milestone.blocked_until_date:
+                if current_date < datetime.datetime.strptime(milestone.blocked_until_date, tools.DEFAULT_SERVER_DATE_FORMAT):
+                    current_date = datetime.datetime.strptime(milestone.blocked_until_date, tools.DEFAULT_SERVER_DATE_FORMAT)
+
             data = {
                 'force_update': True,
                 'forecast_date': current_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT),
