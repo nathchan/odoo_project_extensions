@@ -25,9 +25,23 @@
                   id="menu_project_site_details"
                   parent="project.menu_project_management"
                   action="action_project_site_details"
-                  sequence="3"
+                  sequence="4"
                   groups="project.group_project_manager"/>
 
+
+
+        <menuitem name="Sites"
+                  id="menu_timesheet_site_details_root"
+                  parent="hr_attendance.timesheet_menu_root"
+                  sequence="2"
+                  groups="base.group_user"/>
+
+        <menuitem name="Sites Inventory"
+                  id="menu_project_timesheet_site_details_track"
+                  parent="menu_timesheet_site_details_root"
+                  action="action_project_site_details"
+                  sequence="1"
+                  groups="base.group_user"/>
 
     </data>
 </openerp>

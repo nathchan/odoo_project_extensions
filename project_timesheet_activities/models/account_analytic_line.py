@@ -282,10 +282,10 @@ class AccountAnalyticLine(models.Model):
     @api.constrains('timesheet_travel_start', 'timesheet_travel_end')
     def _check_travel_start_end(self):
         if self.timesheet_travel_start != False:
-            if self.timesheet_travel_start.isdigit() is False or int(self.timesheet_travel_start) > 9999 or int(self.timesheet_travel_start) < 1000:
+            if self.timesheet_travel_start.isdigit() is False or int(self.timesheet_travel_start) > 99999 or int(self.timesheet_travel_start) < 1000:
                 raise e.ValidationError('Invalid value for Start travel (Place/Postcode)')
         if self.timesheet_travel_end != False:
-            if self.timesheet_travel_end.isdigit() is False or int(self.timesheet_travel_end) > 9999 or int(self.timesheet_travel_end) < 1000:
+            if self.timesheet_travel_end.isdigit() is False or int(self.timesheet_travel_end) > 99999 or int(self.timesheet_travel_end) < 1000:
                 raise e.ValidationError('Invalid value for End travel (Place/Postcode)')
 
     @api.one

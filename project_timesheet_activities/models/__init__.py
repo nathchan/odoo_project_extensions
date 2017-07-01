@@ -4,3 +4,4 @@ import project_activity_work_package
 import project_activity_work_package_line
 import account_analytic_line
 import hr_timesheet_sheet
+import sap_period

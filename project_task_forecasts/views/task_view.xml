@@ -24,6 +24,7 @@
                 <data>
 
                     <xpath expr="//field[@name='stage_id']" position="after">
+                        <field name="priority" />
                         <field name="stage_progress" string="% Complete" widget="progressbar" />
                     </xpath>
 
@@ -86,12 +87,19 @@
                         </group>
                     </xpath>
 
+                    <xpath expr="//field[@name='kanban_state']" position="replace"></xpath>
+
+                    <xpath expr="//field[@name='project_id']" position="before">
+                        <field name="kanban_state" widget="kanban_state_selection"/>
+                        <field name="blocked_until" />
+                    </xpath>
 
 
 
                 </data>
             </field>
         </record>
+
 
     </data>
 </openerp>

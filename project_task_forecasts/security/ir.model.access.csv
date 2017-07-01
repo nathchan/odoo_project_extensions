@@ -11,6 +11,7 @@
 "access_project_base_backlog_user","project.base.backlog.user","model_project_base_backlog","project.group_project_user",1,0,0,0
 "access_project_backlog_sa_user","project.backlog.sa.user","model_project_backlog_sa","project.group_project_user",1,0,0,0
 "access_project_backlog_cw_user","project.backlog.cw.user","model_project_backlog_cw","project.group_project_user",1,0,0,0
+"access_project_backlog_sran_user","project.backlog.cw.user","model_project_backlog_sran","project.group_project_user",1,0,0,0
 "access_project_task_priority_employee","project.task.priority.employee","model_project_task_priority","base.group_user",1,0,0,0
 "access_project_task_priority_project_user","project.task.priority.project.user","model_project_task_priority","project.group_project_user",1,0,0,0
 "access_project_task_priority_project_manager","project.task.priority.project.manager","model_project_task_priority","project.group_project_manager",1,1,1,0

@@ -2,11 +2,11 @@
 <openerp>
     <data>
 
-        <record model="ir.ui.view" id="project_backlog_sa_tree">
-            <field name="name">project.backlog.sa.tree</field>
-            <field name="model">project.backlog.sa</field>
+        <record model="ir.ui.view" id="project_backlog_sran_tree">
+            <field name="name">project.backlog.sran.tree</field>
+            <field name="model">project.backlog.sran</field>
             <field name="arch" type="xml">
-                <tree string="Backlog SA" create="false" edit="false">
+                <tree string="Backlog SRAN" create="false" edit="false">
                     <button type="object" string="Open Task" name="action_show_task_from_milestone" />
                     <field name="priority" />
                     <field name="project_id"/>
@@ -23,9 +23,9 @@
         </record>
 
         <!-- Project Task Kanban View -->
-        <record model="ir.ui.view" id="project_backlog_sa_kanban">
-            <field name="name">project.backlog.sa.kanban</field>
-            <field name="model">project.backlog.sa</field>
+        <record model="ir.ui.view" id="project_backlog_sran_kanban">
+            <field name="name">project.backlog.sran.kanban</field>
+            <field name="model">project.backlog.sran</field>
             <field name="arch" type="xml">
                 <kanban default_group_by="milestone_id" class="o_kanban_small_column">
                     <field name="project_id"/>
@@ -73,9 +73,9 @@
             </field>
          </record>
 
-        <record model="ir.ui.view" id="project_backlog_sa_search">
-            <field name="name">project.backlog.sa.search</field>
-            <field name="model">project.backlog.sa</field>
+        <record model="ir.ui.view" id="project_backlog_sran_search">
+            <field name="name">project.backlog.sran.search</field>
+            <field name="model">project.backlog.sran</field>
             <field name="arch" type="xml">
                 <search>
                     <field name="task_id"/>
@@ -95,14 +95,14 @@
             </field>
         </record>
 
-        <record id="action_project_backlog_sa" model="ir.actions.act_window">
-            <field name="name">Backlog SA</field>
+        <record id="action_project_backlog_sran" model="ir.actions.act_window">
+            <field name="name">Backlog SRAN</field>
             <field name="type">ir.actions.act_window</field>
-            <field name="res_model">project.backlog.sa</field>
+            <field name="res_model">project.backlog.sran</field>
             <field name="view_type">form</field>
-            <field name="view_mode">kanban,tree</field>
+            <field name="view_mode">tree,kanban</field>
             <field name="context">{'search_default_group_milestone':1}</field>
-            <field name="search_view_id" ref="project_backlog_sa_search"/>
+            <field name="search_view_id" ref="project_backlog_sran_search"/>
         </record>
 
 

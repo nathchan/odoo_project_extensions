@@ -36,8 +36,14 @@
                   sequence="40" />
 
 
+        <menuitem string="SAP posts"
+                  action="action_hr_timesheet_sap_period"
+                  id="menu_action_hr_timesheet_sap_period"
+                  parent="hr_attendance.menu_hr_time_tracking"
+                  groups="project.group_project_manager"
+                  sequence="48"/>
 
-        <menuitem string="Generate XLS timesheets"
+        <menuitem string="Generate XLS reports"
                   action="act_hr_timesheet_sheet_generate_timesheets_xls"
                   id="menu_act_hr_timesheet_sheet_generate_timesheets_xls"
                   parent="hr_attendance.menu_hr_time_tracking"

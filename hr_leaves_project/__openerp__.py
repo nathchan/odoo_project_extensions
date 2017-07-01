@@ -15,6 +15,7 @@
     ],
     'data': [
         'views/hr_holidays_view.xml',
+        'views/hr_holidays_status_view.xml',
         'views/hr_employee_view.xml',
         'views/menuitems.xml',
         'security/res_group.xml',

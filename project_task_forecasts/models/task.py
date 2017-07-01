@@ -68,10 +68,13 @@ class ProjectTask(models.Model):
     stage_progress = fields.Float('Percent complete', compute=_compute_stage_progress, store=True, group_operator="avg")
     subcontractor_id = fields.Many2one('res.partner', 'Subcontractor')
     work_package = fields.Char('Work Package ID')
-    priority_id = fields.Many2one('project.task.priority', 'Priority')
+    priority_id = fields.Many2one('project.task.priority', 'MDF Priority')
+    quality_finish = fields.Boolean('Quality Finish')
 
     has_processes = fields.Boolean('Has processes', compute=_compute_has_processes)
     stage_process_id = fields.Many2one('project.task.stage.process', 'Process')
+
+    blocked_until = fields.Date('Blocked until')
 
     @api.multi
     def write(self, vals):

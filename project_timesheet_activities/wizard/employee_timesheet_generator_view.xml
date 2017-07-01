@@ -13,42 +13,66 @@
         			<sheet>
 
                         <div states="choose">
-                            <label for="month" />
-                            <field name="month" required="1" />
-                            <label for="year" />
-                            <field name="year" required="1" />
-
                             <label for="display_sap_report" groups="base.group_hr_user"/>
                             <field name="display_sap_report" groups="base.group_hr_user"/>
-                            <group groups="base.group_hr_user" attrs="{'invisible': [('display_sap_report', '=', False)]}">
+                            <div attrs="{'invisible': [('display_sap_report', '=', False)]}">
                                 <div class="o_row">
-                                    <strong>SAP</strong> from
-                                    <field name="sap_date_from" attrs="{'required': [('display_sap_report', '=', True)]}" />
-                                    to
-                                    <field class="oe_inline" name="sap_date_to" attrs="{'required': [('display_sap_report', '=', True)]}" />
+                                    <label for="use_period" />
+                                    <field name="use_period" />
+                                </div>
+                                <div class="o_row">
+                                    <div attrs="{'invisible': [('use_period', '=', True)]}">
+                                        <strong>SAP</strong> from
+                                        <field name="sap_date_from" attrs="{'required': [('display_sap_report', '=', True)]}" />
+                                        <span class="oe_inline">to</span>
+                                        <field class="oe_inline" name="sap_date_to" attrs="{'required': [('display_sap_report', '=', True)]}" />
+
+                                    </div>
+
+                                    <div attrs="{'invisible': [('use_period', '=', False)]}">
+                                        <label for="period_id" />
+                                        <field name="period_id" attrs="{'required': [('use_period', '=', True)]}" options="{'no_open': True, 'no_create': True}" />
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <br/>
+                            <br/>
+
+                            <label for="display_timesheets" groups="base.group_hr_user"/>
+                            <field name="display_timesheets" groups="base.group_hr_user"/>
+                            <group groups="base.group_hr_user" attrs="{'invisible': [('display_timesheets', '=', False)]}">
+                                <div class="o_row">
+                                    <label for="month" />
+                                    <field name="month" required="1" />
+                                    <label for="year" />
+                                    <field name="year" required="1" />
                                 </div>
                             </group>
 
+                            <div attrs="{'invisible': [('display_timesheets', '=', False)]}">
+                                <div>
+                                    <label for="department_id" groups="base.group_hr_user"/>
+                                    <field name="department_id" groups="base.group_hr_user"/>
+                                    <button groups="base.group_hr_user" name="fill_lines" context="" string="Get employees" type="object" />
+                                </div>
 
+                                <field name="employee_timesheet_generator_line_ids" groups="base.group_hr_user">
+                                    <tree editable="on_bottom">
+                                        <field name="employee_id" required="1" />
+                                        <field name="job_id" />
+                                    </tree>
+                                </field>
 
-                            <div>
-                                <label for="department_id" groups="base.group_hr_user"/>
-                                <field name="department_id" groups="base.group_hr_user"/>
-                                <button groups="base.group_hr_user" name="fill_lines" context="" string="Get employees" type="object" />
+                                <label for="lines_count"  groups="base.group_hr_user"/>
+                                <field name="lines_count" groups="base.group_hr_user" class="oe_inline" />
                             </div>
 
-                            <field name="employee_timesheet_generator_line_ids" groups="base.group_hr_user">
-                                <tree editable="on_bottom">
-                                    <field name="employee_id" required="1" />
-                                    <field name="job_id" />
-                                </tree>
-                            </field>
-
-                            <label for="lines_count"  groups="base.group_hr_user"/>
-                            <field name="lines_count" groups="base.group_hr_user" class="oe_inline" />
                         </div>
                         <div states="get">
-                            <h2>Timesheets generation completed</h2>
+                            <h2>Generation completed</h2>
                             <p>Here is the xls file: <field name="data" readonly="1" filename="name"/></p>
                             <p>This file was generated using the universal <strong>Unicode/UTF-8</strong> file encoding, please be sure to view and edit
                                using the same encoding.</p>
@@ -56,7 +80,7 @@
 
         			</sheet>
         			<footer states='choose'>
-                        <button name="get_report" context="" string="Generate timesheets" type="object" default_focus="1" class="oe_highlight"/>
+                        <button name="get_report" context="" string="Generate" type="object" default_focus="1" class="oe_highlight"/>
                         or
                         <button string="Cancel" class="oe_link" special="cancel" />
                     </footer>
@@ -68,7 +92,7 @@
         </record>
 
         <record id="act_hr_timesheet_sheet_generate_timesheets_xls" model="ir.actions.act_window">
-        	<field name="name">Generate XLS timesheets</field>
+        	<field name="name">Generate XLS reports</field>
         	<field name="res_model">employee.timesheet.generator</field>
         	<field name="type">ir.actions.act_window</field>
         	<field name="view_type">form</field>

@@ -86,7 +86,7 @@
 
 
         <record id="project.act_project_project_2_project_task_all" model="ir.actions.act_window">
-            <field name="view_mode">kanban,tree,geoengine,form,calendar,pivot,graph</field>
+            <field name="view_mode">tree,geoengine,form,kanban,calendar,pivot,graph</field>
         </record>
 
 

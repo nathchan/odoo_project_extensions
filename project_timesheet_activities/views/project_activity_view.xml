@@ -36,6 +36,7 @@
                     <field name="show_on_sap_report" />
                     <!--<field name="sap_report_sufix" />-->
                     <field name="is_general_activity" />
+                    <field name="is_on_project_activity" />
                     <field name="info" />
                 </tree>
             </field>
