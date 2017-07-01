@@ -107,7 +107,7 @@
 
                                     <label for="forecast_date"/>
                                     <div class="o_row">
-                                        <field name="forecast_date" attrs="{'required': [('forecast_date_type', '!=', False)]}"/>
+                                        <field name="forecast_date" attrs="{'required': [('forecast_date_type', '=', 'must_start_on')]}"/>
                                         <span attrs="{'invisible': [('forecast_is_holiday', '=', False)]}"
                                               class="label label-danger">FC weekend/holiday</span>
                                     </div>
