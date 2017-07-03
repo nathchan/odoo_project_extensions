@@ -201,6 +201,12 @@ class HrTimesheetSheet(models.Model):
 
     @api.model
     def create(self, vals):
+        if 'employee_id' in vals and vals['employee_id'] != False:
+            emp = self.env['hr.employee'].browse(vals['employee_id'])
+            if emp.user_id and 'timesheet_activity_ids' in vals and len(vals['timesheet_activity_ids']) > 0:
+                for line in vals['timesheet_activity_ids']:
+                    line[2]['user_id'] = emp.user_id.id
+
         if 'date_from' in vals and self.env.user.id != tools.SUPERUSER_ID:
             first_day_of_week = datetime.datetime.now()+relativedelta.relativedelta(weekday=0, days=-6)
             date_from = vals['date_from']
