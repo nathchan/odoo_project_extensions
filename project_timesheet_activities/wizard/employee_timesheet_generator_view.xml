@@ -31,7 +31,7 @@
 
                                     <div attrs="{'invisible': [('use_period', '=', False)]}">
                                         <label for="period_id" />
-                                        <field name="period_id" attrs="{'required': [('use_period', '=', True)]}" options="{'no_open': True, 'no_create': True}" />
+                                        <field name="period_id" attrs="{'required': [('use_period', '=', True), ('display_sap_report', '=', True)]}" options="{'no_open': True, 'no_create': True}" />
                                     </div>
 
                                 </div>
