@@ -1364,7 +1364,7 @@ def write_header(ws, employee, month, year):
                            font=Font(bold=True),
                            fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
 
-    ws['L7'] = 'Driver'
+    ws['L7'] = 'Vehicle'
     ws['L7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
     ws['L7'].font = header_font
     ws['L7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
@@ -1375,7 +1375,7 @@ def write_header(ws, employee, month, year):
                            font=Font(bold=True),
                            fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
 
-    ws['M7'] = 'Vehicle'
+    ws['M7'] = 'Accommodation'
     ws['M7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
     ws['M7'].font = header_font
     ws['M7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
@@ -1386,7 +1386,7 @@ def write_header(ws, employee, month, year):
                            font=Font(bold=True),
                            fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
 
-    ws['N7'] = 'Accommodation'
+    ws['N7'] = 'Taggeld total'
     ws['N7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
     ws['N7'].font = header_font
     ws['N7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
@@ -1397,7 +1397,7 @@ def write_header(ws, employee, month, year):
                            font=Font(bold=True),
                            fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
 
-    ws['O7'] = 'Taggeld total'
+    ws['O7'] = 'Taggeld taxable'
     ws['O7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
     ws['O7'].font = header_font
     ws['O7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
@@ -1408,7 +1408,7 @@ def write_header(ws, employee, month, year):
                            font=Font(bold=True),
                            fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
 
-    ws['P7'] = 'Taggeld taxable'
+    ws['P7'] = 'Taggeld taxfree'
     ws['P7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
     ws['P7'].font = header_font
     ws['P7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
@@ -1419,7 +1419,7 @@ def write_header(ws, employee, month, year):
                            font=Font(bold=True),
                            fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
 
-    ws['Q7'] = 'Taggeld taxfree'
+    ws['Q7'] = 'Comment'
     ws['Q7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
     ws['Q7'].font = header_font
     ws['Q7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
@@ -1429,8 +1429,7 @@ def write_header(ws, employee, month, year):
                            alignment=Alignment(wrap_text=True),
                            font=Font(bold=True),
                            fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
-
-    ws['R7'] = 'Comment'
+    ws['R7'] = 'Overtime 125%'
     ws['R7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
     ws['R7'].font = header_font
     ws['R7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
@@ -1440,7 +1439,7 @@ def write_header(ws, employee, month, year):
                            alignment=Alignment(wrap_text=True),
                            font=Font(bold=True),
                            fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
-    ws['S7'] = 'Overtime 125%'
+    ws['S7'] = 'Overtime 150%'
     ws['S7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
     ws['S7'].font = header_font
     ws['S7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
@@ -1450,7 +1449,7 @@ def write_header(ws, employee, month, year):
                            alignment=Alignment(wrap_text=True),
                            font=Font(bold=True),
                            fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
-    ws['T7'] = 'Overtime 150%'
+    ws['T7'] = 'Overtime 200%'
     ws['T7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
     ws['T7'].font = header_font
     ws['T7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
@@ -1460,7 +1459,7 @@ def write_header(ws, employee, month, year):
                            alignment=Alignment(wrap_text=True),
                            font=Font(bold=True),
                            fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
-    ws['U7'] = 'Overtime 200%'
+    ws['U7'] = 'TimeCredit'
     ws['U7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
     ws['U7'].font = header_font
     ws['U7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
@@ -1470,20 +1469,10 @@ def write_header(ws, employee, month, year):
                            alignment=Alignment(wrap_text=True),
                            font=Font(bold=True),
                            fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
-    ws['V7'] = 'TimeCredit'
+    ws['V7'] = 'Accom. Recharge'
     ws['V7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
     ws['V7'].font = header_font
     ws['V7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
-                                         right=Side(style='thick', color=colors.BLACK),
-                                         top=Side(style='thick', color=colors.BLACK),
-                                         bottom=Side(style='thick', color=colors.BLACK)),
-                           alignment=Alignment(wrap_text=True),
-                           font=Font(bold=True),
-                           fill=PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af')))
-    ws['W7'] = 'Accom. Recharge'
-    ws['W7'].fill = PatternFill(patternType='solid', fill_type='solid', fgColor=Color('ffe8af'))
-    ws['W7'].font = header_font
-    ws['W7'].style = Style(border=Border(left=Side(style='thick', color=colors.BLACK),
                                          right=Side(style='thick', color=colors.BLACK),
                                          top=Side(style='thick', color=colors.BLACK),
                                          bottom=Side(style='thick', color=colors.BLACK)),
@@ -1501,8 +1490,8 @@ def write_header(ws, employee, month, year):
     ws.column_dimensions['A'].width = 12
     ws.column_dimensions['G'].width = 22
     ws.column_dimensions['H'].width = 22
-    ws.column_dimensions['N'].width = 20
-    ws.column_dimensions['R'].width = 30
+    ws.column_dimensions['M'].width = 20
+    ws.column_dimensions['Q'].width = 30
 
 
 def write_line(ws, n, color, current_date, line=None):
@@ -1636,19 +1625,8 @@ def write_line(ws, n, color, current_date, line=None):
                                                     bottom=Side(style='thin', color=colors.BLACK)),
                                       )
 
-    ws['L'+str(7+n[0])] = line.timesheet_is_driver if not empty_line and line.timesheet_is_driver else ''
+    ws['L'+str(7+n[0])] = line.timesheet_vehicle_id.license_plate if not empty_line and line.timesheet_vehicle_id else ''
     ws['L'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
-                                      fill=PatternFill(patternType='solid',
-                                                       fill_type='solid',
-                                                       fgColor=Color(color)),
-                                      border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                    right=Side(style='thick', color=colors.BLACK),
-                                                    top=Side(style='thin', color=colors.BLACK),
-                                                    bottom=Side(style='thin', color=colors.BLACK)),
-                                      )
-
-    ws['M'+str(7+n[0])] = line.timesheet_vehicle_id.license_plate if not empty_line and line.timesheet_vehicle_id else ''
-    ws['M'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
                                       fill=PatternFill(patternType='solid',
                                                        fill_type='solid',
                                                        fgColor=Color(color)),
@@ -1658,7 +1636,18 @@ def write_line(ws, n, color, current_date, line=None):
                                                     bottom=Side(style='thin', color=colors.BLACK)),
                                    )
 
-    ws['N'+str(7+n[0])] = line.timesheet_accommodation if not empty_line and line.timesheet_accommodation else ''
+    ws['M'+str(7+n[0])] = line.timesheet_accommodation if not empty_line and line.timesheet_accommodation else ''
+    ws['M'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
+                                      fill=PatternFill(patternType='solid',
+                                                       fill_type='solid',
+                                                       fgColor=Color(color)),
+                                      border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                    right=Side(style='thick', color=colors.BLACK),
+                                                    top=Side(style='thin', color=colors.BLACK),
+                                                    bottom=Side(style='thin', color=colors.BLACK)),
+                                      )
+
+    ws['N'+str(7+n[0])] = 0.0
     ws['N'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
                                       fill=PatternFill(patternType='solid',
                                                        fill_type='solid',
@@ -1667,6 +1656,7 @@ def write_line(ws, n, color, current_date, line=None):
                                                     right=Side(style='thick', color=colors.BLACK),
                                                     top=Side(style='thin', color=colors.BLACK),
                                                     bottom=Side(style='thin', color=colors.BLACK)),
+                                      number_format='0.00'
                                       )
 
     ws['O'+str(7+n[0])] = 0.0
@@ -1693,7 +1683,7 @@ def write_line(ws, n, color, current_date, line=None):
                                       number_format='0.00'
                                       )
 
-    ws['Q'+str(7+n[0])] = 0.0
+    ws['Q'+str(7+n[0])] = line.timesheet_comment if not empty_line and line.timesheet_comment else ''
     ws['Q'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
                                       fill=PatternFill(patternType='solid',
                                                        fill_type='solid',
@@ -1702,10 +1692,8 @@ def write_line(ws, n, color, current_date, line=None):
                                                     right=Side(style='thick', color=colors.BLACK),
                                                     top=Side(style='thin', color=colors.BLACK),
                                                     bottom=Side(style='thin', color=colors.BLACK)),
-                                      number_format='0.00'
                                       )
-
-    ws['R'+str(7+n[0])] = line.timesheet_comment if not empty_line and line.timesheet_comment else ''
+    ws['R'+str(7+n[0])] = 0.0
     ws['R'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
                                       fill=PatternFill(patternType='solid',
                                                        fill_type='solid',
@@ -1714,6 +1702,7 @@ def write_line(ws, n, color, current_date, line=None):
                                                     right=Side(style='thick', color=colors.BLACK),
                                                     top=Side(style='thin', color=colors.BLACK),
                                                     bottom=Side(style='thin', color=colors.BLACK)),
+                                      number_format='0.00'
                                       )
     ws['S'+str(7+n[0])] = 0.0
     ws['S'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
@@ -1750,17 +1739,6 @@ def write_line(ws, n, color, current_date, line=None):
                                       )
     ws['V'+str(7+n[0])] = 0.0
     ws['V'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
-                                      fill=PatternFill(patternType='solid',
-                                                       fill_type='solid',
-                                                       fgColor=Color(color)),
-                                      border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                    right=Side(style='thick', color=colors.BLACK),
-                                                    top=Side(style='thin', color=colors.BLACK),
-                                                    bottom=Side(style='thin', color=colors.BLACK)),
-                                      number_format='0.00'
-                                      )
-    ws['W'+str(7+n[0])] = 0.0
-    ws['W'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
                                       fill=PatternFill(patternType='solid',
                                                        fill_type='solid',
                                                        fgColor=Color(color)),
@@ -1909,7 +1887,7 @@ def write_pub_holiday_line(ws, n, color, current_date):
                                                     right=Side(style='thick', color=colors.BLACK),
                                                     top=Side(style='thin', color=colors.BLACK),
                                                     bottom=Side(style='thin', color=colors.BLACK)),
-                                      )
+                                   )
 
     ws['M'+str(7+n[0])] = ''
     ws['M'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
@@ -1920,9 +1898,9 @@ def write_pub_holiday_line(ws, n, color, current_date):
                                                     right=Side(style='thick', color=colors.BLACK),
                                                     top=Side(style='thin', color=colors.BLACK),
                                                     bottom=Side(style='thin', color=colors.BLACK)),
-                                   )
+                                      )
 
-    ws['N'+str(7+n[0])] = ''
+    ws['N'+str(7+n[0])] = 0.0
     ws['N'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
                                       fill=PatternFill(patternType='solid',
                                                        fill_type='solid',
@@ -1931,6 +1909,7 @@ def write_pub_holiday_line(ws, n, color, current_date):
                                                     right=Side(style='thick', color=colors.BLACK),
                                                     top=Side(style='thin', color=colors.BLACK),
                                                     bottom=Side(style='thin', color=colors.BLACK)),
+                                      number_format='0.00'
                                       )
 
     ws['O'+str(7+n[0])] = 0.0
@@ -1956,8 +1935,7 @@ def write_pub_holiday_line(ws, n, color, current_date):
                                                     bottom=Side(style='thin', color=colors.BLACK)),
                                       number_format='0.00'
                                       )
-
-    ws['Q'+str(7+n[0])] = 0.0
+    ws['Q'+str(7+n[0])] = ''
     ws['Q'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
                                       fill=PatternFill(patternType='solid',
                                                        fill_type='solid',
@@ -1966,9 +1944,8 @@ def write_pub_holiday_line(ws, n, color, current_date):
                                                     right=Side(style='thick', color=colors.BLACK),
                                                     top=Side(style='thin', color=colors.BLACK),
                                                     bottom=Side(style='thin', color=colors.BLACK)),
-                                      number_format='0.00'
                                       )
-    ws['R'+str(7+n[0])] = ''
+    ws['R'+str(7+n[0])] = 0.0
     ws['R'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
                                       fill=PatternFill(patternType='solid',
                                                        fill_type='solid',
@@ -1977,6 +1954,7 @@ def write_pub_holiday_line(ws, n, color, current_date):
                                                     right=Side(style='thick', color=colors.BLACK),
                                                     top=Side(style='thin', color=colors.BLACK),
                                                     bottom=Side(style='thin', color=colors.BLACK)),
+                                      number_format='0.00'
                                       )
     ws['S'+str(7+n[0])] = 0.0
     ws['S'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
@@ -2013,17 +1991,6 @@ def write_pub_holiday_line(ws, n, color, current_date):
                                       )
     ws['V'+str(7+n[0])] = 0.0
     ws['V'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
-                                      fill=PatternFill(patternType='solid',
-                                                       fill_type='solid',
-                                                       fgColor=Color(color)),
-                                      border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                    right=Side(style='thick', color=colors.BLACK),
-                                                    top=Side(style='thin', color=colors.BLACK),
-                                                    bottom=Side(style='thin', color=colors.BLACK)),
-                                      number_format='0.00'
-                                      )
-    ws['w'+str(7+n[0])] = 0.0
-    ws['W'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
                                       fill=PatternFill(patternType='solid',
                                                        fill_type='solid',
                                                        fgColor=Color(color)),
@@ -2172,7 +2139,7 @@ def write_leave_request_line(ws, n, color, activity, start_time, end_time, sum_t
                                                     right=Side(style='thick', color=colors.BLACK),
                                                     top=Side(style='thin', color=colors.BLACK),
                                                     bottom=Side(style='thin', color=colors.BLACK)),
-                                      )
+                                   )
 
     ws['M'+str(7+n[0])] = ''
     ws['M'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
@@ -2183,9 +2150,9 @@ def write_leave_request_line(ws, n, color, activity, start_time, end_time, sum_t
                                                     right=Side(style='thick', color=colors.BLACK),
                                                     top=Side(style='thin', color=colors.BLACK),
                                                     bottom=Side(style='thin', color=colors.BLACK)),
-                                   )
+                                      )
 
-    ws['N'+str(7+n[0])] = ''
+    ws['N'+str(7+n[0])] = 0.0
     ws['N'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
                                       fill=PatternFill(patternType='solid',
                                                        fill_type='solid',
@@ -2194,6 +2161,7 @@ def write_leave_request_line(ws, n, color, activity, start_time, end_time, sum_t
                                                     right=Side(style='thick', color=colors.BLACK),
                                                     top=Side(style='thin', color=colors.BLACK),
                                                     bottom=Side(style='thin', color=colors.BLACK)),
+                                      number_format='0.00'
                                       )
 
     ws['O'+str(7+n[0])] = 0.0
@@ -2220,7 +2188,7 @@ def write_leave_request_line(ws, n, color, activity, start_time, end_time, sum_t
                                       number_format='0.00'
                                       )
 
-    ws['Q'+str(7+n[0])] = 0.0
+    ws['Q'+str(7+n[0])] = ''
     ws['Q'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
                                       fill=PatternFill(patternType='solid',
                                                        fill_type='solid',
@@ -2229,10 +2197,8 @@ def write_leave_request_line(ws, n, color, activity, start_time, end_time, sum_t
                                                     right=Side(style='thick', color=colors.BLACK),
                                                     top=Side(style='thin', color=colors.BLACK),
                                                     bottom=Side(style='thin', color=colors.BLACK)),
-                                      number_format='0.00'
                                       )
-
-    ws['R'+str(7+n[0])] = ''
+    ws['R'+str(7+n[0])] = 0.0
     ws['R'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
                                       fill=PatternFill(patternType='solid',
                                                        fill_type='solid',
@@ -2241,6 +2207,7 @@ def write_leave_request_line(ws, n, color, activity, start_time, end_time, sum_t
                                                     right=Side(style='thick', color=colors.BLACK),
                                                     top=Side(style='thin', color=colors.BLACK),
                                                     bottom=Side(style='thin', color=colors.BLACK)),
+                                      number_format='0.00'
                                       )
     ws['S'+str(7+n[0])] = 0.0
     ws['S'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
@@ -2277,17 +2244,6 @@ def write_leave_request_line(ws, n, color, activity, start_time, end_time, sum_t
                                       )
     ws['V'+str(7+n[0])] = 0.0
     ws['V'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
-                                      fill=PatternFill(patternType='solid',
-                                                       fill_type='solid',
-                                                       fgColor=Color(color)),
-                                      border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                    right=Side(style='thick', color=colors.BLACK),
-                                                    top=Side(style='thin', color=colors.BLACK),
-                                                    bottom=Side(style='thin', color=colors.BLACK)),
-                                      number_format='0.00'
-                                      )
-    ws['W'+str(7+n[0])] = 0.0
-    ws['W'+str(7+n[0])].style = Style(alignment=Alignment(wrap_text=True),
                                       fill=PatternFill(patternType='solid',
                                                        fill_type='solid',
                                                        fgColor=Color(color)),
@@ -2376,9 +2332,14 @@ def write_footer(ws, n, working_time_sum, working_time_per_day_sum):
     ws['M'+str(7+n[0])].style = Style(border=Border(bottom=Side(style='thick',
                                                                 color=colors.BLACK)),
                                       )
-    ws['N'+str(7+n[0])] = ''
-    ws['N'+str(7+n[0])].style = Style(border=Border(bottom=Side(style='thick',
-                                                                color=colors.BLACK)),
+    ws['N'+str(7+n[0])] = 0.0
+    ws['N'+str(7+n[0])].style = Style(font=Font(bold=True),
+                                      alignment=Alignment(wrap_text=True),
+                                      border=Border(left=Side(style='thick', color=colors.BLACK),
+                                                    right=Side(style='thick', color=colors.BLACK),
+                                                    top=Side(style='thick', color=colors.BLACK),
+                                                    bottom=Side(style='thick', color=colors.BLACK)),
+                                      number_format='0.00'
                                       )
     ws['O'+str(7+n[0])] = 0.0
     ws['O'+str(7+n[0])].style = Style(font=Font(bold=True),
@@ -2398,8 +2359,14 @@ def write_footer(ws, n, working_time_sum, working_time_per_day_sum):
                                                     bottom=Side(style='thick', color=colors.BLACK)),
                                       number_format='0.00'
                                       )
-    ws['Q'+str(7+n[0])] = 0.0
-    ws['Q'+str(7+n[0])].style = Style(font=Font(bold=True),
+
+    ws['Q'+str(7+n[0])] = ''
+    ws['Q'+str(7+n[0])].style = Style(border=Border(bottom=Side(style='thick',
+                                                                color=colors.BLACK)),
+                                      )
+
+    ws['R'+str(7+n[0])] = 0.0
+    ws['R'+str(7+n[0])].style = Style(font=Font(bold=True),
                                       alignment=Alignment(wrap_text=True),
                                       border=Border(left=Side(style='thick', color=colors.BLACK),
                                                     right=Side(style='thick', color=colors.BLACK),
@@ -2407,12 +2374,6 @@ def write_footer(ws, n, working_time_sum, working_time_per_day_sum):
                                                     bottom=Side(style='thick', color=colors.BLACK)),
                                       number_format='0.00'
                                       )
-
-    ws['R'+str(7+n[0])] = ''
-    ws['R'+str(7+n[0])].style = Style(border=Border(bottom=Side(style='thick',
-                                                                color=colors.BLACK)),
-                                      )
-
     ws['S'+str(7+n[0])] = 0.0
     ws['S'+str(7+n[0])].style = Style(font=Font(bold=True),
                                       alignment=Alignment(wrap_text=True),
@@ -2440,18 +2401,9 @@ def write_footer(ws, n, working_time_sum, working_time_per_day_sum):
                                                     bottom=Side(style='thick', color=colors.BLACK)),
                                       number_format='0.00'
                                       )
+
     ws['V'+str(7+n[0])] = 0.0
     ws['V'+str(7+n[0])].style = Style(font=Font(bold=True),
-                                      alignment=Alignment(wrap_text=True),
-                                      border=Border(left=Side(style='thick', color=colors.BLACK),
-                                                    right=Side(style='thick', color=colors.BLACK),
-                                                    top=Side(style='thick', color=colors.BLACK),
-                                                    bottom=Side(style='thick', color=colors.BLACK)),
-                                      number_format='0.00'
-                                      )
-
-    ws['W'+str(7+n[0])] = 0.0
-    ws['W'+str(7+n[0])].style = Style(font=Font(bold=True),
                                       alignment=Alignment(wrap_text=True),
                                       border=Border(left=Side(style='thick', color=colors.BLACK),
                                                     right=Side(style='thick', color=colors.BLACK),
