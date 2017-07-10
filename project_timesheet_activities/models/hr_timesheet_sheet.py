@@ -105,10 +105,28 @@ class HrTimesheetSheet(models.Model):
             rec.supervisor_must_approve = True if counts[0] > 0 else False
 
     def _search_supervisor_must_approve(self, operator, value):
+        db = self.env.cr
+        query = """
+            select distinct
+                sheet_id
+            from
+                (
+                    select
+                        l.timesheet_sheet_id as sheet_id
+                    from
+                        account_analytic_line l
+                        left join project_task t on t.id = l.task_id
+                    where
+                        t.user_id = %d
+                        and l.timesheet_approved_status in ('draft')
+                ) as res_table
+        """
+        db.execute(query % (self.env.user.id,))
+        results = db.fetchall()
+
         res_ids = []
-        for obj in self.search([]):
-            if obj.supervisor_must_approve is True:
-                res_ids.append(obj.id)
+        for item in results:
+            res_ids.append(item[0])
 
         if (operator == '=' and value is True) or (operator == '!=' and value is False):
             operator = 'in'
