@@ -56,12 +56,12 @@
             <field name="arch" type="xml">
                 <form string="Milestone" create="false">
                     <header>
-                        <button name="calculate_forecast"
-                                type="object"
-                                string="Calculate FC"
-                                icon="fa-calculator"
-                                confirm="Recalculate milestone forecasts?"
-                                />
+                        <!--<button name="calculate_forecast"-->
+                                <!--type="object"-->
+                                <!--string="Calculate FC"-->
+                                <!--icon="fa-calculator"-->
+                                <!--confirm="Recalculate milestone forecasts?"-->
+                                <!--/>-->
                     </header>
                     <sheet>
 

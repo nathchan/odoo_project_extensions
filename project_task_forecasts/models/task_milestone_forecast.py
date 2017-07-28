@@ -440,7 +440,10 @@ class ProjectTaskMilestoneForecast(models.Model):
                 'milestone_line_id': self.id,
                 'updated_field': 'actual'
             })
-        return super(ProjectTaskMilestoneForecast, self).write(vals)
+
+        updated_obj = super(ProjectTaskMilestoneForecast, self).write(vals)
+        self.calculate_forecast()
+        return updated_obj
 
     def return_action_to_open_issues(self, cr, uid, ids, context=None):
         if context is None:
