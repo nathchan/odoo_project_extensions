@@ -18,9 +18,7 @@
     'data': [
         'views/assets_backend.xml',
         'views/task_view.xml',
-        'views/task_type_view.xml',
         'views/task_milestone_forecast.xml',
-        'views/stage_process_view.xml',
         'views/issue_view.xml',
         'views/milestone_view.xml',
         'views/milestone_template_view.xml',

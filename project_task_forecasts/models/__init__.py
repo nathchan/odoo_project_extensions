@@ -1,11 +1,10 @@
 import task_milestone_forecast
-import stage_process
 import task
-import task_type
 import task_priority
 import issue
 import milestone
 import milestone_template
+import milestone_template_line
 import project
 import export_milestones_log
 import task_milestone_update_log

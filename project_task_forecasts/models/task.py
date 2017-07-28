@@ -24,15 +24,6 @@ class ProjectTask(models.Model):
             else:
                 obj.stage_progress = float(float(actuals) / float(total)) * 100.0
 
-    @api.one
-    def _compute_has_processes(self):
-        proc_count = len(self.stage_id.process_ids)
-        if proc_count > 1:
-            self.has_processes = True
-
-        else:
-            self.has_processes = False
-
     @api.multi
     def _compute_color(self):
         for rec in self:
@@ -73,61 +64,124 @@ class ProjectTask(models.Model):
     priority_id = fields.Many2one('project.task.priority', 'MDF Priority')
     quality_finish = fields.Boolean('Quality Finish')
 
-    has_processes = fields.Boolean('Has processes', compute=_compute_has_processes)
-    stage_process_id = fields.Many2one('project.task.stage.process', 'Process')
-
     blocked_until = fields.Date('Blocked until')
 
     @api.multi
-    def write(self, vals):
-        if 'stage_id' in vals:
-            stage_1100_1200 = self.env['project.task.type'].search([('name', '=', '1100-1200')], limit=1)
-            new_stage = self.env['project.task.type'].search([('id', '=', vals['stage_id'])], limit=1)
-            if stage_1100_1200 and new_stage and self.stage_id.id == stage_1100_1200.id:
-                if new_stage.sequence > stage_1100_1200.sequence:
-                    # provjeriti da li ima missing goods otvorenih issues
-                    missing_goods_category = self.env['project.issue.category'].search([('name', '=', 'Missing Goods')])
-                    missing_goods_issues_count = self.env['project.issue'].search([('task_id', '=', self.id),
-                                                                                   ('active', '=', True),
-                                                                                   ('category_id', '=', missing_goods_category.id)], count=True)
-                    if missing_goods_issues_count > 0:
-                        raise e.ValidationError('Issues with Category "Missing Goods" are still opened. Close these Issues First.')
+    def apply_milestone_template(self):
+        for task in self:
+            if not task.milestone_template_id:
+                continue
 
-        if 'stage_id' in vals:
-            stage_id = vals.get('stage_id')
-            process_id = self.env['project.task.stage.process'].search([('stage_id', '=', stage_id)],
-                                                                                          limit=1)
-            vals.update({'stage_process_id': process_id.id})
-        return super(ProjectTask, self).write(vals)
+            template = task.milestone_template_id
+
+            #milestones that are in old and new template
+            mutual_milestones = self.env['project.task.milestone.forecast'].search([('task_id', '=', task.id),
+                                                                                    ('milestone_id', 'in', [item.milestone_id.id for item in template.line_ids])])
+            for ms in mutual_milestones:
+                new_duration = template.line_ids.filtered(lambda x: x.milestone_id.id == ms.milestone_id.id).duration
+                new_sequence_order = template.line_ids.filtered(lambda x: x.milestone_id.id == ms.milestone_id.id).sequence_order
+                ms.write({
+                    'duration_forecast': new_duration,
+                    'baseline_duration': new_duration,
+                    'sequence_order': new_sequence_order,
+                    'force_update': True,
+                })
+
+            # milestones in old template, but don't exist in new
+            old_milestones = self.env['project.task.milestone.forecast'].search([('task_id', '=', task.id),
+                                                                                 ('milestone_id', 'not in', [item.milestone_id.id for item in template.line_ids])])
+            for ms in old_milestones:
+                ms.active = False
+
+            # milestones not in old template, but exist in new (should be activated or created)
+            new_milestones = self.env['project.milestone.template.line'].search([('milestone_template_id', '=', template.id),
+                                                                                 ('milestone_id', 'not in', [item.milestone_id.id for item in task.milestone_ids])])
+            for ms in new_milestones:
+                archived = self.env['project.task.milestone.forecast'].search([('task_id', '=', task.id),
+                                                                               ('milestone_id', '=', ms.milestone_id.id),
+                                                                               ('active', '=', False)], limit=1)
+                if archived:
+                    # unarchive
+                    archived.write({
+                        'active': True,
+                        'duration_forecast': ms.duration,
+                        'baseline_duration': ms.duration,
+                        'sequence_order': ms.sequence_order,
+                        'force_update': True,
+                    })
+                else:
+                    # create new
+                    self.env['project.task.milestone.forecast'].create({
+                        'task_id': task.id,
+                        'project_id': template.project_id.id,
+                        'milestone_id': ms.milestone_id.id,
+                        'baseline_duration': ms.duration,
+                        'duration_forecast': ms.duration,
+                        'sequence_order': ms.sequence_order,
+                    })
+
+
+            # recalculate new dates
+            first_ms = self.env['project.task.milestone.forecast'].search([('task_id', '=', task.id)], order='sequence_order', limit=1)
+            if first_ms.forecast_date or first_ms.actual_date:
+                first_ms.calculate_forecast()
+
+    @api.multi
+    def write(self, vals):
+        updated_task = super(ProjectTask, self).write(vals)
+
+        if 'milestone_template_id' in vals and vals['milestone_template_id'] is not False:
+            err_msgs = []
+            try:
+                updated_task.apply_milestone_template()
+            except Exception as e:
+                err_msgs.append(e.name)
+
+            if len(err_msgs) > 0:
+                raise e.UserError('\n\n\n'.join(err_msgs))
+
+        return updated_task
 
     @api.model
     def create(self, vals):
-        new = super(ProjectTask, self).create(vals)
-        forecast_tbl = self.env['project.task.milestone.forecast']
-        for milestone in new.project_id.milestone_ids:
-            data = {
-                'task_id': new.id,
-                'project_id': new.project_id.id,
-                'milestone_id': milestone.id,
-                'baseline_duration': milestone.duration,
-                'duration_forecast': milestone.duration,
-            }
-            forecast_tbl.create(data)
-        return new
+        new_task = super(ProjectTask, self).create(vals)
+        default_template = self.env['project.milestone.template'].search([('project_id', '=', new_task.project_id.id),
+                                                                          ('is_default', '=', True)],
+                                                                         limit=1)
+        if default_template:
+            forecast_tbl = self.env['project.task.milestone.forecast']
+            for line in default_template.line_ids:
+                data = {
+                    'task_id': new_task.id,
+                    'project_id': new_task.project_id.id,
+                    'milestone_id': line.milestone_id.id,
+                    'baseline_duration': line.duration,
+                    'duration_forecast': line.duration,
+                    'sequence_order': line.sequence_order,
+                }
+                forecast_tbl.create(data)
+        return new_task
 
     def copy(self, cr, uid, id, default=None, context=None):
         new_id = super(ProjectTask, self).copy(cr, uid, id, default, context)
-        forecast_tbl = self.pool.get('project.task.milestone.forecast')
-        task_obj = self.pool.get('project.task').browse(cr, uid, new_id)
-        for milestone in task_obj.project_id.milestone_ids:
-            data = {
-                'task_id': task_obj.id,
-                'project_id': task_obj.project_id.id,
-                'milestone_id': milestone.id,
-                'baseline_duration': milestone.duration,
-                'duration_forecast': milestone.duration,
-            }
-            forecast_tbl.create(cr, uid, data, context)
+        new_task = self.pool.get('project.task').browse(cr, uid, new_id)
+
+        default_template = self.env['project.milestone.template'].search([('project_id', '=', new_task.project_id.id),
+                                                                          ('is_default', '=', True)],
+                                                                         limit=1)
+
+        if default_template:
+            forecast_tbl = self.env['project.task.milestone.forecast']
+            for line in default_template.line_ids:
+                data = {
+                    'task_id': new_task.id,
+                    'project_id': new_task.project_id.id,
+                    'milestone_id': line.milestone_id.id,
+                    'baseline_duration': line.duration,
+                    'duration_forecast': line.duration,
+                    'sequence_order': line.sequence_order,
+                }
+                forecast_tbl.create(data)
         return new_id
 
     @api.one
@@ -140,19 +194,24 @@ class ProjectTask(models.Model):
         if records_existing and len(records_existing) > 0:
             return
 
-        milestones = self.env['project.milestone'].search([('project_id', '=', self.project_id.id)],
-                                                          order='sequence')
-        if not milestones or len(milestones) < 1:
-            raise Warning('Project does not have any related milestones.')
+        default_template = self.env['project.milestone.template'].search([('project_id', '=', self.project_id.id),
+                                                                          ('is_default', '=', True)],
+                                                                         limit=1)
+        if not default_template:
+            raise Warning('Project does not have default milestones template.')
 
-        for milestone in milestones:
-            forecast_ref.create({
-                'project_id': self.project_id.id,
-                'task_id': self.id,
-                'milestone_id': milestone.id,
-                'baseline_duration': milestone.duration,
-                'duration_forecast': milestone.duration,
-            })
+        if default_template:
+            forecast_tbl = self.env['project.task.milestone.forecast']
+            for line in default_template.line_ids:
+                data = {
+                    'task_id': self.id,
+                    'project_id': self.project_id.id,
+                    'milestone_id': line.milestone_id.id,
+                    'baseline_duration': line.duration,
+                    'duration_forecast': line.duration,
+                    'sequence_order': line.sequence_order,
+                }
+                forecast_tbl.create(data)
 
         return
 

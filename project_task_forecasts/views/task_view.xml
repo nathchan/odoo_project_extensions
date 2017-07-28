@@ -40,9 +40,13 @@
             <field name="arch" type="xml">
                 <data>
 
-                    <xpath expr="//field[@name='stage_id']" position="after">
-                        <field name="has_processes" invisible="1" />
-                        <field name="stage_process_id" domain="[('stage_id', '=', stage_id)]" attrs="{'invisible': [('has_processes', '!=', True)]}"  widget="statusbar" clickable="True" />
+                    <xpath expr="//field[@name='stage_id']" position="before">
+                        <button string="Apply milestones template"
+                                name="apply_milestone_template"
+                                type="object"
+                                confirm="Are you sure?"
+                                groups="project.group_project_manager"
+                                />
                     </xpath>
 
                     <xpath expr="//button[@name='toggle_active']" position="before">

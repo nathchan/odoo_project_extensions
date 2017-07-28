@@ -7,7 +7,7 @@
             <field name="name">project.task.milestone.forecast.tree</field>
             <field name="model">project.task.milestone.forecast</field>
             <field name="arch" type="xml">
-                <tree string="Milestones">
+                <tree string="Milestones" create="false" edit="false">
                     <field name="sequence_order" invisible="1" />
                     <field name="task_active" invisible="1" />
                     <field name="project_id" />
@@ -54,7 +54,7 @@
             <field name="name">project.task.milestone.forecast.form</field>
             <field name="model">project.task.milestone.forecast</field>
             <field name="arch" type="xml">
-                <form string="Milestone">
+                <form string="Milestone" create="false">
                     <header>
                         <button name="calculate_forecast"
                                 type="object"

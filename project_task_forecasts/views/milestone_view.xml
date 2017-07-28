@@ -72,7 +72,7 @@
 
 
        <record id="action_project_milestones" model="ir.actions.act_window">
-           <field name="name">Milestones</field>
+           <field name="name">All Milestones</field>
            <field name="type">ir.actions.act_window</field>
            <field name="res_model">project.milestone</field>
            <field name="view_type">form</field>

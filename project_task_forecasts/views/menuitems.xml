@@ -30,16 +30,22 @@
                   sequence="30"/>
 
         <menuitem name="Milestones template"
-                  id="menu_project_milestones_config"
+                  id="menu_project_milestones_template_config"
                   parent="project.menu_project_config"
                   action="action_project_milestone_templates"
                   sequence="20"/>
+
+        <menuitem name="All Milestones"
+                  id="menu_project_milestones_config"
+                  parent="project.menu_project_config"
+                  action="action_project_milestones"
+                  sequence="21"/>
 
         <menuitem name="Task priorities"
                   id="menu_project_task_priority_config"
                   parent="project.menu_project_config"
                   action="project_task_priority_action"
-                  sequence="20"/>
+                  sequence="30"/>
 
         <menuitem name="Export Milestones"
                   id="menu_project_milestones_export"

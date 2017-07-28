@@ -84,21 +84,30 @@ class ProjectTaskMilestoneForecast(models.Model):
             else:
                 rec.actual_week = False
 
-    @api.one
+    @api.multi
     def _compute_predecessors_forecast_actual(self):
-        out = '<div> <hr/>'
-        if self.milestone_id and self.milestone_id.predecessor_milestone_ids and len(self.milestone_id.predecessor_milestone_ids) > 0:
-            for line in self.milestone_id.predecessor_milestone_ids:
-                item = self.search([('task_id', '=', self.task_id.id), ('milestone_id', '=', line.id)])
-                if item:
-                    if item.forecast_date:
-                        out += '<h3>' + str(item.milestone_id.name) + ' FC: ' + datetime.datetime.strptime(item.forecast_date, tools.DEFAULT_SERVER_DATE_FORMAT).strftime('%d.%m.%Y') + '</h3>'
-                    if item.actual_date:
-                        out += '<h3>' + str(item.milestone_id.name) + ' AC: ' + datetime.datetime.strptime(item.actual_date, tools.DEFAULT_SERVER_DATE_FORMAT).strftime('%d.%m.%Y') + '</h3>'
-                    out += '<hr/>'
+        for rec in self:
+            out = '<div> <hr/>'
 
-        out += '</div>'
-        self.predecessors_forecast_actual = out
+            # find predecessors from tasks milestone template
+            milestone_template = rec.task_id.milestone_template_id
+            target_template_line = milestone_template.line_ids.filtered(lambda x: x.milestone_id.id == rec.milestone_id.id)
+            predecessor_ids = None
+            if milestone_template and len(target_template_line) > 0:
+                predecessor_ids = target_template_line.predecessor_milestone_ids
+
+            if self.milestone_id and predecessor_ids and len(predecessor_ids) > 0:
+                for line in predecessor_ids:
+                    item = self.search([('task_id', '=', self.task_id.id), ('milestone_id', '=', line.id)])
+                    if item:
+                        if item.forecast_date:
+                            out += '<h3>' + str(item.milestone_id.name) + ' FC: ' + datetime.datetime.strptime(item.forecast_date, tools.DEFAULT_SERVER_DATE_FORMAT).strftime('%d.%m.%Y') + '</h3>'
+                        if item.actual_date:
+                            out += '<h3>' + str(item.milestone_id.name) + ' AC: ' + datetime.datetime.strptime(item.actual_date, tools.DEFAULT_SERVER_DATE_FORMAT).strftime('%d.%m.%Y') + '</h3>'
+                        out += '<hr/>'
+
+            out += '</div>'
+            rec.predecessors_forecast_actual = out
 
     @api.multi
     def _compute_same_week_tasks_count(self):
@@ -144,7 +153,7 @@ class ProjectTaskMilestoneForecast(models.Model):
             else:
                 rec.actual_is_holiday = False
 
-    #active = fields.Boolean('Active', default=True)
+    active = fields.Boolean('Active', default=True)
     same_week_tasks_count = fields.Integer('Task FC in same week', compute=_compute_same_week_tasks_count)
     predecessors_forecast_actual = fields.Html('Predecessors', compute=_compute_predecessors_forecast_actual)
     issue_count = fields.Integer('Issue Count', compute=_compute_issue_count)
@@ -153,7 +162,7 @@ class ProjectTaskMilestoneForecast(models.Model):
     task_id = fields.Many2one('project.task', 'Task', required=True, ondelete='cascade', track_visibility='onchange')
     task_active = fields.Boolean('Task Active', compute=_compute_assigned_to_active, store=True)
     assigned_to = fields.Many2one('res.users', 'Assigned to', compute=_compute_assigned_to_active, store=True)
-    sequence_order = fields.Integer('Sequence', related='milestone_id.sequence', store=True)
+    sequence_order = fields.Integer('Sequence')
 
     milestone_id = fields.Many2one('project.milestone', 'Milestone', required=True, ondelete='restrict', track_visibility='onchange')
 
@@ -187,8 +196,9 @@ class ProjectTaskMilestoneForecast(models.Model):
         ('unique_task_milestone', 'unique(task_id, milestone_id)', 'Combination of task and milestone must be unique!')
     ]
 
-    @api.one
     def calculate_forecast(self):
+        self.ensure_one()
+
         future_milestones = self.env['project.task.milestone.forecast'].search([('task_id', '=', self.task_id.id),
                                                                                 ('project_id', '=', self.project_id.id),
                                                                                 ('sequence_order', '>', self.sequence_order)],
@@ -214,12 +224,19 @@ class ProjectTaskMilestoneForecast(models.Model):
                 start_date = datetime.datetime.strptime(milestone.forecast_date, tools.DEFAULT_SERVER_DATE_FORMAT)
                 continue
 
-            if milestone.milestone_id.predecessor_milestone_ids and len(milestone.milestone_id.predecessor_milestone_ids) > 0:
+            # find predecessors from tasks milestone template
+            milestone_template = self.task_id.milestone_template_id
+            target_template_line = milestone_template.line_ids.filtered(lambda x: x.milestone_id.id == milestone.milestone_id.id)
+            predecessor_ids = None
+            if milestone_template and len(target_template_line) > 0:
+                predecessor_ids = target_template_line.predecessor_milestone_ids
+
+            if predecessor_ids and len(predecessor_ids) > 0:
                 dates = []
                 all_milestones = self.env['project.task.milestone.forecast'].search([('task_id', '=', self.task_id.id),
                                                                                      ('project_id', '=', self.project_id.id)],
                                                                                     order='sequence_order')
-                for item in milestone.milestone_id.predecessor_milestone_ids:
+                for item in predecessor_ids:
                     predecessor = all_milestones.filtered(lambda r: r.milestone_id.id == item.id)
                     if predecessor and len(predecessor) == 1:
                         dates.append(predecessor.forecast_date)
@@ -375,7 +392,8 @@ class ProjectTaskMilestoneForecast(models.Model):
                         vals['duration_forecast'] = days if days >= 0 else 0
 
             elif 'duration_forecast' in vals and vals['duration_forecast'] is not False \
-                    and ('forecast_date' not in vals or vals['forecast_date'] is False):
+                    and ('forecast_date' not in vals or vals['forecast_date'] is False)\
+                    and ('force_update' not in vals or vals['force_update'] is False):
                 if self.duration_forecast:
                     old_duration = self.duration_forecast
                 else:

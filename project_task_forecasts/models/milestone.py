@@ -18,10 +18,10 @@ class ProjectMilestone(models.Model):
 
     active = fields.Boolean('Active', default=True, track_visibility='onchange')
 
-    sequence_order = fields.Integer('Sequence', track_visibility='onchange')
+    sequence_order = fields.Integer('Default sequence', track_visibility='onchange')
     name = fields.Char('Name', required=True, track_visibility='onchange')
-    duration = fields.Integer('Duration', required=True, default=0, track_visibility='onchange')
-    str_predecessor_milestone_ids = fields.Char('Predecessors', compute=_compute_str_predecessors)
+    duration = fields.Integer('Default duration', required=True, default=0, track_visibility='onchange')
+    str_predecessor_milestone_ids = fields.Char('Default predecessors', compute=_compute_str_predecessors)
 
     predecessor_milestone_ids = fields.Many2many('project.milestone', 'milestone_predecessor_rel', 'current_milestone_id', 'predecessor_milestone_id', 'Predecessors')
     project_id = fields.Many2one('project.project', 'Project', track_visibility='onchange', required=True)
