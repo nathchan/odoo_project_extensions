@@ -125,12 +125,27 @@ class ProjectBacklogCw(models.AbstractModel):
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE or REPLACE VIEW %s as (
+            WITH %s
             SELECT %s
             FROM ( %s )
             WHERE %s
             ORDER BY %s
             )
-        """ % (self._table, self._select(), self._from(), self._where(), self._order_by()))
+        """ % (self._table, self._with(), self._select(), self._from(), self._where(), self._order_by()))
+
+    def _with(self):
+        with_str = """
+        predecessor_relation AS (
+            select
+                line.milestone_template_id as milestone_template_id,
+                line.milestone_id as current_milestone_id,
+                rel.project_milestone_id as predecessor_milestone_id
+            from
+                project_milestone_project_milestone_template_line_rel rel
+                left join project_milestone_template_line line on line.id = rel.project_milestone_template_line_id
+        )
+        """
+        return with_str
 
     def _select(self):
         select_str = """
@@ -197,29 +212,31 @@ class ProjectBacklogCw(models.AbstractModel):
                 a.name = '%s' and
                 f.actual_date is null and
                 t.active is true and
+                f.active is true and
                 f.milestone_id in (
                     select
-                        distinct mp.current_milestone_id
+                    distinct mp.current_milestone_id
                     from
-                        milestone_predecessor_rel mp
+                    predecessor_relation mp
                     where
-                        mp.predecessor_milestone_id in (
-                            select
-                                f1.milestone_id
-                            from
-                                project_task_milestone_forecast f1
-                            where
-                                f1.task_id = f.task_id
-                                and f1.actual_date is not null
-                                and (select count(*) from milestone_predecessor_rel mp1 where mp1.current_milestone_id = f.milestone_id) <= 1
-                        )
+                    mp.milestone_template_id = t.milestone_template_id and
+                    mp.predecessor_milestone_id in (
+                        select
+                        f1.milestone_id
+                        from
+                        project_task_milestone_forecast f1
+                        where
+                        f1.task_id = f.task_id
+                        and f1.actual_date is not null
+                        and (select count(*) from predecessor_relation mp1 where mp1.milestone_template_id = t.milestone_template_id and mp1.current_milestone_id = f.milestone_id) <= 1
+                    )
                     union
                     select
                         distinct mp2.current_milestone_id
                     from
-                        milestone_predecessor_rel mp2
+                        predecessor_relation mp2
                     where
-                        (select count(*) from milestone_predecessor_rel mp3 where mp3.current_milestone_id = f.milestone_id)
+                        (select count(*) from predecessor_relation mp3 where mp3.milestone_template_id = t.milestone_template_id and mp3.current_milestone_id = f.milestone_id)
                         =
                         (select count(*)
                          from project_task_milestone_forecast f2
@@ -227,9 +244,9 @@ class ProjectBacklogCw(models.AbstractModel):
                             f2.task_id = f.task_id
                             and f2.actual_date is not null
                             and f2.milestone_id in (
-                                select mp4.predecessor_milestone_id
-                                from milestone_predecessor_rel mp4
-                                where mp4.current_milestone_id = f.milestone_id
+                            select mp4.predecessor_milestone_id
+                            from predecessor_relation mp4
+                            where mp4.milestone_template_id = t.milestone_template_id and mp4.current_milestone_id = f.milestone_id
                             )
                         )
                 )
