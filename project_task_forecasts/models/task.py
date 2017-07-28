@@ -184,37 +184,6 @@ class ProjectTask(models.Model):
                 forecast_tbl.create(data)
         return new_id
 
-    @api.one
-    def action_fill_milestones(self):
-        forecast_ref = self.env['project.task.milestone.forecast']
-        records_existing = forecast_ref.search([('task_id', '=', self.id),
-                                                ('project_id', '=', self.project_id.id)],
-                                               order='sequence_order')
-
-        if records_existing and len(records_existing) > 0:
-            return
-
-        default_template = self.env['project.milestone.template'].search([('project_id', '=', self.project_id.id),
-                                                                          ('is_default', '=', True)],
-                                                                         limit=1)
-        if not default_template:
-            raise Warning('Project does not have default milestones template.')
-
-        if default_template:
-            forecast_tbl = self.env['project.task.milestone.forecast']
-            for line in default_template.line_ids:
-                data = {
-                    'task_id': self.id,
-                    'project_id': self.project_id.id,
-                    'milestone_id': line.milestone_id.id,
-                    'baseline_duration': line.duration,
-                    'duration_forecast': line.duration,
-                    'sequence_order': line.sequence_order,
-                }
-                forecast_tbl.create(data)
-
-        return
-
     def return_action_to_open_milestones(self, cr, uid, ids, context=None):
         if context is None:
             context = {}

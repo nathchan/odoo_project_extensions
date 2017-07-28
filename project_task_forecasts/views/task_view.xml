@@ -79,18 +79,6 @@
                         <field name="priority_id" />
                     </xpath>
 
-                    <xpath expr="//field[@name='tag_ids']/.." position="after">
-                        <group attrs="{'invisible': [('milestone_count', '>', 0)]}">
-                            <button name="action_fill_milestones"
-                                    type="object"
-                                    string="Add milestones"
-                                    icon="fa-line-chart"
-                                    help="add milestones for this task"
-                                    confirm="Are you sure?"
-                                    />
-                        </group>
-                    </xpath>
-
                     <xpath expr="//field[@name='kanban_state']" position="replace"></xpath>
 
                     <xpath expr="//field[@name='project_id']" position="before">
