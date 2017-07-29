@@ -133,9 +133,9 @@ class ProjectTask(models.Model):
         if 'milestone_template_id' in vals and vals['milestone_template_id'] is not False:
             err_msgs = []
             try:
-                updated_task.apply_milestone_template()
-            except Exception as e:
-                err_msgs.append(e.name)
+                self.apply_milestone_template()
+            except e.except_orm as ex:
+                err_msgs.append(ex.name)
 
             if len(err_msgs) > 0:
                 raise e.UserError('\n\n\n'.join(err_msgs))
