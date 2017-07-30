@@ -8,7 +8,6 @@ import datetime
 class ProjectTaskMilestoneForecast(models.Model):
     _name = 'project.task.milestone.forecast'
     _inherit = ['mail.thread', 'ir.needaction_mixin']
-    _rec_name = 'milestone_id'
     _order = 'sequence_order'
 
     def _skip_date(self, date):
@@ -36,6 +35,7 @@ class ProjectTaskMilestoneForecast(models.Model):
             rec.duration_days = rec.milestone_id.duration
 
     @api.multi
+    @api.depends('milestone_id', 'task_id')
     def _get_name(self):
         for rec in self:
             rec.name = ''
@@ -179,7 +179,7 @@ class ProjectTaskMilestoneForecast(models.Model):
     actual_week = fields.Char('Actual week', track_visibility='onchange', compute=_compute_weeks, store=True)
     actual_is_holiday = fields.Boolean('AC is holiday', compute=_fc_ac_holiday)
 
-    name = fields.Char('Name', compute=_get_name)
+    name = fields.Char('Name', compute=_get_name, store=True)
 
     baseline_duration = fields.Integer('Baseline duration', default=_get_default_duration, group_operator="avg", track_visibility='onchange')
     duration_forecast = fields.Integer('Duration forecast', default=_get_default_duration, group_operator="avg", track_visibility='onchange')
