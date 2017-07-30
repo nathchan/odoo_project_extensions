@@ -122,7 +122,10 @@ class ProjectTask(models.Model):
 
 
             # recalculate new dates
-            first_ms = self.env['project.task.milestone.forecast'].search([('task_id', '=', task.id)], order='sequence_order', limit=1)
+            first_ms = self.env['project.task.milestone.forecast'].search([('task_id', '=', task.id), '|',
+                                                                           ('forecast_date', '!=', False),
+                                                                           ('actual_date', '!=', False)],
+                                                                          order='sequence_order', limit=1)
             if first_ms.forecast_date or first_ms.actual_date:
                 first_ms.calculate_forecast()
 
