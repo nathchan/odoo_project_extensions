@@ -442,7 +442,7 @@ class ProjectTaskMilestoneForecast(models.Model):
             })
 
         updated_obj = super(ProjectTaskMilestoneForecast, self).write(vals)
-        self.calculate_forecast()
+        # self.calculate_forecast()
         return updated_obj
 
     def return_action_to_open_issues(self, cr, uid, ids, context=None):
