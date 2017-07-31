@@ -53,11 +53,11 @@
                   action="action_project_export_milestones"
                   sequence="40"/>
 
-        <!--<menuitem name="Mass update FC AC"-->
-                  <!--id="menu_project_task_milestone_forecast_mass_update"-->
-                  <!--parent="project.menu_project_management"-->
-                  <!--action="action_project_task_milestone_forecast_mass_update"-->
-                  <!--sequence="50"/>-->
+        <menuitem name="Mass update FC AC"
+                  id="menu_project_task_milestone_forecast_mass_update"
+                  parent="project.menu_project_management"
+                  action="action_project_task_milestone_forecast_mass_update"
+                  sequence="50"/>
 
         <!--<menuitem name="Package FC calculation"-->
                   <!--id="menu_project_task_package_forecast_calculation"-->

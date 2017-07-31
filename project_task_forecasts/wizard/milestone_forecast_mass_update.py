@@ -34,5 +34,6 @@ class MilestoneForecastMassUpdateWizard(models.TransientModel):
         if self.milestone_forecast_ids and len(self.milestone_forecast_ids) > 0:
             for item in self.milestone_forecast_ids.filtered(lambda x: x.project_id.id == self.target_project_id.id and x.milestone_id.id == self.target_milestone_id.id):
                 item.write(new_vals)
+                item.calculate_forecast()
 
         return True
