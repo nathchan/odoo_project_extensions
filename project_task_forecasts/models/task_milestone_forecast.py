@@ -196,6 +196,7 @@ class ProjectTaskMilestoneForecast(models.Model):
         ('unique_task_milestone', 'unique(task_id, milestone_id)', 'Combination of task and milestone must be unique!')
     ]
 
+    @api.multi
     def calculate_forecast(self):
         self.ensure_one()
 
