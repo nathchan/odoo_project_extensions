@@ -16,6 +16,7 @@
                     <field name="milestone_id" />
                     <field name="baseline_duration" string="BL Duration" />
                     <field name="duration_forecast" string="Duration" />
+                    <field name="forecast_date_type" />
                     <field name="forecast_date" string="Forecast" />
                     <field name="forecast_week" string="FC Week" />
                     <field name="actual_date" string="Actual" />
