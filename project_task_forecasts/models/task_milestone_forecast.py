@@ -153,6 +153,11 @@ class ProjectTaskMilestoneForecast(models.Model):
             else:
                 rec.actual_is_holiday = False
 
+    @api.onchange('forecast_date_type', 'forecast_date')
+    def _onchange_forecast_date_type_forecast_date(self):
+        if self.forecast_date_type == 'blocked_until':
+            self.blocked_until_date = self.forecast_date
+
     active = fields.Boolean('Active', default=True)
     same_week_tasks_count = fields.Integer('Task FC in same week', compute=_compute_same_week_tasks_count)
     predecessors_forecast_actual = fields.Html('Predecessors', compute=_compute_predecessors_forecast_actual)
