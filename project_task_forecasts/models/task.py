@@ -51,6 +51,8 @@ class ProjectTask(models.Model):
 
     color = fields.Char('Color Index', compute=_compute_color)
 
+    check_list_ids = fields.One2many('project.task.check.list.line', 'task_id', 'Check list')
+
     forecast_start_date = fields.Date('Forecast start date')
     forecast_project_id = fields.Many2one('project.project')
 

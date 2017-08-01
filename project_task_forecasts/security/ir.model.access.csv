@@ -18,3 +18,9 @@
 "access_project_milestone_template_line_employee","project.milestone.template.line.employee","model_project_milestone_template_line","base.group_user",1,0,0,0
 "access_project_milestone_template_line_user","project.milestone.template.line.user","model_project_milestone_template_line","project.group_project_user",1,0,0,0
 "access_project_milestone_template_line_manager","project.milestone.template.line.manager","model_project_milestone_template_line","project.group_project_manager",1,1,1,0
+"access_project_check_list_activity_employee","project.check.list.activity.employee","model_project_check_list_activity","base.group_user",1,0,0,0
+"access_project_check_list_activity_user","project.check.list.activity.user","model_project_check_list_activity","project.group_project_user",1,0,0,0
+"access_project_check_list_activity_manager","project.check.list.activity.manager","model_project_check_list_activity","project.group_project_manager",1,1,1,0
+"access_project_task_check_list_line_employee","project.task.check.list.line.employee","model_project_task_check_list_line","base.group_user",1,0,0,0
+"access_project_task_check_list_line_user","project.task.check.list.line.user","model_project_task_check_list_line","project.group_project_user",1,0,0,0
+"access_project_task_check_list_line_manager","project.task.check.list.line.manager","model_project_task_check_list_line","project.group_project_manager",1,1,1,0

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_check_list_activity_tree" model="ir.ui.view">
+            <field name="name">project.check.list.activity.tree</field>
+            <field name="model">project.check.list.activity</field>
+            <field name="arch" type="xml">
+                <tree editable="top">
+                    <field name="name" />
+                    <field name="sequence_order" />
+                    <field name="info" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_check_list_activity_form" model="ir.ui.view">
+            <field name="name">project.check.list.activity.form</field>
+            <field name="model">project.check.list.activity</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name" />
+                            <field name="sequence_order" />
+                            <field name="info" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="project_check_list_activity_action">
+            <field name="name">Check List Activities</field>
+            <field name="res_model">project.check.list.activity</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+    </data>
+</openerp>

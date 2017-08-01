@@ -27,6 +27,7 @@
         'views/backlog_cw_view.xml',
         'views/backlog_sa_view.xml',
         'views/backlog_sran_view.xml',
+        'views/check_list_activity_view.xml',
         'wizard/export_milestones_view.xml',
         'wizard/milestone_forecast_mass_update_view.xml',
         'wizard/task_package_forecast_calculation_view.xml',
