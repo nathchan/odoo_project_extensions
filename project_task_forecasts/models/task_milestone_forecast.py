@@ -172,6 +172,8 @@ class ProjectTaskMilestoneForecast(models.Model):
     milestone_id = fields.Many2one('project.milestone', 'Milestone', required=True, ondelete='restrict', track_visibility='onchange')
 
     force_update = fields.Boolean('Force update', default=False)
+    skip_milestones_recalculation = fields.Boolean('Skip milestones recalculation', default=False)
+
     forecast_date_type = fields.Selection([('blocked_until', 'Blocked until'),
                                            ('must_start_on', 'Must start on')],
                                           'Constrain type',
@@ -270,6 +272,7 @@ class ProjectTaskMilestoneForecast(models.Model):
 
             data = {
                 'force_update': True,
+                'skip_milestones_recalculation': True,
                 'forecast_date': current_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT),
             }
             milestone.write(data)
@@ -448,7 +451,7 @@ class ProjectTaskMilestoneForecast(models.Model):
             })
 
         updated_obj = super(ProjectTaskMilestoneForecast, self).write(vals)
-        if 'force_update' not in vals or vals['force_update'] is False:
+        if 'skip_milestones_recalculation' not in vals or vals['skip_milestones_recalculation'] is False:
             self.calculate_forecast()
 
         return updated_obj

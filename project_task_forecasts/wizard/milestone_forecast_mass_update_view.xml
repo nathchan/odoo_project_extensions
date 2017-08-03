@@ -29,7 +29,7 @@
 
                             <label for="milestone_forecast_ids" />
                             <field name="milestone_forecast_ids"
-                                   domain="[('milestone_id', '=', target_milestone_id), ('actual_date', '=', False)]"
+                                   domain="[('milestone_id', '=', target_milestone_id)]"
                                    options="{'no_open': True, 'no_create': True}"
                                    widget="many2many_tags" required="1"/>
 
@@ -39,10 +39,10 @@
                             <field name="actual_date" />
 
                         </div>
-                        <div states="get">
-                            <!--<h2>Forecast and actual dates update for milestone <field name="target_milestone_id" readonly="1"/> completed.</h2>-->
-                            <p>System updated <field name="updated_count"/> tasks.</p>
-                        </div>
+                        <!--<div states="get">-->
+                            <!--&lt;!&ndash;<h2>Forecast and actual dates update for milestone <field name="target_milestone_id" readonly="1"/> completed.</h2>&ndash;&gt;-->
+                            <!--<p>System updated <field name="updated_count"/> tasks.</p>-->
+                        <!--</div>-->
 
         			</sheet>
         			<footer states='choose'>
