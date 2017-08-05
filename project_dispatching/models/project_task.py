@@ -129,3 +129,12 @@ class Task(geo_model.GeoModel):
         if 'group_by' in res['context']:
             del res['context']['group_by']
         return res
+
+
+    @api.model
+    def create(self, vals):
+        if ('site_id' not in vals or vals['site_id'] is False) and vals['name'] is not False and vals['name'] != '':
+            site = self.env['project.site.details'].search([('number', '=', vals['name'])], limit=1)
+            if site:
+                vals['site_id'] = site.id
+        return super(Task, self).create(vals)
