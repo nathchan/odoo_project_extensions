@@ -112,7 +112,7 @@ class ProjectDispatching(geo_model.GeoModel):
 
     @api.one
     def _compute_timesheets(self):
-        acts = self.env['account.analytic.line'].search([('task_id', '=', self.task_id.id), ('date', '>=', self.datetime_start), ('date', '<=', self.datetime_stop)])
+        acts = self.env['account.analytic.line'].search([('task_id', '!=', False), ('task_id', '=', self.task_id.id), ('date', '>=', self.datetime_start), ('date', '<=', self.datetime_stop)])
         self.effective_hours = 0.0
         if acts and len(acts) > 0:
             self.timesheet_activity_ids = acts
