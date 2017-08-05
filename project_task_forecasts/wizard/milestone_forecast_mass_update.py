@@ -28,15 +28,19 @@ class MilestoneForecastMassUpdateWizard(models.TransientModel):
 
         new_vals = {}
         date_seven_days_ago = (datetime.datetime.now() - datetime.timedelta(days=7))
+        allowed_date = datetime.datetime.strptime('1999-01-01', tools.DEFAULT_SERVER_DATE_FORMAT)
         if self.forecast_date:
             new_vals['forecast_date'] = self.forecast_date
-            if datetime.datetime.strptime(new_vals['actual_date'], tools.DEFAULT_SERVER_DATE_FORMAT) <= date_seven_days_ago:
+            if datetime.datetime.strptime(new_vals['forecast_date'], tools.DEFAULT_SERVER_DATE_FORMAT) != allowed_date and \
+                                datetime.datetime.strptime(new_vals['forecast_date'], tools.DEFAULT_SERVER_DATE_FORMAT) <= date_seven_days_ago:
                 raise e.ValidationError('Forecast date can not be older than 7 days.')
+
         if self.actual_date:
             new_vals['actual_date'] = self.actual_date
             if datetime.datetime.strptime(new_vals['actual_date'], tools.DEFAULT_SERVER_DATE_FORMAT) > datetime.datetime.now():
                 raise e.ValidationError('Actual date can not be date in future.')
-            if datetime.datetime.strptime(new_vals['actual_date'], tools.DEFAULT_SERVER_DATE_FORMAT) <= date_seven_days_ago:
+            if datetime.datetime.strptime(new_vals['actual_date'], tools.DEFAULT_SERVER_DATE_FORMAT) != allowed_date and \
+                                datetime.datetime.strptime(new_vals['actual_date'], tools.DEFAULT_SERVER_DATE_FORMAT) <= date_seven_days_ago:
                 raise e.ValidationError('Actual date can not be older than 7 days.')
 
         if self.milestone_forecast_ids and len(self.milestone_forecast_ids) > 0:
