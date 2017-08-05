@@ -68,6 +68,11 @@ class ProjectTask(models.Model):
 
     blocked_until = fields.Date('Blocked until')
 
+    @api.onchange('kanban_state')
+    def _onchange_kanban_state(self):
+        if self.kanban_state != 'blocked':
+            self.blocked_until = False
+
     @api.multi
     def apply_milestone_template(self):
         for task in self:
@@ -133,6 +138,9 @@ class ProjectTask(models.Model):
 
     @api.multi
     def write(self, vals):
+        if 'kanban_state' in vals and vals['kanban_state'] != 'blocked':
+            vals['blocked_until'] = False
+
         updated_task = super(ProjectTask, self).write(vals)
 
         if 'milestone_template_id' in vals and vals['milestone_template_id'] is not False:
@@ -154,17 +162,9 @@ class ProjectTask(models.Model):
                                                                           ('is_default', '=', True)],
                                                                          limit=1)
         if default_template:
-            forecast_tbl = self.env['project.task.milestone.forecast']
-            for line in default_template.line_ids:
-                data = {
-                    'task_id': new_task.id,
-                    'project_id': new_task.project_id.id,
-                    'milestone_id': line.milestone_id.id,
-                    'baseline_duration': line.duration,
-                    'duration_forecast': line.duration,
-                    'sequence_order': line.sequence_order,
-                }
-                forecast_tbl.create(data)
+            new_task.write({
+                'milestone_template_id': default_template.id
+            })
         return new_task
 
     def copy(self, cr, uid, id, default=None, context=None):
@@ -176,17 +176,9 @@ class ProjectTask(models.Model):
                                                                          limit=1)
 
         if default_template:
-            forecast_tbl = self.env['project.task.milestone.forecast']
-            for line in default_template.line_ids:
-                data = {
-                    'task_id': new_task.id,
-                    'project_id': new_task.project_id.id,
-                    'milestone_id': line.milestone_id.id,
-                    'baseline_duration': line.duration,
-                    'duration_forecast': line.duration,
-                    'sequence_order': line.sequence_order,
-                }
-                forecast_tbl.create(data)
+            new_task.write({
+                'milestone_template_id': default_template.id
+            })
         return new_id
 
     def return_action_to_open_milestones(self, cr, uid, ids, context=None):
