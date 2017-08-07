@@ -212,44 +212,21 @@ class ProjectBacklogCw(models.AbstractModel):
                 a.name = '%s' and
                 f.actual_date is null and
                 t.active is true and
-                f.active is true and
-                f.milestone_id in (
-                    select
-                    distinct mp.current_milestone_id
-                    from
-                    predecessor_relation mp
-                    where
-                    mp.milestone_template_id = t.milestone_template_id and
-                    mp.predecessor_milestone_id in (
-                        select
-                        f1.milestone_id
-                        from
-                        project_task_milestone_forecast f1
-                        where
-                        f1.task_id = f.task_id
-                        and f1.actual_date is not null
-                        and (select count(*) from predecessor_relation mp1 where mp1.milestone_template_id = t.milestone_template_id and mp1.current_milestone_id = f.milestone_id) <= 1
-                    )
-                    union
-                    select
-                        distinct mp2.current_milestone_id
-                    from
-                        predecessor_relation mp2
-                    where
-                        (select count(*) from predecessor_relation mp3 where mp3.milestone_template_id = t.milestone_template_id and mp3.current_milestone_id = f.milestone_id)
-                        =
-                        (select count(*)
-                         from project_task_milestone_forecast f2
+                f.active is true
+                AND
+                (
+                  select
+                    count(*)
+                  from predecessor_relation rel
+                  where
+                    rel.milestone_template_id = t.milestone_template_id
+                    and rel.current_milestone_id = f.milestone_id
+                    and (select ac.actual_date
+                         from project_task_milestone_forecast ac
                          where
-                            f2.task_id = f.task_id
-                            and f2.actual_date is not null
-                            and f2.milestone_id in (
-                            select mp4.predecessor_milestone_id
-                            from predecessor_relation mp4
-                            where mp4.milestone_template_id = t.milestone_template_id and mp4.current_milestone_id = f.milestone_id
-                            )
-                        )
-                )
+                           ac.milestone_id = rel.predecessor_milestone_id
+                           and ac.task_id = f.task_id) is null
+                ) = 0
         """
         return where_str % (self._project_name,)
 
