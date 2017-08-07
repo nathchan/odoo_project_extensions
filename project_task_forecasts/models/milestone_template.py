@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, fields, api, exceptions as e
+from openerp import models, fields, api, exceptions as ex
 
 
 class MilestoneTemplate(models.Model):
@@ -29,4 +29,4 @@ class MilestoneTemplate(models.Model):
                 err_msgs.append(e.name)
 
         if len(err_msgs) > 0:
-            raise e.UserError('\n\n\n'.join(err_msgs))
+            raise ex.UserError('\n\n\n'.join(err_msgs))

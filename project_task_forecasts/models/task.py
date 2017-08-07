@@ -92,6 +92,7 @@ class ProjectTask(models.Model):
                     'baseline_duration': new_duration,
                     'sequence_order': new_sequence_order,
                     'force_update': True,
+                    'skip_milestones_recalculation': True,
                 })
 
             # milestones in old template, but don't exist in new
@@ -115,6 +116,7 @@ class ProjectTask(models.Model):
                         'baseline_duration': ms.duration,
                         'sequence_order': ms.sequence_order,
                         'force_update': True,
+                        'skip_milestones_recalculation': True,
                     })
                 else:
                     # create new
