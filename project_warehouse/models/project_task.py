@@ -11,6 +11,7 @@ class ProjectTask(models.Model):
         self.ensure_one()
         location_search = '%s/%s' % (self.project_id.name, self.name)
         res = {
+            'name': 'Inventory',
             'type': 'ir.actions.act_window',
             'res_model': 'stock.quant',
             'view_type': 'form',
