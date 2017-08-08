@@ -15,7 +15,8 @@
     ],
     'data': [
         'views/purchase_order_view.xml',
-        'views/stock_picking_view.xml'
+        'views/stock_picking_view.xml',
+        'views/project_task_view.xml',
     ],
     'demo': [],
     'qweb': [],
