@@ -1,8 +1,5 @@
 "id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
 "access_hr_job_employee","hr.job.employee","hr.model_hr_job","base.group_user",1,0,0,0
-"access_project_activity_category_employee","project.activity.category.employee","model_project_activity_category","base.group_user",1,0,0,0
-"access_project_activity_category_user","project.activity.category.user","model_project_activity_category","project.group_project_user",1,0,0,0
-"access_project_activity_category_manager","project.activity.category.manager","model_project_activity_category","project.group_project_manager",1,1,1,0
 "access_project_activity_employee","project.activity.employee","model_project_activity","base.group_user",1,1,0,0
 "access_project_activity_work_package_employee","project.activity.work.package.employee","model_project_activity_work_package","base.group_user",1,1,0,0
 "access_project_activity_user","project.activity.user","model_project_activity","project.group_project_user",1,1,0,0
