@@ -124,14 +124,14 @@ class ProjectBacklogCw(models.AbstractModel):
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
-        # cr.execute("""CREATE or REPLACE VIEW %s as (
-        #     WITH %s
-        #     SELECT %s
-        #     FROM ( %s )
-        #     WHERE %s
-        #     ORDER BY %s
-        #     )
-        # """ % (self._table, self._with(), self._select(), self._from(), self._where(), self._order_by()))
+        cr.execute("""CREATE or REPLACE VIEW %s as (
+            WITH %s
+            SELECT %s
+            FROM ( %s )
+            WHERE %s
+            ORDER BY %s
+            )
+        """ % (self._table, self._with(), self._select(), self._from(), self._where(), self._order_by()))
 
     def _with(self):
         with_str = """
