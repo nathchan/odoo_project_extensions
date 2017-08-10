@@ -15,7 +15,7 @@ var _t = core._t;
 
     KanbanRecord.include({
         on_card_clicked: function () {
-            if (this.model === 'project.backlog.cw' || this.model === 'project.backlog.sa') {
+            if (this.model === 'project.backlog.cw' || this.model === 'project.backlog.sa' || this.model === 'project.backlog.sran') {
                 var obj = $(this.$el).find('a').first().click();
             } else {
                 this._super.apply(this, arguments);
